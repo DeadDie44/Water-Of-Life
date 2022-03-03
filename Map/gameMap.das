@@ -27,7 +27,6 @@ class GameMap
         return float4(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
 
     def DrawGameMap(var tiles: ImageHandle&)
-        print("\nSize thing " + string(mapContainer |> length))
         for i in range(0, mapContainer |> length)
             draw_image_region(tiles, float(i % height * TILE_SIZE), float(i / width * TILE_SIZE),
             GetTileRect(mapContainer[i]))

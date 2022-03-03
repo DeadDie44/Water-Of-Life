@@ -1,5 +1,13 @@
 require gameObject
 
 class public GameCharacter: GameObject
-    def MyFunction (i: int)
-        var a: int = i
+    private healthPoints, healthCap:int
+    
+    def LoseHealth(damage:int)
+        healthPoints -= damage
+
+    def GetCurrentHealth : int
+        return healthPoints
+
+    def GetHealthCap : int
+        return healthCap

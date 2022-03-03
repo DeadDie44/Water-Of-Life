@@ -1,5 +1,9 @@
-require GameCharacter
+require gameCharacter
 
-class Player : GameCharacter
-    
-    i:int = 0
+class public Player: GameCharacter
+    def Player()
+        self -> Init()
+        return
+
+    def Init
+        print("Player is here")

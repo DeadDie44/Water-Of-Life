@@ -2,7 +2,7 @@
    // path to dasbox.exe
    "dascript.compiler": "C:/Users/deadd/dasbox/bin/dasbox.exe",
 
-   "dascript.server.args": [
+ "dascript.server.args": [
         "${file}",
         "x",
         "-main",
