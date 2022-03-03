@@ -3,7 +3,7 @@ require daslib/media
 require Graphics/mySpriteAtlas
 require Map/gameMap
 require Util/Util
-require Objects/player
+//require Objects/player
 
 // options debugger            // uncomment for debug in VS Code
 // require daslib/debug        // uncomment for debug in VS Code
@@ -12,7 +12,7 @@ var
     GameOn: bool = false
     tiles: ImageHandle
     myMap = new GameMap()
-    player:Player = new PLayer()
+    //player:Player = new PLayer()
         
 
 // 'initialize' runs once when game starts and every hot-reload
