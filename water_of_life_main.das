@@ -36,7 +36,6 @@ def initialize
 def act(dt: float)
     if get_key(VK_ESCAPE)
         schedule_quit_game()
-    //if get_key(VK_SPACE)
     if (GameOn)
         var move: float2
 
@@ -52,6 +51,8 @@ def act(dt: float)
         move = normalize(move)
 
         player -> playerMove(move, dt)
+        if get_key(VK_SPACE) || get_key(VK_SPACE)
+            player -> playerAttack()
 
     return
 
