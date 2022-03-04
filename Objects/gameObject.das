@@ -5,3 +5,6 @@ class GameObject
 
     spriteSheet:ImageHandle
     sprite:Image
+
+    colliderType:int
+
