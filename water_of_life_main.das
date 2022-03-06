@@ -1,8 +1,8 @@
 require daslib/media
 
-require Graphics/mySpriteAtlas
-require Map/gameMap
-require Util/Util
+require graphics/mySpriteAtlas
+require map/gameMap
+require util/util
 require player
 
 // options debugger            // uncomment for debug in VS Code
@@ -12,19 +12,16 @@ var
     GameOn: bool = false
     tiles: ImageHandle
     myMap = new GameMap()
-    player = new Player()
-    torch: ImageHandle
-    torchFrame: int = 0
-        
+    player = new Player()     
 
 // 'initialize' runs once when game starts and every hot-reload
 [export]
 def initialize
     set_window_title("Water of Life")
     tiles <- create_managed_image(TILES)
-    torch <- create_managed_image(TORCHES)
 
     setup_2d_camera(float2(get_screen_width() / 8, get_screen_height() / 8), 4.0)
+    player.pos = float2(30f,30f)
 
     GameOn = true
 
@@ -37,7 +34,7 @@ def act(dt: float)
     if get_key(VK_ESCAPE)
         schedule_quit_game()
     if (GameOn)
-        var move: float2
+        var move = float2(0f,0f)
 
         if get_key(VK_W) || get_key(VK_UP)
             move.y = -1f
@@ -64,17 +61,9 @@ def draw
     enable_alpha_blend()
     myMap -> DrawGameMap(tiles)
     player -> DrawPlayer()
-    DrawTorch()
     disable_alpha_blend()
     //if GameOn
         //myMap -> DrawGameMap(tiles)
-    return
-
-def DrawTorch
-    draw_image_region(torch, 64f, 64f, getTileRect(torchFrame))
-    torchFrame++
-    if torchFrame > 5
-        torchFrame = 0
 
 def getTileRect(spriteIndex: int): float4
     var x, y: int

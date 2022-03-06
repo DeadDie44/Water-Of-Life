@@ -1,0 +1,3 @@
+let
+    COLLIDER_CIRCLE: int = 1
+    COLLIDER_RECTANGLE: int = 2

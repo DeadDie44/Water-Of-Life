@@ -1,91 +1,112 @@
 require daslib/media
 
-require Objects/gameCharacter
-require Graphics/mySpriteAtlas
-require Graphics/Animation/animationHelper
+require objects/gameCharacter
+require graphics/mySpriteAtlas
+require graphics/Animation/animationHelper
+require objects/Physics/collisionHelper
 
 class public Player: GameCharacter
-    speed:float = 75f
-    currentFrame:int = 0
-    fps:float = 12f
-    frameTime:float
-    direction:int2
-
-    public animationState: int = CHARACTER_IDLE
-
-    idleAnimationUp = [[int[1]25]]
-    idleAnimationDown = [[int[1]26]]
-    idleAnimationLeft = [[int[1]24]]
-    idleAnimationRight = [[int[1]27]]
-
-    runAnimationUp = [[int[8]25;0;1;2;25;3;4;5]]
-    runAnimationDown = [[int[8]26;12;13;14;26;15;16;17]]
-    runAnimationLeft = [[int[8]24;6;7;8;24;9;10;11]]
-    runAnimationRight = [[int[8]27;18;19;20;27;21;22;23]]
-
-    attackAnimationUp = [[int[5]28;29;30;31;32]]
-    attackAnimationDown = [[int[8]28;29;30;31;32;33;34;35]]
-    attackAnimationLeft = [[int[5]28;29;30;31;32]]
-    attackAnimationRight = [[int[5]28;29;30;31;32]]
-
-    currentAnimation: array<int>
-
-    def Player()
+    
+    def Player
         self -> init()
-        return
 
     def init
+        speed = 75f
+        currentFrame = 0
+        fps = 12f
+
+        animationState = CHARACTER_IDLE
+
+        idleAnimationUp = [[int[1]25]]
+        idleAnimationDown = [[int[1]26]]
+        idleAnimationSide = [[int[1]24]]
+
+        runAnimationUp = [[int[8]25;0;1;2;25;3;4;5]]
+        runAnimationDown = [[int[8]26;12;13;14;26;15;16;17]]
+        runAnimationSide = [[int[8]24;6;7;8;24;9;10;11]]
+
+        attackAnimationUp = [[int[7]35;36;37;38;39;40;41]]
+        attackAnimationDown = [[int[7]28;29;30;31;32;33;34]]
+        attackAnimationSide = [[int[7]42;43;44;45;46;47;48]]
+
         print("Player is here x:" + string(pos.y) + " y:" + string(pos.y))
         spriteSheet <- create_managed_image(PLAYER)
         currentAnimation <- idleAnimationDown[0..idleAnimationDown |> length]
         currentFrame = 0
+        direction = float2(0f,-1f)
+        colliderType = COLLIDER_RECTANGLE
+        colliderSize = 10f
 
-    def playerMove(move:float2; dt:float)
+    def playerMove(move: float2; dt: float)
         pos += move * speed * dt
+        if move != float2(0f,0f)
+            direction := move
+            animationState = CHARACTER_RUNNING
+            fps = 12f
+        else
+            animationState = CHARACTER_IDLE
+            fps = 12f
 
-        if move.x == 0f && move.y == 0f
-            if direction.y < 0
-                currentAnimation <- idleAnimationUp[0..(idleAnimationUp |> length)]
-            elif direction.y > 0
-                currentAnimation <- idleAnimationDown[0..(idleAnimationDown |> length)]
-            elif direction.x < 0
-                currentAnimation <- idleAnimationLeft[0..(idleAnimationLeft |> length)]
-            elif direction.x > 0   
-                currentAnimation <- idleAnimationRight[0..(idleAnimationRight |> length)]
-            return
-        if move.y < 0f
-            currentAnimation <- runAnimationUp[0..(runAnimationUp |> length)]
-        elif move.y > 0f
-            currentAnimation <- runAnimationDown[0..(runAnimationDown |> length)]
-        elif move.x < 0f
-            currentAnimation <- runAnimationLeft[0..(runAnimationLeft |> length)]
-        elif move.x > 0f    
-            currentAnimation <- runAnimationRight[0..(runAnimationRight |> length)]
-        direction := int2(move)
-
-    def playerAttack()
-        if direction.y < 0
-            currentAnimation <- attackAnimationUp[0..(attackAnimationUp |> length)]
-        elif direction.y > 0
-            currentAnimation <- attackAnimationDown[0..(attackAnimationDown |> length)]
-        elif direction.x < 0
-            currentAnimation <- attackAnimationLeft[0..(attackAnimationLeft |> length)]
-        elif direction.x > 0   
-            currentAnimation <- attackAnimationRight[0..(attackAnimationRight |> length)]
+    def playerAttack
+        animationState = CHARACTER_ATTACK
+        fps = 32f
 
     def DrawPlayer()
+        Animate()
         if currentFrame >= currentAnimation |> length
             currentFrame = 0
-        draw_image_region(spriteSheet, pos.x - PLAYER_SIZE/2f, pos.y - PLAYER_SIZE/2f, getSpriteRect(currentAnimation[currentFrame]))
-        setup_2d_camera(pos, 18.0)
+    
+        if direction == float2(1f,0f)
+            draw_image_transformed(spriteSheet, pos.x + PLAYER_SIZE / 2f, pos.y - PLAYER_SIZE / 2f,
+            getSpriteRect(currentAnimation[currentFrame]), 0xFFFFFFFF, float2(-PLAYER_SIZE,PLAYER_SIZE), 
+            0f, 0f, 0f)
+        else
+            draw_image_region(spriteSheet, pos.x - PLAYER_SIZE / 2f, pos.y - PLAYER_SIZE / 2f, 
+            getSpriteRect(currentAnimation[currentFrame]))
+
+
+        setup_2d_camera(pos, 8.0)
         frameTime += get_delta_time()
-        circle(pos.x - 0.5f, pos.y - 0.5f, 8f, 0xFFFFFFFF)
-        circle(pos.x - 0.5f, pos.y - 0.5f, 0.5f, 0xFFFFFFFF)
-        rect(pos.x - 0.5f, pos.y - 0.5f, 4f, 4f, 0xFFFFFFFF)
-        rect(pos.x - 2.5f, pos.y - 2.5f, 5f, 5f, 0xFFFFFFFF)
+
+        if showCollider
+            if colliderType == COLLIDER_CIRCLE
+                fill_circle(pos.x, pos.y, colliderSize,0x44FFFFFF)
+            if colliderType == COLLIDER_RECTANGLE
+                fill_circle(pos.x, pos.y, colliderSize,0x44FFFFFF)
+                fill_rect(pos.x - colliderSize, pos.y - colliderSize, colliderSize*2f, colliderSize*2f,0x44FFFFFF)
+        
+
+        //fill_rect(pos.x - PLAYER_SIZE / 2f , pos.y - PLAYER_SIZE / 2f, PLAYER_SIZE, PLAYER_SIZE,0x44FFFFFF)
+        //fill_circle(pos.x, pos.y, 16f,0x44FFFFFF)
+        //fill_circle(pos.x, pos.y, 24f,0x44FF2222)
+
         if frameTime >= 1f/fps
             currentFrame++
             frameTime = 0f
+
+    def Animate
+        var i:int = 0
+        if animationState == CHARACTER_IDLE
+            if direction.y < 0f
+                currentAnimation <- idleAnimationUp[0..(idleAnimationUp |> length)]
+            elif direction.y > 0f
+                currentAnimation <- idleAnimationDown[0..(idleAnimationDown |> length)]
+            elif direction.x != 0f
+                currentAnimation <- idleAnimationSide[0..(idleAnimationSide|> length)]
+        elif animationState == CHARACTER_RUNNING
+            if direction.y < 0f
+                currentAnimation <- runAnimationUp[0..(runAnimationUp |> length)]
+            elif direction.y > 0f
+                currentAnimation <- runAnimationDown[0..(runAnimationDown |> length)]
+            elif direction.x != 0f
+                currentAnimation <- runAnimationSide[0..(runAnimationSide |> length)]
+        elif animationState == CHARACTER_ATTACK
+            if direction.y < 0f
+                currentAnimation <- attackAnimationUp[0..(attackAnimationUp |> length)]
+            elif direction.y > 0f
+                currentAnimation <- attackAnimationDown[0..(attackAnimationDown |> length)]
+            elif direction.x != 0f
+                currentAnimation <- attackAnimationSide[0..(attackAnimationSide |> length)]
 
     def getSpriteRect(spriteIndex: int): float4
         var x, y: float
