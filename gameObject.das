@@ -1,43 +1,79 @@
 require daslib/media
 require collisionManager
+require collisionHelper
 require animator
+require mySpriteAtlas
 
 class GameObject
+    private healthPoints, healthCap: int
 
-//    animator: Animator
+    showCollider: bool = true
 
-    showCollider:bool = false
-    
     colliderType: int
+    currentFrame: int
 
     colliderSize: float
-    pos: float2
+    size:         float = 32f
+    speed:        float
+
+    direction: float2
+    pos:       float2
 
     spriteSheet: ImageHandle
+    shadowSprite: Image
 
-    speed: float = 75f
-    currentFrame: int = 0
-    fps: float = 12f
-    frameTime: float
-    direction: float2
+    animator: Animator?
 
-    animationState: int = 0
+    def GameObject
+        self -> init()
 
-    idleAnimationUp = [[int[1]25]]
-    idleAnimationSide = [[int[1]24]]
-    idleAnimationDown = [[int[1]26]]
-    
+    def init()
+        print("Object init")
+        spriteSheet <- create_managed_image(PLAYER)
+        shadowSprite <- create_image(CHARACTER_SHADOW)
+        animator = new Animator()
 
-    runAnimationUp = [[int[8]25;0;1;2;25;3;4;5]]
-    runAnimationSide = [[int[8]24;6;7;8;24;9;10;11]]
-    runAnimationDown = [[int[8]26;12;13;14;26;15;16;17]]
+    def loseHealth(damage: int)
+        healthPoints -= damage
+
+    def getCurrentHealth: int
+        return healthPoints
+
+    def getHealthCap: int
+        return healthCap
+
+    def abstract UpdateObject(dt: float): void
+        
+    def DrawObject
+        animator -> Animate(direction)
+        if currentFrame >= animator.currentAnimation |> length
+            currentFrame = 0
     
-    
-    attackAnimationUp = [[int[7]35;36;37;38;39;40;41]]
-    attackAnimationSide = [[int[7]42;43;44;45;46;47;48]]
-    attackAnimationDown = [[int[7]28;29;30;31;32;33;34]]
-    
-    
-    currentAnimation: array<int>
-    
-    size: float = 32f
+        draw_image(shadowSprite, pos.x - size / 2f, pos.y - size / 2f)
+        if direction == float2(1f,0f)
+            draw_image_transformed(spriteSheet, pos.x + size / 2f, pos.y - size / 2f,
+            getSpriteRect(animator.currentAnimation[currentFrame]), 0xFFFFFFFF, float2(-size, size), 
+            0f, 0f, 0f)
+        else
+            draw_image_region(spriteSheet, pos.x - size / 2f, pos.y - size / 2f, 
+            getSpriteRect(animator.currentAnimation[currentFrame]))
+       
+        animator.frameTime += get_delta_time()
+
+        if showCollider
+            if colliderType == COLLIDER_CIRCLE
+                fill_circle(pos.x, pos.y, colliderSize,0x44FFFFFF)
+            if colliderType == COLLIDER_RECTANGLE
+                fill_rect(pos.x - colliderSize, pos.y - colliderSize, colliderSize*2f, colliderSize*2f,0x44FFFFFF)
+
+        if animator.frameTime >= 1f/animator.fps
+            currentFrame++
+            animator.frameTime = 0f
+     
+    def getSpriteRect(spriteIndex: int): float4
+        var x, y: float
+
+        x = float(spriteIndex % 8)
+        y = float(spriteIndex / 8)
+
+        return float4(x * size, y * size, size, size)

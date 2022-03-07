@@ -1,9 +1,9 @@
 let public
-    TILES: string = "Assets/sprites/tiles/tiles.png"
+    TILES: string = "assets/sprites/tiles/tiles.png"
 
-    PLAYER: string = "Assets/sprites/player/player.png"
+    PLAYER: string = "assets/sprites/characters/player.png"
     PLAYER_SIZE: float = 48f
 
-    CHARACTER_SHADOW: string = "Assets/sprites/player/regular_character_shadow.png"
+    CHARACTER_SHADOW: string = "assets/sprites/characters/regular_character_shadow.png"
 
-    TORCHES: string = "Assets/sprites/objects/torches.png"
+    TORCHES: string = "assets/sprites/objects/torches.png"
