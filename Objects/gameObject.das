@@ -3,7 +3,7 @@ require physics/collisionManager
 
 class GameObject
 
-    showCollider:bool = true
+    showCollider:bool = false
     
     colliderType: int
 
