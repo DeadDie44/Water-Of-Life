@@ -1,6 +1,6 @@
 require daslib/media
 
-require objects/gameObject
+require gameObject
 
 var
     showCollider = true

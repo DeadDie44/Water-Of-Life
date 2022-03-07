@@ -1,8 +1,8 @@
 require daslib/media
 
-require graphics/mySpriteAtlas
-require map/gameMap
-require util/util
+require mySpriteAtlas
+require gameMap
+require util
 require player
 
 // options debugger            // uncomment for debug in VS Code

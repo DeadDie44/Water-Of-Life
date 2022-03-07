@@ -1,9 +1,9 @@
 require daslib/media
 
-require objects/gameCharacter
-require graphics/mySpriteAtlas
-require graphics/Animation/animationHelper
-require objects/Physics/collisionHelper
+require gameCharacter
+require mySpriteAtlas
+require animationHelper
+require collisionHelper
 
 class public Player: GameCharacter
     
@@ -17,20 +17,24 @@ class public Player: GameCharacter
 
         animationState = CHARACTER_IDLE
 
-        idleAnimationUp = [[int[1]25]]
-        idleAnimationDown = [[int[1]26]]
-        idleAnimationSide = [[int[1]24]]
+        idleAnimationUp = [[int[1]18]]
+        idleAnimationSide = [[int[1]19]]
+        idleAnimationDown = [[int[1]20]]
+        
 
-        runAnimationUp = [[int[8]25;0;1;2;25;3;4;5]]
-        runAnimationDown = [[int[8]26;12;13;14;26;15;16;17]]
-        runAnimationSide = [[int[8]24;6;7;8;24;9;10;11]]
+        runAnimationUp = [[int[8]18;0;1;2;18;3;4;5]]
+        runAnimationSide = [[int[8]19;6;7;8;19;9;10;11]]
+        runAnimationDown = [[int[8]20;12;13;14;20;15;16;17]]
+        
 
         attackAnimationUp = [[int[7]35;36;37;38;39;40;41]]
-        attackAnimationDown = [[int[7]28;29;30;31;32;33;34]]
         attackAnimationSide = [[int[7]42;43;44;45;46;47;48]]
+        attackAnimationDown = [[int[7]28;29;30;31;32;33;34]]
+        
 
         print("Player is here x:" + string(pos.y) + " y:" + string(pos.y))
         spriteSheet <- create_managed_image(PLAYER)
+        shadowSprite <- create_image(CHARACTER_SHADOW)
         currentAnimation <- idleAnimationDown[0..idleAnimationDown |> length]
         currentFrame = 0
         direction = float2(0f,-1f)
@@ -56,6 +60,7 @@ class public Player: GameCharacter
         if currentFrame >= currentAnimation |> length
             currentFrame = 0
     
+        draw_image(shadowSprite, pos.x - PLAYER_SIZE / 2f, pos.y - PLAYER_SIZE / 2f)
         if direction == float2(1f,0f)
             draw_image_transformed(spriteSheet, pos.x + PLAYER_SIZE / 2f, pos.y - PLAYER_SIZE / 2f,
             getSpriteRect(currentAnimation[currentFrame]), 0xFFFFFFFF, float2(-PLAYER_SIZE,PLAYER_SIZE), 
@@ -63,7 +68,7 @@ class public Player: GameCharacter
         else
             draw_image_region(spriteSheet, pos.x - PLAYER_SIZE / 2f, pos.y - PLAYER_SIZE / 2f, 
             getSpriteRect(currentAnimation[currentFrame]))
-
+       
 
         setup_2d_camera(pos, 8.0)
         frameTime += get_delta_time()

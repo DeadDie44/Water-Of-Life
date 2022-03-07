@@ -4,6 +4,6 @@ let public
     PLAYER: string = "Assets/sprites/player/player.png"
     PLAYER_SIZE: float = 48f
 
-    CENTER_TEST: string = "Assets/sprites/singleSpriteTest.png"
+    CHARACTER_SHADOW: string = "Assets/sprites/player/regular_character_shadow.png"
 
     TORCHES: string = "Assets/sprites/objects/torches.png"
