@@ -2,6 +2,7 @@ require daslib/media
 
 require gameObject
 require player
+require objectFactory
 
 var
     //showCollider = true
@@ -11,7 +12,7 @@ var
 def InitObjectContainer
     clear (objectContainer)
     //CreateObject(new Player())
-    player = new Player()
+    player = new Player(objectFromDesc("player"))
 
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(new GameObject())

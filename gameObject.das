@@ -2,7 +2,7 @@ require daslib/media
 require collisionManager
 require collisionHelper
 require animator
-require mySpriteAtlas
+require objectFactory
 
 class GameObject
     private healthPoints, healthCap: int
@@ -13,7 +13,8 @@ class GameObject
     currentFrame: int
 
     colliderSize: float
-    size:         float = 32f
+    size:         float
+    baseSpeed:    float
     speed:        float
 
     direction: float2
@@ -24,13 +25,19 @@ class GameObject
 
     animator: Animator?
 
-    def GameObject
-        self -> init()
+    def GameObject(desc: ObjectDescriptor)
+        self -> init(desc)
 
-    def init()
-        print("Object init")
-        spriteSheet <- create_managed_image(PLAYER)
-        shadowSprite <- create_image(CHARACTER_SHADOW)
+    def init(desc: ObjectDescriptor)
+        colliderSize = desc.colliderSize
+        colliderType = desc.colliderType
+        size = desc.size
+        baseSpeed = desc.baseSpeed
+        healthCap = desc.health
+        healthPoints = healthCap
+        spriteSheet <- create_managed_image(desc.sprite)
+        shadowSprite <- create_image(desc.shadow)
+
         animator = new Animator()
 
     def loseHealth(damage: int)

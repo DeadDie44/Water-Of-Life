@@ -2,21 +2,21 @@ require daslib/media
 
 require gameObject
 require animator
-require mySpriteAtlas
+require objectFactory
 
 class public Player: GameObject
 
-    def Player
-        GameObject`GameObject(self)
+    def Player (desc: ObjectDescriptor)
+        GameObject`GameObject(self, desc)
 
-    def override init
-        GameObject`init(self)
-        size = PLAYER_SIZE
-        speed = 60f
-        print("Player here")
+    def override init (desc: ObjectDescriptor)
+        GameObject`init(self, desc)
+        print("\nPlayer here\n")
     
     def override UpdateObject(dt: float): void
         var move = float2(0f,0f)
+
+        speed = baseSpeed
 
         if get_key(VK_W) || get_key(VK_UP)
             move.y = -1f
@@ -39,10 +39,10 @@ class public Player: GameObject
         
         if move != float2(0f,0f)
             direction := move
-            animator -> SetAnimationState(CHARACTER_RUNNING, 12f)
+            animator -> SetAnimationState(AnimState RUNNING, 12f)
         else
-            animator -> SetAnimationState(CHARACTER_IDLE, 12f)
+            animator -> SetAnimationState(AnimState IDLE, 12f)
 
     def playerAttack
         print("Player attack")
-        animator -> SetAnimationState(CHARACTER_ATTACK, 32f)
+        animator -> SetAnimationState(AnimState ATTACK, 32f)

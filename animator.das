@@ -1,17 +1,18 @@
-let
-    //Состояния анимации персонажей
-    CHARACTER_IDLE: int = 0
-    CHARACTER_RUNNING: int = 1
-    CHARACTER_ATTACK: int = 2
+//Состояния анимации
+enum AnimState
+    IDLE
+    RUNNING
+    ATTACK
 
 class Animator
-    animationState: int
+    animationState: AnimState
 
     frameTime: float
     fps: float = 12f
 
     currentAnimation: array<int>
-    
+    animationContainer: array<int>
+
     idleAnimationUp = [[int[1]18]]
     idleAnimationSide = [[int[1]19]]
     idleAnimationDown = [[int[1]20]]
@@ -30,29 +31,28 @@ class Animator
 
     def init()
         currentAnimation <- idleAnimationUp[0..(idleAnimationUp |> length)]
-        print("Animator initialized")
 
-    def SetAnimationState(state: int; f:float)
+    def SetAnimationState(state: AnimState; f:float)
         fps = f
         animationState = state
 
     def Animate (direction: float2)
         var i:int = 0
-        if animationState == CHARACTER_IDLE
+        if animationState == AnimState IDLE
             if direction.y < 0f
                 currentAnimation <- idleAnimationUp[0..(idleAnimationUp |> length)]
             elif direction.y > 0f
                 currentAnimation <- idleAnimationDown[0..(idleAnimationDown |> length)]
             elif direction.x != 0f
                 currentAnimation <- idleAnimationSide[0..(idleAnimationSide|> length)]
-        elif animationState == CHARACTER_RUNNING
+        elif animationState == AnimState RUNNING
             if direction.y < 0f
                 currentAnimation <- runAnimationUp[0..(runAnimationUp |> length)]
             elif direction.y > 0f
                 currentAnimation <- runAnimationDown[0..(runAnimationDown |> length)]
             elif direction.x != 0f
                 currentAnimation <- runAnimationSide[0..(runAnimationSide |> length)]
-        elif animationState == CHARACTER_ATTACK
+        elif animationState == AnimState ATTACK
             if direction.y < 0f
                 currentAnimation <- attackAnimationUp[0..(attackAnimationUp |> length)]
             elif direction.y > 0f
