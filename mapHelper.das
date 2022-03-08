@@ -1,8 +1,8 @@
 let
 //Размер тайла
-    TILE_SIZE: int = 32
-    TILE_SET_WIDTH: int = 8
-    TILE_SET_HEIGHT: int= 8
+    TILE_SIZE      : float = 32f
+    TILE_SET_WIDTH : int   = 8
+    TILE_SET_HEIGHT: int   = 8
 
 //Индексы тайлов
     TILE_EMPTY: int = 0

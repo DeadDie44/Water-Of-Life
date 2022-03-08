@@ -1,8 +1,8 @@
 require daslib/media
-require collisionManager
 require collisionHelper
 require animator
 require objectFactory
+require util
 
 class GameObject
     private healthPoints, healthCap: int
@@ -12,17 +12,17 @@ class GameObject
     colliderType: int
    
     colliderSize: float
-    size:         float
-    baseSpeed:    float
-    speed:        float
+    size        : float
+    baseSpeed   : float
+    speed       : float
 
-    direction: float2
-    pos:       float2
+    direction   : float2
+    pos         : float2
 
-    spriteSheet: ImageHandle
+    spriteSheet : ImageHandle
     shadowSprite: Image
 
-    animator: Animator?
+    animator    : Animator?
 
     def GameObject(desc: ObjectDescriptor)
         self -> init(desc)
@@ -30,11 +30,11 @@ class GameObject
     def init(desc: ObjectDescriptor)
         colliderSize = desc.colliderSize
         colliderType = desc.colliderType
-        size = desc.size
-        baseSpeed = desc.baseSpeed
-        healthCap = desc.health
+        size         = desc.size
+        baseSpeed    = desc.baseSpeed
+        healthCap    = desc.health
         healthPoints = healthCap
-        spriteSheet <- create_managed_image(desc.sprite)
+        spriteSheet  <- create_managed_image(desc.sprite)
         shadowSprite <- create_image(desc.shadow)
 
         animator = new Animator(desc.frames, desc.frameCount, desc.fps)
@@ -56,22 +56,15 @@ class GameObject
         draw_image(shadowSprite, pos.x - size / 2f, pos.y - size / 2f)
         if direction == float2(1f,0f)
             draw_image_transformed(spriteSheet, pos.x + size / 2f, pos.y - size / 2f,
-            getSpriteRect(animator -> FrameIndex()), 0xFFFFFFFF, float2(-size, size), 
-            0f, 0f, 0f)
+            getSpriteRect(animator -> FrameIndex(), 8, 8, size, size), 
+            0xFFFFFFFF, float2(-size, size), 0f, 0f, 0f)
         else
             draw_image_region(spriteSheet, pos.x - size / 2f, pos.y - size / 2f, 
-            getSpriteRect(animator -> FrameIndex()))
+            getSpriteRect(animator -> FrameIndex(), 8, 8, size, size))
 
         if showCollider
             if colliderType == COLLIDER_CIRCLE
+                print("")
                 fill_circle(pos.x, pos.y, colliderSize,0x44FFFFFF)
             if colliderType == COLLIDER_RECTANGLE
                 fill_rect(pos.x - colliderSize, pos.y - colliderSize, colliderSize*2f, colliderSize*2f,0x44FFFFFF)
-     
-    def getSpriteRect(spriteIndex: int): float4
-        var x, y: float
-
-        x = float(spriteIndex % 8)
-        y = float(spriteIndex / 8)
-
-        return float4(x * size, y * size, size, size)

@@ -1,12 +1,12 @@
 require daslib/media
 
-//Состояния анимации
+//Виды анимаций
 enum AnimState
     IDLE
     RUNNING
     ATTACK
 
-// Куда смотрит персонаж
+//Куда смотрит персонаж
 enum Direction
     UP
     SIDE
@@ -16,13 +16,13 @@ class Animator
     animationState: AnimState
     direction     : Direction
 
-    currentFrame  : int
-    frameTime     : float
+    currentFrame  : int // Текущий кадр в рамках проигрываемой анимации
+    frameTime     : float // Сколько времени прошло со смены кадра
 
-    frames        : array<int>
-    frameCount    : array<int>
+    frames        : array<int> // Кадры всех анимаций, в соотвествии с порядковым номером спрайта в нашем sprite sheet
+    frameCount    : array<int> // Сколько кадров в анимациях для конкретного animationState (Для простоты считаем что все однотипные анимации длятся одинаковое количество кадров)
 
-    fps           : array<float>
+    fps           : array<float>// Скорость анимации конкретного animationState
 
     def Animator(framesArray, countArray: array<int>; fpsArray: array<float>)
         self -> init(framesArray, countArray, fpsArray)
@@ -35,17 +35,23 @@ class Animator
         fps        := fpsArray
 
     def SetAnimationState(state: AnimState)
+        if(animationState != state)
+            currentFrame = 0
         animationState = state
 
     def FrameIndex: int
         return frames[GetFirstFrame() + currentFrame]
 
+    // Анимации в frames идут в следующем порядке:
+    // Idle Up, Idle Side, Idle Down,
+    // Running Up, Running Side, Running Down,
+    // Attack Up, Attack Side, Attack Down
     def GetFirstFrame: int
-        var currentLength:int = frameCount[int(animationState)]
-        var nAnimations  :int = frameCount |> length
-        var whereStateStarts: int = nAnimations * int(animationState)
+        var currentAnimationLength: int = frameCount[int(animationState)]
+        var numberOfAnimations    : int = frameCount |> length
+        var whereStateStarts      : int = numberOfAnimations * int(animationState)
         
-        return whereStateStarts + int(direction) * currentLength  
+        return whereStateStarts + int(direction) * currentAnimationLength  
 
     def GetLastFrame: int
         return GetFirstFrame() + frameCount[int(animationState)]
@@ -53,15 +59,17 @@ class Animator
     def Animate (directionVector: float2)
         frameTime += get_delta_time()
 
-        if frameTime >= 1f/fps[int(animationState)]
-            currentFrame++
-            frameTime = 0f
-        if currentFrame >= frameCount[int(animationState)]
-            currentFrame = 0    
-
         if directionVector.y   < 0f
             direction = Direction UP
         elif directionVector.y > 0f
             direction = Direction DOWN
         elif directionVector.x != 0f
             direction = Direction SIDE
+
+        if frameTime >= 1f/fps[int(animationState)]
+            currentFrame++
+            frameTime = 0f
+            if currentFrame >= frameCount[int(animationState)]
+                currentFrame = 0    
+
+        
