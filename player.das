@@ -39,10 +39,10 @@ class public Player: GameObject
         
         if move != float2(0f,0f)
             direction := move
-            animator -> SetAnimationState(AnimState RUNNING, 12f)
+            animator -> SetAnimationState(AnimState RUNNING)
         else
-            animator -> SetAnimationState(AnimState IDLE, 12f)
+            animator -> SetAnimationState(AnimState IDLE)
 
     def playerAttack
         print("Player attack")
-        animator -> SetAnimationState(AnimState ATTACK, 32f)
+        animator -> SetAnimationState(AnimState ATTACK)

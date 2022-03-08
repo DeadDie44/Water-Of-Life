@@ -1,61 +1,67 @@
+require daslib/media
+
 //Состояния анимации
 enum AnimState
     IDLE
     RUNNING
     ATTACK
 
+// Куда смотрит персонаж
+enum Direction
+    UP
+    SIDE
+    DOWN
+
 class Animator
     animationState: AnimState
+    direction     : Direction
 
-    frameTime: float
-    fps: float = 12f
+    currentFrame  : int
+    frameTime     : float
 
-    currentAnimation: array<int>
-    animationContainer: array<int>
+    frames        : array<int>
+    frameCount    : array<int>
 
-    idleAnimationUp = [[int[1]18]]
-    idleAnimationSide = [[int[1]19]]
-    idleAnimationDown = [[int[1]20]]
+    fps           : array<float>
 
-    runAnimationUp = [[int[8]18;0;1;2;18;3;4;5]]
-    runAnimationSide = [[int[8]19;6;7;8;19;9;10;11]]
-    runAnimationDown = [[int[8]20;12;13;14;20;15;16;17]]
-    
-    attackAnimationUp = [[int[7]35;36;37;38;39;40;41]]
-    attackAnimationSide = [[int[7]42;43;44;45;46;47;48]]
-    attackAnimationDown = [[int[7]28;29;30;31;32;33;34]]
+    def Animator(framesArray, countArray: array<int>; fpsArray: array<float>)
+        self -> init(framesArray, countArray, fpsArray)
 
-    def Animator()
-        self -> init()
-        return
+    def init(framesArray, countArray: array<int>; fpsArray: array<float>)
+        currentFrame = 0
+        
+        frames     := framesArray
+        frameCount := countArray
+        fps        := fpsArray
 
-    def init()
-        currentAnimation <- idleAnimationUp[0..(idleAnimationUp |> length)]
-
-    def SetAnimationState(state: AnimState; f:float)
-        fps = f
+    def SetAnimationState(state: AnimState)
         animationState = state
 
-    def Animate (direction: float2)
-        var i:int = 0
-        if animationState == AnimState IDLE
-            if direction.y < 0f
-                currentAnimation <- idleAnimationUp[0..(idleAnimationUp |> length)]
-            elif direction.y > 0f
-                currentAnimation <- idleAnimationDown[0..(idleAnimationDown |> length)]
-            elif direction.x != 0f
-                currentAnimation <- idleAnimationSide[0..(idleAnimationSide|> length)]
-        elif animationState == AnimState RUNNING
-            if direction.y < 0f
-                currentAnimation <- runAnimationUp[0..(runAnimationUp |> length)]
-            elif direction.y > 0f
-                currentAnimation <- runAnimationDown[0..(runAnimationDown |> length)]
-            elif direction.x != 0f
-                currentAnimation <- runAnimationSide[0..(runAnimationSide |> length)]
-        elif animationState == AnimState ATTACK
-            if direction.y < 0f
-                currentAnimation <- attackAnimationUp[0..(attackAnimationUp |> length)]
-            elif direction.y > 0f
-                currentAnimation <- attackAnimationDown[0..(attackAnimationDown |> length)]
-            elif direction.x != 0f
-                currentAnimation <- attackAnimationSide[0..(attackAnimationSide |> length)]
+    def FrameIndex: int
+        return frames[GetFirstFrame() + currentFrame]
+
+    def GetFirstFrame: int
+        var currentLength:int = frameCount[int(animationState)]
+        var nAnimations  :int = frameCount |> length
+        var whereStateStarts: int = nAnimations * int(animationState)
+        
+        return whereStateStarts + int(direction) * currentLength  
+
+    def GetLastFrame: int
+        return GetFirstFrame() + frameCount[int(animationState)]
+
+    def Animate (directionVector: float2)
+        frameTime += get_delta_time()
+
+        if frameTime >= 1f/fps[int(animationState)]
+            currentFrame++
+            frameTime = 0f
+        if currentFrame >= frameCount[int(animationState)]
+            currentFrame = 0    
+
+        if directionVector.y   < 0f
+            direction = Direction UP
+        elif directionVector.y > 0f
+            direction = Direction DOWN
+        elif directionVector.x != 0f
+            direction = Direction SIDE

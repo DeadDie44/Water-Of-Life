@@ -10,8 +10,7 @@ class GameObject
     showCollider: bool = true
 
     colliderType: int
-    currentFrame: int
-
+   
     colliderSize: float
     size:         float
     baseSpeed:    float
@@ -38,7 +37,7 @@ class GameObject
         spriteSheet <- create_managed_image(desc.sprite)
         shadowSprite <- create_image(desc.shadow)
 
-        animator = new Animator()
+        animator = new Animator(desc.frames, desc.frameCount, desc.fps)
 
     def loseHealth(damage: int)
         healthPoints -= damage
@@ -53,29 +52,21 @@ class GameObject
         
     def DrawObject
         animator -> Animate(direction)
-        if currentFrame >= animator.currentAnimation |> length
-            currentFrame = 0
-    
+        
         draw_image(shadowSprite, pos.x - size / 2f, pos.y - size / 2f)
         if direction == float2(1f,0f)
             draw_image_transformed(spriteSheet, pos.x + size / 2f, pos.y - size / 2f,
-            getSpriteRect(animator.currentAnimation[currentFrame]), 0xFFFFFFFF, float2(-size, size), 
+            getSpriteRect(animator -> FrameIndex()), 0xFFFFFFFF, float2(-size, size), 
             0f, 0f, 0f)
         else
             draw_image_region(spriteSheet, pos.x - size / 2f, pos.y - size / 2f, 
-            getSpriteRect(animator.currentAnimation[currentFrame]))
-       
-        animator.frameTime += get_delta_time()
+            getSpriteRect(animator -> FrameIndex()))
 
         if showCollider
             if colliderType == COLLIDER_CIRCLE
                 fill_circle(pos.x, pos.y, colliderSize,0x44FFFFFF)
             if colliderType == COLLIDER_RECTANGLE
                 fill_rect(pos.x - colliderSize, pos.y - colliderSize, colliderSize*2f, colliderSize*2f,0x44FFFFFF)
-
-        if animator.frameTime >= 1f/animator.fps
-            currentFrame++
-            animator.frameTime = 0f
      
     def getSpriteRect(spriteIndex: int): float4
         var x, y: float
