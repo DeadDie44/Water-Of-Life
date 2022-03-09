@@ -46,12 +46,15 @@ class Animator
     // Idle Up, Idle Side, Idle Down,
     // Running Up, Running Side, Running Down,
     // Attack Up, Attack Side, Attack Down
-    def GetFirstFrame: int
-        var currentAnimationLength: int = frameCount[int(animationState)]
-        var numberOfAnimations    : int = frameCount |> length
-        var whereStateStarts      : int = numberOfAnimations * int(animationState)
-        
-        return whereStateStarts + int(direction) * currentAnimationLength  
+    def GetFirstFrame: int        
+        return FindState() + int(direction) * frameCount[int(animationState)]  
+
+    def FindState(): int
+        var i:int = 0
+        for n in range(0, int(animationState))
+            i += frameCount |> length * frameCount[n]
+
+        return i
 
     def GetLastFrame: int
         return GetFirstFrame() + frameCount[int(animationState)]

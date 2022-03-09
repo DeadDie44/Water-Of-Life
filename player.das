@@ -28,10 +28,12 @@ class public Player: GameObject
             move.x = 1f
 
         move = normalize(move)
-
-        playerAct(move, dt)
+        
         if get_key(VK_SPACE) || get_key(VK_SPACE)
             playerAttack()
+        else
+            playerAct(move, dt)
+        
 
     def playerAct(move: float2; dt: float)
         pos += move * speed * dt
