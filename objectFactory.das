@@ -33,6 +33,8 @@ def objectFromDesc(objName: string): ObjectDescriptor
                 desc.sprite = "assets/sprites/" + v as _string
             elif k == "shadow"
                 desc.shadow = "assets/sprites/" + v as _string
+            elif k == "name"
+                desc.objName = v as _string
             elif k == "colliderSize"
                 desc.colliderSize = float(v as _number)
             elif k == "colliderType"
@@ -66,7 +68,7 @@ def JsonArrayAsFloat(arr: array<JsonValue?>): array<float>
 struct ObjectDescriptor
     colliderType, health         : int
     baseSpeed, colliderSize, size: float
-    sprite, shadow               : string
+    sprite, shadow, objName      : string
 
     frameCount, frames: array<int>
     fps               : array<float>

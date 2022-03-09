@@ -1,6 +1,6 @@
 {
-	"name" : "Player",
-	"sprite" : "characters/player.png",
+	"name" : "Father",
+	"sprite" : "characters/father.png",
 	"shadow" : "characters/regular_character_shadow.png",
 	
 	"baseSpeed": 60,

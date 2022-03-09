@@ -3,24 +3,27 @@ require daslib/media
 require gameObject
 require player
 require objectFactory
+require collisionManager
 
 var
-    //showCollider = true
     objectContainer: array<GameObject?>
     player: Player?
 
 def InitObjectContainer
     clear (objectContainer)
-    //CreateObject(new Player())
-    player = new Player(objectFromDesc("player"))
+    player = new Player(objectFromDesc("player"), float2(40, 40))
+    CreateObject(new GameObject(objectFromDesc("father"), float2(100, 100)))
 
 def CreateObject(var obj: GameObject?)
-    objectContainer |> push(new GameObject())
+    obj.id = (objectContainer |> length) + 1
+    objectContainer |> push(obj)
 
 def UpdateObjects(dt: float)
     player -> UpdateObject(dt)
     if objectContainer |> length != 0
+        UpdateCollisions (player, objectContainer)
         for obj in objectContainer
+            UpdateCollisions (obj, objectContainer)
             obj -> UpdateObject(dt)
 
 def DrawObjects

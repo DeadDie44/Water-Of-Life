@@ -6,12 +6,11 @@ require objectFactory
 
 class public Player: GameObject
 
-    def Player (desc: ObjectDescriptor)
-        GameObject`GameObject(self, desc)
+    def Player (desc: ObjectDescriptor; position: float2)
+        GameObject`GameObject(self, desc, position)
 
-    def override init (desc: ObjectDescriptor)
-        GameObject`init(self, desc)
-        print("\nPlayer here\n")
+    def override init (desc: ObjectDescriptor; position: float2)
+        GameObject`init(self, desc, position)
     
     def override UpdateObject(dt: float): void
         var move = float2(0f,0f)
@@ -28,12 +27,11 @@ class public Player: GameObject
             move.x = 1f
 
         move = normalize(move)
-        
+
         if get_key(VK_SPACE) || get_key(VK_SPACE)
             playerAttack()
         else
             playerAct(move, dt)
-        
 
     def playerAct(move: float2; dt: float)
         pos += move * speed * dt
@@ -46,5 +44,5 @@ class public Player: GameObject
             animator -> SetAnimationState(AnimState IDLE)
 
     def playerAttack
-        print("Player attack")
+        print("\nPlayer attack")
         animator -> SetAnimationState(AnimState ATTACK)

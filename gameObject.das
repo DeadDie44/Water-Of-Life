@@ -10,6 +10,7 @@ class GameObject
     showCollider: bool = true
 
     colliderType: int
+    id          : int
    
     colliderSize: float
     size        : float
@@ -19,15 +20,21 @@ class GameObject
     direction   : float2
     pos         : float2
 
+    objName     : string
+
     spriteSheet : ImageHandle
     shadowSprite: Image
 
     animator    : Animator?
 
-    def GameObject(desc: ObjectDescriptor)
-        self -> init(desc)
+    def GameObject(desc: ObjectDescriptor; position: float2)
+        self -> init(desc, position)
 
-    def init(desc: ObjectDescriptor)
+    def init(desc: ObjectDescriptor; position: float2)
+        direction = float2(0, 1)
+        pos       = position
+
+        objName      = desc.objName 
         colliderSize = desc.colliderSize
         colliderType = desc.colliderType
         size         = desc.size
@@ -38,6 +45,8 @@ class GameObject
         shadowSprite <- create_image(desc.shadow)
 
         animator = new Animator(desc.frames, desc.frameCount, desc.fps)
+        animator -> SetAnimationState(AnimState IDLE)
+        print("\n" + objName + " created")
 
     def loseHealth(damage: int)
         healthPoints -= damage
@@ -48,7 +57,8 @@ class GameObject
     def getHealthCap: int
         return healthCap
 
-    def abstract UpdateObject(dt: float): void
+    def UpdateObject(dt: float): void
+        return
         
     def DrawObject
         animator -> Animate(direction)
