@@ -6,7 +6,7 @@
 	"baseSpeed": 60,
 	"size" : 48,
 	"colliderSize" : 10,
-	"colliderType" : 0,
+	"colliderType" : 1,
 
 	"health" : 100,
 	

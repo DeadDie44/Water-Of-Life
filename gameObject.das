@@ -1,4 +1,5 @@
 require daslib/media
+
 require collisionHelper
 require animator
 require objectFactory
@@ -6,20 +7,16 @@ require util
 
 class GameObject
     private healthPoints, healthCap: int
-
-    showCollider: bool = true
+    showCollider : bool = true
 
     colliderType: int
     id          : int
-   
     colliderSize: float
     size        : float
     baseSpeed   : float
     speed       : float
-
     direction   : float2
     pos         : float2
-
     objName     : string
 
     spriteSheet : ImageHandle
@@ -75,6 +72,6 @@ class GameObject
         if showCollider
             if colliderType == COLLIDER_CIRCLE
                 print("")
-                fill_circle(pos.x, pos.y, colliderSize,0x44FFFFFF)
+                fill_circle(pos.x, pos.y, colliderSize, 0x44FFFFFF)
             if colliderType == COLLIDER_RECTANGLE
-                fill_rect(pos.x - colliderSize, pos.y - colliderSize, colliderSize*2f, colliderSize*2f,0x44FFFFFF)
+                fill_rect(pos.x - colliderSize, pos.y - colliderSize, colliderSize*2f, colliderSize*2f, 0x44FFFFFF)

@@ -36,7 +36,6 @@ class public Player: GameObject
     def playerAct(move: float2; dt: float)
         pos += move * speed * dt
         setup_2d_camera(pos, 8.0)
-        
         if move != float2(0f,0f)
             direction := move
             animator -> SetAnimationState(AnimState RUNNING)
