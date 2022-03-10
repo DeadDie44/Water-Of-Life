@@ -7,16 +7,19 @@ require util
 
 class GameObject
     private healthPoints, healthCap: int
-    showCollider : bool = true
-
+    //***
+    showCollider : bool = true // для тестов
+    //***
+    movable     : bool
     colliderType: int
     id          : int
-    colliderSize: float
-    size        : float
     baseSpeed   : float
     speed       : float
+    colliderSize: float2
     direction   : float2
+    size        : float2
     pos         : float2
+    velocity    : float2
     objName     : string
 
     spriteSheet : ImageHandle
@@ -31,11 +34,13 @@ class GameObject
         direction = float2(0, 1)
         pos       = position
 
+        movable      = desc.movable
         objName      = desc.objName 
         colliderSize = desc.colliderSize
         colliderType = desc.colliderType
         size         = desc.size
         baseSpeed    = desc.baseSpeed
+        speed        = baseSpeed
         healthCap    = desc.health
         healthPoints = healthCap
         spriteSheet  <- create_managed_image(desc.sprite)
@@ -54,24 +59,29 @@ class GameObject
     def getHealthCap: int
         return healthCap
 
-    def UpdateObject(dt: float): void
-        return
-        
+    def UpdateObject(dt: float)
+        pos.x += velocity.x
+        pos.y += velocity.y
+
+    def Move(move: float2)
+        if !movable
+            return
+        velocity = move
+
     def DrawObject
         animator -> Animate(direction)
         
-        draw_image(shadowSprite, pos.x - size / 2f, pos.y - size / 2f)
+        draw_image(shadowSprite, pos.x - size.x / 2f, pos.y - size.y / 2f)
         if direction == float2(1f,0f)
-            draw_image_transformed(spriteSheet, pos.x + size / 2f, pos.y - size / 2f,
-            getSpriteRect(animator -> FrameIndex(), 8, 8, size, size), 
-            0xFFFFFFFF, float2(-size, size), 0f, 0f, 0f)
+            draw_image_transformed(spriteSheet, pos.x + size.x / 2f, pos.y - size.y / 2f,
+            getSpriteRect(animator -> FrameIndex(), 8, 8, size.x, size.y), 
+            0xFFFFFFFF, float2(-size.x, size.y), 0f, 0f, 0f)
         else
-            draw_image_region(spriteSheet, pos.x - size / 2f, pos.y - size / 2f, 
-            getSpriteRect(animator -> FrameIndex(), 8, 8, size, size))
+            draw_image_region(spriteSheet, pos.x - size.x / 2f, pos.y - size.y / 2f, 
+            getSpriteRect(animator -> FrameIndex(), 8, 8, size.x, size.y))
 
         if showCollider
             if colliderType == COLLIDER_CIRCLE
-                print("")
-                fill_circle(pos.x, pos.y, colliderSize, 0x44FFFFFF)
+                fill_circle(pos.x, pos.y, colliderSize.x, 0x44FFFFFF)
             if colliderType == COLLIDER_RECTANGLE
-                fill_rect(pos.x - colliderSize, pos.y - colliderSize, colliderSize*2f, colliderSize*2f, 0x44FFFFFF)
+                fill_rect(pos.x - colliderSize.x, pos.y - colliderSize.y, colliderSize.x * 2f, colliderSize.y * 2f, 0x44FFFFFF)

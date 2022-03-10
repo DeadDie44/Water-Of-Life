@@ -13,9 +13,8 @@ class public Player: GameObject
         GameObject`init(self, desc, position)
     
     def override UpdateObject(dt: float): void
+        GameObject`UpdateObject(self, dt)
         var move = float2(0f,0f)
-
-        speed = baseSpeed
 
         if get_key(VK_W) || get_key(VK_UP)
             move.y = -1f
@@ -34,8 +33,8 @@ class public Player: GameObject
             playerAct(move, dt)
 
     def playerAct(move: float2; dt: float)
-        pos += move * speed * dt
-        setup_2d_camera(pos, 8.0)
+        Move(move * speed * dt)
+        setup_2d_camera(pos, 4.0)
         if move != float2(0f,0f)
             direction := move
             animator -> SetAnimationState(AnimState RUNNING)
@@ -43,5 +42,6 @@ class public Player: GameObject
             animator -> SetAnimationState(AnimState IDLE)
 
     def playerAttack
-        print("\nPlayer attack")
+        print("\nPlayer attack, I am at: {pos.x}, {pos.y}")
+        print("\nVelocity  {velocity.x}, {velocity.y}")
         animator -> SetAnimationState(AnimState ATTACK)

@@ -35,8 +35,10 @@ def objectFromDesc(objName: string): ObjectDescriptor
                 desc.shadow = "assets/sprites/" + v as _string
             elif k == "name"
                 desc.objName = v as _string
+            elif k == "movable"
+                desc.movable = v as _bool
             elif k == "colliderSize"
-                desc.colliderSize = float(v as _number)
+                desc.colliderSize = JsonAsFloat2(v as _array)
             elif k == "colliderType"
                 desc.colliderType = int(v as _number)
             elif k == "health"
@@ -44,7 +46,7 @@ def objectFromDesc(objName: string): ObjectDescriptor
             elif k == "frameCount"
                 desc.frameCount <- JsonArrayAsInt(v as _array)
             elif k == "size"
-                desc.size = float(v as _number)
+                desc.size = JsonAsFloat2(v as _array)
             elif k == "baseSpeed"
                 desc.baseSpeed = float(v as _number)
             elif k == "fps"
@@ -52,6 +54,13 @@ def objectFromDesc(objName: string): ObjectDescriptor
             elif k == "frames"
                 desc.frames <- JsonArrayAsInt(v as _array)
     return <- desc
+
+def JsonAsFloat2(arr: array<JsonValue?>): float2
+    var myArr: array<float>
+    for a in arr
+        myArr |> push(float(a.value as _number))
+
+    return float2(myArr[0], myArr[1])
 
 def JsonArrayAsInt(arr: array<JsonValue?>): array<int>
     var myArr: array<int>
@@ -66,9 +75,10 @@ def JsonArrayAsFloat(arr: array<JsonValue?>): array<float>
     return <- myArr
 
 struct ObjectDescriptor
-    colliderType, health         : int
-    baseSpeed, colliderSize, size: float
-    sprite, shadow, objName      : string
-
-    frameCount, frames: array<int>
-    fps               : array<float>
+    movable                 : bool
+    colliderType, health    : int
+    baseSpeed               : float
+    sprite, shadow, objName : string
+    size, colliderSize      : float2
+    frameCount, frames      : array<int>
+    fps                     : array<float>
