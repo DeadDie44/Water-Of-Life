@@ -14,7 +14,6 @@ class GameObject
     colliderType: int
     id          : int
     baseSpeed   : float
-    speed       : float
     colliderSize: float2
     direction   : float2
     size        : float2
@@ -40,7 +39,6 @@ class GameObject
         colliderType = desc.colliderType
         size         = desc.size
         baseSpeed    = desc.baseSpeed
-        speed        = baseSpeed
         healthCap    = desc.health
         healthPoints = healthCap
         spriteSheet  <- create_managed_image(desc.sprite)
@@ -60,13 +58,16 @@ class GameObject
         return healthCap
 
     def UpdateObject(dt: float)
-        pos.x += velocity.x
-        pos.y += velocity.y
+        pos += velocity
+        velocity = velocity * 0.9f
 
     def Move(move: float2)
         if !movable
             return
         velocity = move
+
+    def Speed() : float
+        return baseSpeed
 
     def DrawObject
         animator -> Animate(direction)

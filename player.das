@@ -16,25 +16,25 @@ class public Player: GameObject
         GameObject`UpdateObject(self, dt)
         var move = float2(0f,0f)
 
-        if get_key(VK_W) || get_key(VK_UP)
+        if get_key(VK_W) || get_key(VK_UP) || get_axis(AXIS_PRIMARY_Y) < 0f
             move.y = -1f
-        if get_key(VK_S) || get_key(VK_DOWN)
+        if get_key(VK_S) || get_key(VK_DOWN) || get_axis(AXIS_PRIMARY_Y) > 0f
             move.y = 1f
-        if get_key(VK_A) || get_key(VK_LEFT)
+        if get_key(VK_A) || get_key(VK_LEFT) || get_axis(AXIS_PRIMARY_X) < 0f
             move.x = -1f
-        if get_key(VK_D) || get_key(VK_RIGHT)
+        if get_key(VK_D) || get_key(VK_RIGHT) || get_axis(AXIS_PRIMARY_X) > 0f
             move.x = 1f
 
         move = normalize(move)
 
-        if get_key(VK_SPACE) || get_key(VK_SPACE)
+        if get_key(VK_SPACE) || get_key(VK_SPACE) || get_key(GP_A)
             playerAttack()
         else
             playerAct(move, dt)
+        setup_2d_camera(pos, float(int(get_screen_width()/270)) )
 
     def playerAct(move: float2; dt: float)
-        Move(move * speed * dt)
-        setup_2d_camera(pos, 4.0)
+        Move(move * Speed() * dt)
         if move != float2(0f,0f)
             direction := move
             animator -> SetAnimationState(AnimState RUNNING)
