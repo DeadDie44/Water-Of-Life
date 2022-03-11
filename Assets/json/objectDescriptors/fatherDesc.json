@@ -1,6 +1,6 @@
 {
 	"name"   : "Father",
-	"movable": false,
+	"movable": true,
 	"sprite" : "characters/father.png",
 	"shadow" : "characters/regular_character_shadow.png",
 	

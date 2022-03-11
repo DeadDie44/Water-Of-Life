@@ -1,16 +1,16 @@
 {
-	"name"   : "Barrel",
+	"name"   : "Crate",
 	"movable": true,
 	"sprite" : "objects/movable_objects.png",
 	"shadow" : "objects/round_object_shadow.png",
 	
 	"size"         : [32,32],
-	"colliderSize" : [9,12],
+	"colliderSize" : [10,13],
 	"colliderType" : 1,
 
 	"health" : 1,
 	
 	"fps"       : [1],
 	"frameCount": [1],
-	"frames"    : [0]
+	"frames"    : [1]
 }

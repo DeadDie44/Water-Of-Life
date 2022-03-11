@@ -1,0 +1,16 @@
+{
+	"name"   : "Torch",
+	"movable": false,
+	"sprite" : "objects/torches.png",
+	"shadow" : "objects/round_object_shadow.png",
+	
+	"size"         : [32,32],
+	"colliderSize" : [2,12],
+	"colliderType" : 1,
+
+	"health" : 1,
+	
+	"fps"       : [12],
+	"frameCount": [5],
+	"frames"    : [1,2,3,4,5]
+}
