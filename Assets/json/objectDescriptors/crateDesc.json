@@ -5,7 +5,7 @@
 	"shadow" : "objects/round_object_shadow.png",
 	
 	"size"         : [32,32],
-	"colliderSize" : [10,13],
+	"colliderSize" : [20,26],
 	"colliderType" : 1,
 
 	"health" : 1,

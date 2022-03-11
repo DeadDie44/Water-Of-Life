@@ -8,10 +8,20 @@ def CheckCollision (var obj, target: GameObject?)
     if(obj.colliderType == COLLIDER_CIRCLE && target.colliderType == COLLIDER_CIRCLE)
         if CircleCircle(float3(obj.pos.x ,obj.pos.y, obj.colliderSize.x), float3(target.pos.x, target.pos.y, target.colliderSize.x))
             ResolveCC(obj, target) 
-    if(obj.colliderType == COLLIDER_RECTANGLE && target.colliderType == COLLIDER_RECTANGLE)
-        if RectRect(float4(obj.pos.x - obj.colliderSize.x, obj.pos.y - obj.colliderSize.y, obj.colliderSize.x * 2f, obj.colliderSize.y * 2f), 
-        float4(target.pos.x - obj.colliderSize.x, target.pos.y - obj.colliderSize.y, target.colliderSize.x * 2f, target.colliderSize.y * 2f))
+    elif(obj.colliderType == COLLIDER_RECTANGLE && target.colliderType == COLLIDER_RECTANGLE)
+        if RectRect(float4(obj.pos.x - obj.colliderSize.x / 2f, obj.pos.y - obj.colliderSize.y / 2f, obj.colliderSize.x, obj.colliderSize.y), 
+        float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y))
             ResolveRR(obj, target)
+    else
+        var o: float4 = float4(obj.pos.x - obj.colliderSize.x / 2f, obj.pos.y - obj.colliderSize.y / 2f, obj.colliderSize.x, obj.colliderSize.y)
+        var t: float4 = float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y)
+        if (obj.colliderType == COLLIDER_CIRCLE)
+            if CircRect(float3(o.x, o.y, o.z), float4(t.x, t.y, t.z, t.w), obj.velocity)
+                var i = 0
+        else
+            if CircRect(float3(t.x, t.y, t.z), float4(o.x, o.y, o.z, o.w), target.velocity)
+                var i = 0
+        
                 
 def ResolveCC(var obj, target : GameObject?)
     var distance: float = Distance(float2(obj.pos.x, obj.pos.y), float2(target.pos.x, target.pos.y))
@@ -40,10 +50,10 @@ def ResolveRR(var obj, target : GameObject?)
 
     if RayRect(rayStart, rayDirection, float4(expandTarget.x, expandTarget.y, expandTarget.z, expandTarget.w), contactPoint, contactNormal, contactTime)
         if contactTime <= 1f
-            //obj.pos += float2(contactNormal.x * abs(obj.velocity.x) * (1f - contactTime), contactNormal.y * abs(obj.velocity.y) * (1f - contactTime))
-            //target.pos += -float2(contactNormal.x * abs(obj.velocity.x) * (1f - contactTime), contactNormal.y * abs(obj.velocity.y) * (1f - contactTime))
-            obj -> Move(float2(contactNormal.x * abs(obj.velocity.x) * (1f - contactTime), contactNormal.y * abs(obj.velocity.y) * (1f - contactTime)))
-            target -> Move(-float2(contactNormal.x * abs(obj.velocity.x) * (1f - contactTime), contactNormal.y * abs(obj.velocity.y) * (1f - contactTime)))
+            obj.pos += float2(contactNormal.x * abs(obj.velocity.x) * (1f - contactTime), contactNormal.y * abs(obj.velocity.y) * (1f - contactTime))
+            target.pos += -float2(contactNormal.x * abs(obj.velocity.x) * (1f - contactTime), contactNormal.y * abs(obj.velocity.y) * (1f - contactTime))
+            //obj -> Move(float2(contactNormal.x * abs(obj.velocity.x) * (1f - contactTime), contactNormal.y * abs(obj.velocity.y) * (1f - contactTime)))
+            //target -> Move(-float2(contactNormal.x * abs(obj.velocity.x) * (1f - contactTime), contactNormal.y * abs(obj.velocity.y) * (1f - contactTime)))
 
 
 def CircleCircle(c1: float3; c2: float3): bool
@@ -52,7 +62,17 @@ def CircleCircle(c1: float3; c2: float3): bool
 def RectRect(r1: float4; r2: float4): bool
     return (r1.x < r2.x + r2.z) && (r1.x + r1.z > r2.x) && (r1.y < r2.y + r2.w) && (r1.y + r1.w > r2.y)
 
-def CircRect(c:float3; r: float4): bool
+def CircRect(c:float3; r: float4; v:float2): bool
+    var nearestPoint: float2
+    nearestPoint.x = max(r.x, min(c.x + v.x * get_delta_time(), r.x + r.z))
+    nearestPoint.y = max(r.y, min(c.y + v.y * get_delta_time(), r.y + r.w))
+
+    var rayToNearest: float2
+    rayToNearest.x = nearestPoint.x - (c.x + v.x * get_delta_time())
+    rayToNearest.y = nearestPoint.y - (c.y + v.y * get_delta_time())
+    var overlap: float = c.z - length(rayToNearest)
+    if overlap > 0f
+        return true
     return false
 
 def RayRect(p1, p2: float2; rect:float4; var contactPoint, contactNormal: float2&; var tHitNear: float&) : bool

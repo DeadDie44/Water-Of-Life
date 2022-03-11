@@ -85,4 +85,4 @@ class GameObject
             if colliderType == COLLIDER_CIRCLE
                 fill_circle(pos.x, pos.y, colliderSize.x, 0x44FFFFFF)
             if colliderType == COLLIDER_RECTANGLE
-                fill_rect(pos.x - colliderSize.x, pos.y - colliderSize.y, colliderSize.x * 2f, colliderSize.y * 2f, 0x44FFFFFF)
+                fill_rect(pos.x - colliderSize.x / 2f, pos.y - colliderSize.y / 2f, colliderSize.x, colliderSize.y, 0x44FFFFFF)
