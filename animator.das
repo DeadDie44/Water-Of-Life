@@ -39,6 +39,16 @@ class Animator
             currentFrame = 0
         animationState = state
 
+    def GetAnimationState(): int
+        if (int(animationState) > fps |> length)
+            return fps |> length
+        return int(animationState)
+
+    def GetDirection(): int
+        if (int(direction) > fps |> length)
+            return fps |> length - 1
+        return int(direction)
+
     def FrameIndex: int
         return frames[GetFirstFrame() + currentFrame]
 
@@ -46,18 +56,20 @@ class Animator
     // Idle Up, Idle Side, Idle Down,
     // Running Up, Running Side, Running Down,
     // Attack Up, Attack Side, Attack Down
-    def GetFirstFrame: int        
-        return FindState() + int(direction) * frameCount[int(animationState)]  
+    def GetFirstFrame: int
+        return FindState() + GetDirection() * frameCount[GetAnimationState()]  
 
     def FindState(): int
         var i:int = 0
-        for n in range(0, int(animationState))
+        if frameCount |> length == 1
+            return 0
+        for n in range(0, GetAnimationState())
             i += frameCount |> length * frameCount[n]
 
         return i
 
     def GetLastFrame: int
-        return GetFirstFrame() + frameCount[int(animationState)]
+        return GetFirstFrame() + frameCount[GetAnimationState()]
 
     def Animate (directionVector: float2)
         frameTime += get_delta_time()
@@ -69,10 +81,8 @@ class Animator
         elif directionVector.x != 0f
             direction = Direction SIDE
 
-        if frameTime >= 1f/fps[int(animationState)]
+        if frameTime >= 1f/fps[GetAnimationState()]
             currentFrame++
             frameTime = 0f
-            if currentFrame >= frameCount[int(animationState)]
-                currentFrame = 0    
-
-        
+            if currentFrame >= frameCount[GetAnimationState()]
+                currentFrame = 0
