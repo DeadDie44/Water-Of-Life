@@ -6,6 +6,7 @@ require objectManager
 
 // options debugger            // uncomment for debug in VS Code
 // require daslib/debug        // uncomment for debug in VS Code
+options log
 
 var
     GameOn: bool = false
@@ -41,8 +42,9 @@ def draw
     enable_alpha_blend()
     myMap -> DrawGameMap(tiles)
     DrawObjects()
-    set_font_name("mono")  // set_font_name("mono"), set_font_name("sans"), set_font_name("*.ttf")
-    set_font_size(24)
-
-    text_out(0f, 0f, "It's Game man", 0xFFFFFFFF)
     disable_alpha_blend()
+
+def DisplayText(pos:float2; text:string; size: int)
+    set_font_name("mono")  // set_font_name("mono"), set_font_name("sans"), set_font_name("*.ttf")
+    set_font_size(size)
+    text_out(pos.x, pos.y, text, 0xFFFFFFFF)
