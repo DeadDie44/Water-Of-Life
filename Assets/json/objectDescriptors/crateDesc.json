@@ -1,8 +1,7 @@
 {
 	"name"   : "Crate",
-	"movable": true,
+	"movable": false,
 	"sprite" : "objects/movable_objects.png",
-	"shadow" : "objects/round_object_shadow.png",
 	
 	"size"         : [32,32],
 	"colliderSize" : [20,26],

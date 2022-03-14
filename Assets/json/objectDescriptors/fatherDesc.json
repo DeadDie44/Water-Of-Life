@@ -2,7 +2,6 @@
 	"name"   : "Father",
 	"movable": false,
 	"sprite" : "characters/father.png",
-	"shadow" : "characters/regular_character_shadow.png",
 	
 	"baseSpeed"    : 60,
 	"size"         : [48,48],

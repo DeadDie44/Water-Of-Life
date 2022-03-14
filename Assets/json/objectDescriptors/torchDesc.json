@@ -2,7 +2,6 @@
 	"name"   : "Torch",
 	"movable": false,
 	"sprite" : "objects/torches.png",
-	"shadow" : "objects/round_object_shadow.png",
 	
 	"size"         : [32,32],
 	"colliderSize" : [4,24],

@@ -22,7 +22,6 @@ class GameObject
     objName     : string
 
     spriteSheet : ImageHandle
-    shadowSprite: Image
 
     animator    : Animator?
 
@@ -42,7 +41,6 @@ class GameObject
         healthCap    = desc.health
         healthPoints = healthCap
         spriteSheet  <- create_managed_image(desc.sprite)
-        shadowSprite <- create_image(desc.shadow)
 
         animator = new Animator(desc.frames, desc.frameCount, desc.fps)
         animator -> SetAnimationState(AnimState IDLE)
@@ -71,8 +69,6 @@ class GameObject
 
     def DrawObject
         animator -> Animate(direction)
-        
-        draw_image(shadowSprite, pos.x - size.x / 2f, pos.y - size.y / 2f)
         if direction == float2(1f,0f)
             draw_image_transformed(spriteSheet, pos.x + size.x / 2f, pos.y - size.y / 2f,
             getSpriteRect(animator -> FrameIndex(), 8, 8, size.x, size.y), 
@@ -86,9 +82,3 @@ class GameObject
                 fill_circle(pos.x, pos.y, colliderSize.x, 0x44FFFFFF)
             if colliderType == COLLIDER_RECTANGLE
                 fill_rect(pos.x - colliderSize.x / 2f, pos.y - colliderSize.y / 2f, colliderSize.x, colliderSize.y, 0x44FFFFFF)
-                if objName != "Player"
-                    var expand: float4 = float4(pos.x - colliderSize.x / 2f - 14f / 2f,
-                                        pos.y - colliderSize.y / 2f - 22f / 2f,
-                                        colliderSize.x + 14f,
-                                        colliderSize.y + 22f)
-                    fill_rect(expand.x, expand.y, expand.z, expand.w, 0x44FFFFFF)

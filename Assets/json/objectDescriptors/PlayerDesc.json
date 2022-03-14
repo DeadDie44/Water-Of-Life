@@ -2,12 +2,11 @@
 	"name"   : "Player",
 	"movable": true,
 	"sprite" : "characters/player.png",
-	"shadow" : "characters/regular_character_shadow.png",
 	
 	"baseSpeed"    : 60,
 	"size"         : [48,48],
-	"colliderSize" : [14,22],
-	"colliderType" : 1,
+	"colliderSize" : [10,22],
+	"colliderType" : 0,
 
 	"health" : 100,
 	

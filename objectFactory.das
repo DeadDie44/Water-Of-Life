@@ -31,8 +31,6 @@ def objectFromDesc(objName: string): ObjectDescriptor
             i++
             if k == "sprite"
                 desc.sprite = "assets/sprites/" + v as _string
-            elif k == "shadow"
-                desc.shadow = "assets/sprites/" + v as _string
             elif k == "name"
                 desc.objName = v as _string
             elif k == "movable"
@@ -78,7 +76,7 @@ struct ObjectDescriptor
     movable                 : bool
     colliderType, health    : int
     baseSpeed               : float
-    sprite, shadow, objName : string
+    sprite, objName         : string
     size, colliderSize      : float2
     frameCount, frames      : array<int>
     fps                     : array<float>

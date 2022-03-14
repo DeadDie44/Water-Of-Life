@@ -27,7 +27,7 @@ def MapBoundaryCheck (var obj: GameObject?)
         if obj.pos.y + obj.colliderSize.y / 2f > float(MAP_HEIGHT) * TILE_SIZE
             obj.pos.y = float(MAP_HEIGHT) * TILE_SIZE - obj.colliderSize.y / 2f
 
-
+// Напоминалка: двигаться могут только круги
 def CheckCollision (var obj, target: GameObject?)
     if obj.colliderType == COLLIDER_CIRCLE && target.colliderType == COLLIDER_CIRCLE
         if CircleCircle(float3(obj.pos.x ,obj.pos.y, obj.colliderSize.x), float3(target.pos.x, target.pos.y, target.colliderSize.x))

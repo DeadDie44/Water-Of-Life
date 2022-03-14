@@ -2,11 +2,10 @@
 	"name"   : "Barrel",
 	"movable": true,
 	"sprite" : "objects/movable_objects.png",
-	"shadow" : "objects/round_object_shadow.png",
 	
 	"size"         : [32,32],
-	"colliderSize" : [18,24],
-	"colliderType" : 1,
+	"colliderSize" : [12,24],
+	"colliderType" : 0,
 
 	"health" : 1,
 	
