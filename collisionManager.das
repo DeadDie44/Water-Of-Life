@@ -37,14 +37,13 @@ def CheckCollision (var obj, target: GameObject?)
         float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y))
             ResolveRR(obj, target)
     else
-        var o: float4 = float4(obj.pos.x - obj.colliderSize.x / 2f, obj.pos.y - obj.colliderSize.y / 2f, obj.colliderSize.x, obj.colliderSize.y)
-        var t: float4 = float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y)
+        var o: float4 = float4(obj.pos.x, obj.pos.y, obj.colliderSize.x, obj.colliderSize.y)
+        var t: float4 = float4(target.pos.x, target.pos.y, target.colliderSize.x, target.colliderSize.y)
         if obj.colliderType == COLLIDER_CIRCLE
-            if CircRect(float3(o.x, o.y, o.z), float4(t.x, t.y, t.z, t.w), obj.velocity)
-                var i = 0
+            CircRect(float3(o.x, o.y, o.z), float4(t.x - t.z / 2f, t.y - t.w / 2f, t.z, t.w), obj.velocity, obj)
         else
-            if CircRect(float3(t.x, t.y, t.z), float4(o.x, o.y, o.z, o.w), target.velocity)
-                var i = 0   
+            CircRect(float3(t.x, t.y, t.z), float4(o.x - o.z / 2f, o.y - o.w / 2f, o.z, o.w), target.velocity, target)
+            
                 
 def ResolveCC(var obj, target : GameObject?)
     var distance: float = Distance(float2(obj.pos.x, obj.pos.y), float2(target.pos.x, target.pos.y))
@@ -123,7 +122,7 @@ def RayRect(p1, p2: float2; rect:float4; var contactPoint, contactNormal: float2
 
     return true
 
-def CircRect(c:float3; r: float4; v:float2): bool
+def CircRect(c:float3; r: float4; v:float2; var obj: GameObject?): bool
     var nearestPoint: float2
     nearestPoint.x = max(r.x, min(c.x + v.x * get_delta_time(), r.x + r.z))
     nearestPoint.y = max(r.y, min(c.y + v.y * get_delta_time(), r.y + r.w))
@@ -133,6 +132,9 @@ def CircRect(c:float3; r: float4; v:float2): bool
     rayToNearest.y = nearestPoint.y - (c.y + v.y * get_delta_time())
     var overlap: float = c.z - length(rayToNearest)
     if overlap > 0f
+        var vX = c.x + v.x * get_delta_time()
+        var vY = c.y + v.y * get_delta_time()
+        obj.pos = float2(vX,vY) - normalize(rayToNearest)  * overlap
         return true
     return false
 
