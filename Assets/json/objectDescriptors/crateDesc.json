@@ -1,15 +1,15 @@
 {
 	"name"   : "Crate",
 	"movable": false,
-	"sprite" : "objects/movable_objects.png",
+	"sprite" : "objects/static_objects.png",
 	
 	"size"         : [32,32],
-	"colliderSize" : [20,26],
+	"colliderSize" : [20,24],
 	"colliderType" : 1,
 
 	"health" : 1,
 	
 	"fps"       : [1],
 	"frameCount": [1],
-	"frames"    : [1]
+	"frames"    : [0]
 }

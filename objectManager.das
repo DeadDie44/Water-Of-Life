@@ -15,6 +15,7 @@ def InitObjectContainer
     CreateObject(new GameObject(objectFromDesc("barrel"), float2(130, 130)))    
     CreateObject(new GameObject(objectFromDesc("crate"), float2(50, 110)))
     CreateObject(new GameObject(objectFromDesc("torch"), float2(150, 80)))
+    CreateObject(new GameObject(objectFromDesc("kolovershi"), float2(160, 100)))
 
 def CreateObject(var obj: GameObject?)
     obj.id = (objectContainer |> length)

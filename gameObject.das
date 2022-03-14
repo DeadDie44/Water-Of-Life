@@ -10,13 +10,14 @@ class GameObject
     //***
     showCollider : bool = true // для тестов
     //***
+    isAttacking : bool
     movable     : bool
     colliderType: int
     id          : int
     baseSpeed   : float
     colliderSize: float2
     direction   : float2
-    size        : float2
+    spriteSize  : float2
     pos         : float2
     velocity    : float2
     objName     : string
@@ -36,7 +37,7 @@ class GameObject
         objName      = desc.objName 
         colliderSize = desc.colliderSize
         colliderType = desc.colliderType
-        size         = desc.size
+        spriteSize   = desc.size
         baseSpeed    = desc.baseSpeed
         healthCap    = desc.health
         healthPoints = healthCap
@@ -70,12 +71,12 @@ class GameObject
     def DrawObject
         animator -> Animate(direction)
         if direction == float2(1f,0f)
-            draw_image_transformed(spriteSheet, pos.x + size.x / 2f, pos.y - size.y / 2f,
-            getSpriteRect(animator -> FrameIndex(), 8, 8, size.x, size.y), 
-            0xFFFFFFFF, float2(-size.x, size.y), 0f, 0f, 0f)
+            draw_image_transformed(spriteSheet, pos.x + spriteSize.x / 2f, pos.y - spriteSize.y / 2f,
+            getSpriteRect(animator -> FrameIndex(), 8, 8, spriteSize.x, spriteSize.y), 
+            0xFFFFFFFF, float2(-spriteSize.x, spriteSize.y), 0f, 0f, 0f)
         else
-            draw_image_region(spriteSheet, pos.x - size.x / 2f, pos.y - size.y / 2f, 
-            getSpriteRect(animator -> FrameIndex(), 8, 8, size.x, size.y))
+            draw_image_region(spriteSheet, pos.x - spriteSize.x / 2f, pos.y - spriteSize.y / 2f, 
+            getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y))
 
         if showCollider
             if colliderType == COLLIDER_CIRCLE
