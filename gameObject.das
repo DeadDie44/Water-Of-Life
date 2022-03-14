@@ -59,7 +59,7 @@ class GameObject
 
     def UpdateObject(dt: float)
         pos += velocity
-        velocity = velocity * 0.9f
+        velocity *= 0f
 
     def Move(move: float2)
         if !movable
@@ -86,3 +86,9 @@ class GameObject
                 fill_circle(pos.x, pos.y, colliderSize.x, 0x44FFFFFF)
             if colliderType == COLLIDER_RECTANGLE
                 fill_rect(pos.x - colliderSize.x / 2f, pos.y - colliderSize.y / 2f, colliderSize.x, colliderSize.y, 0x44FFFFFF)
+                if objName != "Player"
+                    var expand: float4 = float4(pos.x - colliderSize.x / 2f - 14f / 2f,
+                                        pos.y - colliderSize.y / 2f - 22f / 2f,
+                                        colliderSize.x + 14f,
+                                        colliderSize.y + 22f)
+                    fill_rect(expand.x, expand.y, expand.z, expand.w, 0x44FFFFFF)

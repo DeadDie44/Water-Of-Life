@@ -4,6 +4,10 @@ let
     TILE_SET_WIDTH : int   = 8
     TILE_SET_HEIGHT: int   = 8
 
+//Размер карты
+    MAP_WIDTH       : int = 16
+    MAP_HEIGHT      : int = 16
+
 //Индексы тайлов
     TILE_EMPTY: int = 0
 //Трава

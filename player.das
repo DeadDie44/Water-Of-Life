@@ -31,13 +31,13 @@ class public Player: GameObject
             playerAttack()
         else
             playerAct(move, dt)
-        setup_2d_camera(pos, float(int(get_screen_width()/270)) )
+        setup_2d_camera(pos, float(int(get_screen_width()/270)) * 2f )
 
     def playerAct(move: float2; dt: float)
-        Move(move * Speed() * dt)
         if move != float2(0f,0f)
             direction := move
             animator -> SetAnimationState(AnimState RUNNING)
+            Move(move * Speed() * dt)
         else
             animator -> SetAnimationState(AnimState IDLE)
 

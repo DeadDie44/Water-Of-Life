@@ -27,6 +27,7 @@ def UpdateObjects(dt: float)
             for target in objectContainer
                 if(obj.id != target.id && (obj.movable || obj.movable))
                     CheckCollision(obj, target)
+            MapBoundaryCheck (obj)
 
 def DrawObjects
     if objectContainer |> length != 0
