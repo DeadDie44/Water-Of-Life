@@ -10,11 +10,14 @@ class GameObject
     //***
     showCollider : bool = false // для тестов
     //***
+    isAlive     : bool
     isAttacking : bool
     movable     : bool
     colliderType: int
     id          : int
+    attackRadius: float
     baseSpeed   : float
+    universalCD : float
     colliderSize: float2
     direction   : float2
     spriteSize  : float2
@@ -31,9 +34,12 @@ class GameObject
         self -> init(desc, position)
 
     def init(desc: ObjectDescriptor; position: float2)
-        direction = float2(0, 1)
-        pos       = position
+        isAlive     = true
+        direction   = float2(0, 1)
+        pos         = position
+        universalCD = 0f
 
+        attackRadius = desc.attackRadius
         movable      = desc.movable
         objName      = desc.objName 
         colliderSize = desc.colliderSize
@@ -50,6 +56,9 @@ class GameObject
 
     def loseHealth(damage: int)
         healthPoints -= damage
+        if healthPoints <= 0
+            healthPoints = 0
+            isAlive = false
 
     def getCurrentHealth: int
         return healthPoints
@@ -60,9 +69,13 @@ class GameObject
     def UpdateObject(dt: float)
         pos += velocity
         velocity *= 0f
+        universalCD += dt
+        if (universalCD > 1f)
+            universalCD = 0f
+            isAttacking = false
 
     def Move(move: float2)
-        if !movable      
+        if !movable && isAttacking   
             return
         if move == float2(0f, 0f)
             animator -> SetAnimationState(AnimState IDLE)
@@ -70,6 +83,10 @@ class GameObject
             animator -> SetAnimationState(AnimState RUNNING)
             velocity = move * Speed() * get_delta_time()
             direction = move
+
+    def Attack()
+        isAttacking = true
+        animator -> SetAnimationState(AnimState ATTACK)
 
     def Speed() : float
         return baseSpeed

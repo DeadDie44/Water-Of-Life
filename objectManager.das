@@ -24,6 +24,10 @@ def InitObjectContainer
         var x: float = 10f * float(j)
         var y: float = 40f * float(j)
         CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
+    for j in range(1, 15)
+        var x: float = 40f * float(j)
+        var y: float = 10f * float(j)
+        CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
 
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)

@@ -1,6 +1,6 @@
 require daslib/media
 
-require mySpriteAtlas
+require spriteHelper
 require gameMap
 require objectManager
 
@@ -11,14 +11,17 @@ options log
 var
     GameOn: bool = false
     tiles: ImageHandle
+    titleScreen: ImageHandle
     myMap = new GameMap()
 
 // 'initialize' runs once when game starts and every hot-reload
 [export]
 def initialize
     set_window_title("Water of Life")
+    //set_resolution(get_desktop_width(), get_desktop_height())
     tiles <- create_managed_image(TILES)
-    setup_2d_camera(float2(get_screen_width() / 8, get_screen_height() / 8), 4.0)
+    titleScreen <- create_managed_image(TITLE_SCREEN)
+    //setup_2d_camera(float2(get_screen_width() / 4, get_screen_height() /4), 4.0)
     InitObjectContainer()
     GameOn = true
 
@@ -42,9 +45,13 @@ def draw
     enable_alpha_blend()
     myMap -> DrawGameMap(tiles)
     DrawObjects()
+    DrawTitleScreen()
     disable_alpha_blend()
 
 def DisplayText(pos:float2; text:string; size: int)
     set_font_name("mono")  // set_font_name("mono"), set_font_name("sans"), set_font_name("*.ttf")
     set_font_size(size)
     text_out(pos.x, pos.y, text, 0xFFFFFFFF)
+
+def DrawTitleScreen()
+    draw_image(titleScreen, 0f,0f)
