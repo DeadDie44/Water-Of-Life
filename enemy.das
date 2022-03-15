@@ -9,10 +9,11 @@ require collisionManager
 
 class Enemy: GameObject
     area       : float3
-    areaSize   : float = 45f
+    areaSize   : float = 145f
     destination: float2
-    waitFor    : float = 10f
+    waitFor    : float = 1f
     timer      : float
+    previousPos: float2
 
     def Enemy (desc: ObjectDescriptor; position: float2; i: int)
         GameObject`GameObject(self, desc, position, i)
@@ -21,18 +22,29 @@ class Enemy: GameObject
         GameObject`init(self, desc, position)
         SetRoamArea(float3(pos.x, pos.y, areaSize))
         destination = pos
+        previousPos = pos
     
-    def override UpdateObject(): void
-        GameObject`UpdateObject(self)
-    
+    def override UpdateObject(dt: float): void
+        GameObject`UpdateObject(self, dt)
+        //if abs(pos.x - previousPos.x) < 0.01f || abs(pos.y - previousPos.y) < 0.01f
+            
         if pos == destination
+            if timer < waitFor
+                timer += get_delta_time()
+                return
             destination = NewDestination()
+            timer = 0f
         else
-            if abs(pos.x - destination.x) < 1f && abs(pos.y - destination.y) < 1f
+            var move: float2 = float2(0f, 0f)
+            if abs(pos.x - destination.x) < Speed() * dt && abs(pos.y - destination.y) < Speed() * dt
                 pos.x = destination.x
                 pos.y = destination.y
             else
-                Move(-(pos - destination) / Distance(pos, destination))
+                move = (destination - pos) / Distance(destination, pos) * Speed() * dt
+            Move(move)
+        if abs(pos.x - previousPos.x) < 0.1f && abs(pos.y - previousPos.y) < 0.1f
+            destination = NewDestination()
+        previousPos = pos
 
     def SetRoamArea(a: float3)
         area = a

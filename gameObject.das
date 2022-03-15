@@ -8,7 +8,7 @@ require util
 class GameObject
     private healthPoints, healthCap: int
     //***
-    showCollider : bool = true // для тестов
+    showCollider : bool = false // для тестов
     //***
     isAttacking : bool
     movable     : bool
@@ -57,7 +57,7 @@ class GameObject
     def getHealthCap: int
         return healthCap
 
-    def UpdateObject()
+    def UpdateObject(dt: float)
         pos += velocity
         velocity *= 0f
 
@@ -76,9 +76,9 @@ class GameObject
 
     def DrawObject
         animator -> Animate(direction)
-        if direction == float2(1f,0f)
+        if direction.x > 0f && direction.x > direction.y
             draw_image_transformed(spriteSheet, pos.x + spriteSize.x / 2f, pos.y - spriteSize.y / 2f,
-            getSpriteRect(animator -> FrameIndex(), 8, 8, spriteSize.x, spriteSize.y), 
+            getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
             0xFFFFFFFF, float2(-spriteSize.x, spriteSize.y), 0f, 0f, 0f)
         else
             draw_image_region(spriteSheet, pos.x - spriteSize.x / 2f, pos.y - spriteSize.y / 2f, 

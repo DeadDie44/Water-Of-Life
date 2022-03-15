@@ -3,7 +3,7 @@
 	"movable": true,
 	"sprite" : "characters/kolovershi.png",
 	
-	"baseSpeed"    : 155,
+	"baseSpeed"    : 45,
 	"size"         : [16,16],
 	"colliderSize" : [8,8],
 	"colliderType" : 0,

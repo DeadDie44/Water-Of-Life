@@ -74,12 +74,12 @@ class Animator
     def Animate (directionVector: float2)
         frameTime += get_delta_time()
 
-        if directionVector.y   < 0f
+        if abs(directionVector.x) > abs(directionVector.y)
+            direction = Direction SIDE
+        elif directionVector.y < 0f
             direction = Direction UP
         elif directionVector.y > 0f
             direction = Direction DOWN
-        elif directionVector.x != 0f
-            direction = Direction SIDE
 
         if frameTime >= 1f/fps[GetAnimationState()]
             currentFrame++

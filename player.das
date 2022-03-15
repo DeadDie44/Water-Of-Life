@@ -12,8 +12,8 @@ class Player: GameObject
     def override init (desc: ObjectDescriptor; position: float2)
         GameObject`init(self, desc, position)
     
-    def override UpdateObject(): void
-        GameObject`UpdateObject(self)
+    def override UpdateObject(dt: float): void
+        GameObject`UpdateObject(self, dt)
         var move = float2(0f,0f)
 
         if get_key(VK_W) || get_key(VK_UP) || get_axis(AXIS_PRIMARY_Y) < 0f
@@ -34,6 +34,5 @@ class Player: GameObject
         setup_2d_camera(pos, float(int(get_screen_width()/270)))
 
     def playerAttack
-        print("\nPlayer attack, I am at: {pos.x}, {pos.y}")
-        print("\nVelocity  {velocity.x}, {velocity.y}")
+        print("\n{objName}.pos: {pos}")
         animator -> SetAnimationState(AnimState ATTACK)
