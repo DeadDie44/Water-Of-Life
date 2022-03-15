@@ -31,7 +31,7 @@ class Player: GameObject
             playerAttack()
         else
             Move(move)
-        setup_2d_camera(pos, float(int(get_screen_width()/270)))
+        setup_2d_camera(pos, float(get_screen_width()/270))
 
     def playerAttack
         print("\n{objName}.pos: {pos}")

@@ -8,3 +8,7 @@ let public
     TORCHES: string = "assets/sprites/objects/torches.png"
 
     TITLE_SCREEN: string = "assets/sprites/title_screen.png"
+    
+    BUTTON_START: string = "assets/sprites/button_start.png"
+
+    BUTTON_EXIT: string = "assets/sprites/button_exit.png"

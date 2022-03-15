@@ -10,9 +10,12 @@ options log
 
 var
     GameOn: bool = false
+    buttonStart: ImageHandle
+    buttonExit: ImageHandle
     tiles: ImageHandle
     titleScreen: ImageHandle
     myMap = new GameMap()
+    cameraCenter: float2
 
 // 'initialize' runs once when game starts and every hot-reload
 [export]
@@ -21,21 +24,31 @@ def initialize
     //set_resolution(get_desktop_width(), get_desktop_height())
     tiles <- create_managed_image(TILES)
     titleScreen <- create_managed_image(TITLE_SCREEN)
-    //setup_2d_camera(float2(get_screen_width() / 4, get_screen_height() /4), 4.0)
+    buttonStart <- create_managed_image(BUTTON_START)
+    buttonExit <- create_managed_image(BUTTON_EXIT)
+    cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
+    setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
     InitObjectContainer()
-    GameOn = true
-
     return
 
 // this function is called to update game data,
 // dt - time elapsed since the previous update (in seconds)
 [export]
 def act(dt: float)
-    if get_key(VK_ESCAPE)
-        schedule_quit_game()
-    if (GameOn)
+    if GameOn
+        //if get_key(VK_ESCAPE)
+            //schedule_quit_game()
         UpdateObjects(dt)
-
+    else
+        if get_key(VK_W) || get_key(VK_UP) || get_axis(AXIS_PRIMARY_Y) < 0f
+            print("\nUP")
+        if get_key(VK_S) || get_key(VK_DOWN) || get_axis(AXIS_PRIMARY_Y) > 0f
+            print("\nDOWN")
+        if get_key(VK_A) || get_key(VK_LEFT) || get_axis(AXIS_PRIMARY_X) < 0f
+            print("\nLEFT")
+        if get_key(VK_D) || get_key(VK_RIGHT) || get_axis(AXIS_PRIMARY_X) > 0f
+            print("\nRIGHT")
+        HandleTitleMenu()
     return
 
 // this function will be called every frame after 'act',
@@ -43,15 +56,33 @@ def act(dt: float)
 [export]
 def draw
     enable_alpha_blend()
-    myMap -> DrawGameMap(tiles)
-    DrawObjects()
-    DrawTitleScreen()
+    if GameOn
+        myMap -> DrawGameMap(tiles)
+        DrawObjects()
+    else
+        DrawTitleScreen()
+        draw_image(buttonStart, 290f, 75f)
+        draw_image(buttonExit, 290f, 155f)
     disable_alpha_blend()
 
 def DisplayText(pos:float2; text:string; size: int)
-    set_font_name("mono")  // set_font_name("mono"), set_font_name("sans"), set_font_name("*.ttf")
+    set_font_name("assets/fonts/SquareCaps.ttf")  // set_font_name("mono"), set_font_name("sans"), set_font_name("*.ttf")
     set_font_size(size)
     text_out(pos.x, pos.y, text, 0xFFFFFFFF)
 
-def DrawTitleScreen()
+def DrawTitleScreen
     draw_image(titleScreen, 0f,0f)
+
+def HandleTitleMenu
+
+    if get_mouse_button_down(MB_LEFT)
+        print("\nClick! {screen_to_world(get_mouse_position())}")
+        if PointRec(screen_to_world(get_mouse_position()), float4(290f,75f,100f,30f))
+            print("\nStart!")
+        elif PointRec(screen_to_world(get_mouse_position()), float4(290f,155f,100f,30f))
+            print("\nExit!")
+            schedule_quit_game()
+        
+
+def PointRec(pos: float2; rect: float4): bool
+    return pos.x >= rect.x && pos.x <= rect.x + rect.z && pos.y >= rect.y && pos.y <= rect.y + rect.w
