@@ -31,7 +31,7 @@ def act(dt: float)
     if get_key(VK_ESCAPE)
         schedule_quit_game()
     if (GameOn)
-        UpdateObjects(dt)
+        UpdateObjects()
 
     return
 

@@ -26,7 +26,8 @@ class GameObject
 
     animator    : Animator?
 
-    def GameObject(desc: ObjectDescriptor; position: float2)
+    def GameObject(desc: ObjectDescriptor; position: float2; i: int)
+        id = i
         self -> init(desc, position)
 
     def init(desc: ObjectDescriptor; position: float2)
@@ -56,14 +57,19 @@ class GameObject
     def getHealthCap: int
         return healthCap
 
-    def UpdateObject(dt: float)
+    def UpdateObject()
         pos += velocity
         velocity *= 0f
 
     def Move(move: float2)
-        if !movable
+        if !movable      
             return
-        velocity = move
+        if move == float2(0f, 0f)
+            animator -> SetAnimationState(AnimState IDLE)
+        else
+            animator -> SetAnimationState(AnimState RUNNING)
+            velocity = move * Speed() * get_delta_time()
+            direction = move
 
     def Speed() : float
         return baseSpeed

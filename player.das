@@ -4,16 +4,16 @@ require gameObject
 require animator
 require objectFactory
 
-class public Player: GameObject
+class Player: GameObject
 
-    def Player (desc: ObjectDescriptor; position: float2)
-        GameObject`GameObject(self, desc, position)
+    def Player (desc: ObjectDescriptor; position: float2; i: int)
+        GameObject`GameObject(self, desc, position, i)
 
     def override init (desc: ObjectDescriptor; position: float2)
         GameObject`init(self, desc, position)
     
-    def override UpdateObject(dt: float): void
-        GameObject`UpdateObject(self, dt)
+    def override UpdateObject(): void
+        GameObject`UpdateObject(self)
         var move = float2(0f,0f)
 
         if get_key(VK_W) || get_key(VK_UP) || get_axis(AXIS_PRIMARY_Y) < 0f
@@ -30,16 +30,8 @@ class public Player: GameObject
         if get_key(VK_SPACE) || get_key(VK_SPACE) || get_key(GP_A)
             playerAttack()
         else
-            playerAct(move, dt)
-        setup_2d_camera(pos, float(int(get_screen_width()/270)) * 2f )
-
-    def playerAct(move: float2; dt: float)
-        if move != float2(0f,0f)
-            direction := move
-            animator -> SetAnimationState(AnimState RUNNING)
-            Move(move * Speed() * dt)
-        else
-            animator -> SetAnimationState(AnimState IDLE)
+            Move(move)
+        setup_2d_camera(pos, float(int(get_screen_width()/270)))
 
     def playerAttack
         print("\nPlayer attack, I am at: {pos.x}, {pos.y}")
