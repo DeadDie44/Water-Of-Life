@@ -22,11 +22,7 @@ def InitObjectContainer
     CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(20, 480), objectContainer |> length))
 
 def CreateObject(var obj: GameObject?)
-    unsafe
-        var o: GameObject? = new GameObject()
-        o = obj
-        objectContainer |> push(o)
-    
+    objectContainer |> push(obj)
 
 def UpdateObjects()
     if objectContainer |> length != 0

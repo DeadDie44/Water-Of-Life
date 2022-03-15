@@ -3,7 +3,7 @@
 	"movable": true,
 	"sprite" : "characters/player.png",
 	
-	"baseSpeed"    : 60,
+	"baseSpeed"    : 160,
 	"size"         : [48,48],
 	"colliderSize" : [10,22],
 	"colliderType" : 0,

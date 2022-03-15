@@ -46,7 +46,7 @@ class GameObject
 
         animator = new Animator(desc.frames, desc.frameCount, desc.fps)
         animator -> SetAnimationState(AnimState IDLE)
-        print("\n" + objName + " created")
+        print("\n {objName} id:{id} created")
 
     def loseHealth(damage: int)
         healthPoints -= damage
