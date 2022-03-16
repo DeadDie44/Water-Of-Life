@@ -4,7 +4,7 @@
 	"sprite" : "characters/player.png",
 	
 	"attackRadius" : 20, 
-	"baseSpeed"    : 160,
+	"baseSpeed"    : 60,
 	"size"         : [48,48],
 	"colliderSize" : [10,22],
 	"colliderType" : 0,

@@ -18,7 +18,7 @@ var
     tiles      : ImageHandle
     titleScreen: ImageHandle
 
-    titleMusic : PcmSound
+    music : PcmSound
 
     myMap = new GameMap()
 
@@ -33,7 +33,7 @@ def initialize
     buttonStart <- create_managed_image(BUTTON_START)
     buttonExit  <- create_managed_image(BUTTON_EXIT)
 
-    titleMusic <- create_sound(TITLE_THEME)
+    music <- create_sound(TITLE_THEME)
 
     cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
     setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
@@ -46,9 +46,8 @@ def initialize
 [export]
 def act(dt: float)
     if GameOn
-        stop_all_sounds()
-        //if get_key(VK_ESCAPE)
-            //schedule_quit_game()
+        if get_key(VK_ESCAPE)
+            schedule_quit_game()
         UpdateObjects(dt)
     else
         if get_key(VK_W) || get_key(VK_UP) || get_axis(AXIS_PRIMARY_Y) < 0f
@@ -90,6 +89,9 @@ def HandleTitleMenu
         if PointRec(screen_to_world(get_mouse_position()), float4(290f,75f,100f,30f))
             print("\nStart!")
             GameOn = true
+            stop_all_sounds()
+            music <- create_sound(GRASS_THEME)
+            music |> play_sound_loop(0.25f)
         elif PointRec(screen_to_world(get_mouse_position()), float4(290f,155f,100f,30f))
             print("\nExit!")
             schedule_quit_game()
@@ -98,4 +100,4 @@ def PointRec(pos: float2; rect: float4): bool
     return pos.x >= rect.x && pos.x <= rect.x + rect.z && pos.y >= rect.y && pos.y <= rect.y + rect.w
 
 def PlayMusic()
-    play_sound_loop(titleMusic)
+    play_sound_loop(music)

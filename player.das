@@ -25,14 +25,10 @@ class Player: GameObject
         if get_key(VK_D) || get_key(VK_RIGHT) || get_axis(AXIS_PRIMARY_X) > 0f
             move.x = 1f
 
-        move = normalize(move)
+        //move = normalize(move)
 
         if get_key(VK_SPACE) || get_key(VK_SPACE) || get_key(GP_A)
-            playerAttack()
-        else
-            Move(move)
+            Attack()
+        
+        Move(move)
         setup_2d_camera(pos, float(get_screen_width()/270))
-
-    def playerAttack
-        print("\n{objName}.pos: {pos}")
-        animator -> SetAnimationState(AnimState ATTACK)

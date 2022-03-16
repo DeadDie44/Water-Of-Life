@@ -20,14 +20,6 @@ def InitObjectContainer
         var x: float = 30f * float(i)
         var y: float = 30f * float(i)
         CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
-    for j in range(1, 15)
-        var x: float = 10f * float(j)
-        var y: float = 40f * float(j)
-        CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
-    for j in range(1, 15)
-        var x: float = 40f * float(j)
-        var y: float = 10f * float(j)
-        CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
 
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
@@ -35,11 +27,12 @@ def CreateObject(var obj: GameObject?)
 def UpdateObjects(dt: float)
     if objectContainer |> length != 0
         for obj in objectContainer
-            obj -> UpdateObject(dt)
-            for target in objectContainer
-                if(obj.id != target.id && (obj.movable || obj.movable))
-                    CheckCollision(obj, target)
-            MapBoundaryCheck (obj)
+            if obj.isAlive
+                obj -> UpdateObject(dt)
+                for target in objectContainer
+                    if(obj.id != target.id && (obj.movable || obj.movable))
+                        CheckCollision(obj, target)
+                MapBoundaryCheck (obj)
 
 def DrawObjects
     if objectContainer |> length != 0

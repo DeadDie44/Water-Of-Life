@@ -85,4 +85,6 @@ class Animator
             currentFrame++
             frameTime = 0f
             if currentFrame >= frameCount[GetAnimationState()]
+                if animationState == AnimState ATTACK
+                    animationState = AnimState IDLE
                 currentFrame = 0

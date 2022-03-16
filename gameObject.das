@@ -17,6 +17,7 @@ class GameObject
     id          : int
     attackRadius: float
     baseSpeed   : float
+    cooldown    : float
     universalCD : float
     colliderSize: float2
     direction   : float2
@@ -37,7 +38,8 @@ class GameObject
         isAlive     = true
         direction   = float2(0, 1)
         pos         = position
-        universalCD = 0f
+        universalCD = 0.5f
+        cooldown    = universalCD
 
         attackRadius = desc.attackRadius
         movable      = desc.movable
@@ -67,26 +69,30 @@ class GameObject
         return healthCap
 
     def UpdateObject(dt: float)
+        if isAttacking && animator.animationState == AnimState IDLE
+            isAttacking = false
+            cooldown = 0f
         pos += velocity
         velocity *= 0f
-        universalCD += dt
-        if (universalCD > 1f)
-            universalCD = 0f
-            isAttacking = false
+        if cooldown < universalCD
+            cooldown += dt
 
     def Move(move: float2)
-        if !movable && isAttacking   
+        if !movable || isAttacking   
             return
         if move == float2(0f, 0f)
             animator -> SetAnimationState(AnimState IDLE)
         else
+            normalize(move)
             animator -> SetAnimationState(AnimState RUNNING)
             velocity = move * Speed() * get_delta_time()
             direction = move
 
     def Attack()
-        isAttacking = true
-        animator -> SetAnimationState(AnimState ATTACK)
+        print("\ncooldown {cooldown}\nuniversalCD {universalCD}")
+        if (cooldown >= universalCD)
+            isAttacking = true
+            animator -> SetAnimationState(AnimState ATTACK)
 
     def Speed() : float
         return baseSpeed
@@ -106,3 +112,6 @@ class GameObject
                 fill_circle(pos.x, pos.y, colliderSize.x, 0x44FFFFFF)
             if colliderType == COLLIDER_RECTANGLE
                 fill_rect(pos.x - colliderSize.x / 2f, pos.y - colliderSize.y / 2f, colliderSize.x, colliderSize.y, 0x44FFFFFF)
+
+    
+    

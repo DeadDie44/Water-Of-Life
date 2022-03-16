@@ -135,6 +135,7 @@ def CircRect(c:float3; r: float4; v:float2; var obj: GameObject?): bool
         var vX = c.x + v.x * get_delta_time()
         var vY = c.y + v.y * get_delta_time()
         obj.pos = float2(vX,vY) - normalize(rayToNearest)  * overlap
+        print("\nCRT")
         return true
     return false
 
