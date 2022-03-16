@@ -8,7 +8,7 @@ require util
 class GameObject
     private healthPoints, healthCap: int
     //***
-    showCollider : bool = false // для тестов
+    showCollider : bool = true // для тестов
     //***
     isAlive     : bool
     isAttacking : bool
@@ -73,6 +73,7 @@ class GameObject
             isAttacking = false
             cooldown = 0f
         pos += velocity
+
         velocity *= 0f
         if cooldown < universalCD
             cooldown += dt
@@ -89,7 +90,6 @@ class GameObject
             direction = move
 
     def Attack()
-        print("\ncooldown {cooldown}\nuniversalCD {universalCD}")
         if (cooldown >= universalCD)
             isAttacking = true
             animator -> SetAnimationState(AnimState ATTACK)

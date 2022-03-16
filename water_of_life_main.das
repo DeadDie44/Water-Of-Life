@@ -38,7 +38,7 @@ def initialize
     cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
     setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
     InitObjectContainer()
-    PlayMusic()
+    music |> play_sound_loop()
     return
 
 // this function is called to update game data,
@@ -64,17 +64,19 @@ def act(dt: float)
 // this function will be called every frame after 'act',
 // you can draw anything in this function
 [export]
-def draw
-    enable_alpha_blend()
+def draw 
     if GameOn
+        enable_alpha_blend()
         myMap -> DrawGameMap(tiles)
         DrawObjects()
+        disable_alpha_blend()
     else
+        enable_alpha_blend()
         DrawTitleScreen()
         draw_image(buttonStart, 290f, 75f)
         draw_image(buttonExit, 290f, 155f)
-    disable_alpha_blend()
-
+        disable_alpha_blend()
+    
 def DisplayText(pos:float2; text:string; size: int)
     set_font_name("assets/fonts/SquareCaps.ttf")  // set_font_name("mono"), set_font_name("sans"), set_font_name("*.ttf")
     set_font_size(size)
@@ -98,6 +100,3 @@ def HandleTitleMenu
         
 def PointRec(pos: float2; rect: float4): bool
     return pos.x >= rect.x && pos.x <= rect.x + rect.z && pos.y >= rect.y && pos.y <= rect.y + rect.w
-
-def PlayMusic()
-    play_sound_loop(music)
