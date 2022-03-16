@@ -8,7 +8,7 @@ require util
 class GameObject
     private healthPoints, healthCap: int
     //***
-    showCollider : bool = true // для тестов
+    showCollider : bool = true //  для тестов
     //***
     isAlive     : bool
     isAttacking : bool
@@ -19,6 +19,7 @@ class GameObject
     baseSpeed   : float
     cooldown    : float
     universalCD : float
+    attackPos   : float2
     colliderSize: float2
     direction   : float2
     spriteSize  : float2
@@ -41,6 +42,7 @@ class GameObject
         universalCD = 0.5f
         cooldown    = universalCD
 
+        attackPos    = desc.attackPos
         attackRadius = desc.attackRadius
         movable      = desc.movable
         objName      = desc.objName 
@@ -114,7 +116,10 @@ class GameObject
         if showCollider
             if colliderType == COLLIDER_CIRCLE
                 fill_circle(pos.x, pos.y, colliderSize.x, 0x44FFFFFF)
-                fill_circle(pos.x, pos.y, attackRadius, 0x44FF5555)
+                var dirVec: float2 = float2(direction.x,direction.y)
+                if direction.y != 0f
+                    dirVec.x = 0f
+                fill_circle(pos.x + dirVec.x * attackPos.x, pos.y + dirVec.y * attackPos.y, attackRadius, 0x44FF5555)
             if colliderType == COLLIDER_RECTANGLE
                 fill_rect(pos.x - colliderSize.x / 2f, pos.y - colliderSize.y / 2f, colliderSize.x, colliderSize.y, 0x44FFFFFF)
 

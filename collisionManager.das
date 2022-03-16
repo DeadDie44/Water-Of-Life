@@ -28,15 +28,19 @@ def MapBoundaryCheck (var obj: GameObject?)
             obj.pos.y = float(MAP_HEIGHT) * TILE_SIZE - obj.colliderSize.y / 2f
 
 def CheckAttack (var obj, target: GameObject?)
-    //print("I attack")
+    //if  target.pos.x > obj.pos.x * obj.direction.x && target.pos.y > obj.pos.y * obj.direction.y
+    var dirVec: float2 = float2(obj.direction.x, obj.direction.y)
+    if obj.direction.y != 0f
+        dirVec.x = 0f
+    var attackPos: float2 = float2(obj.pos.x + dirVec.x * obj.attackPos.x, obj.pos.y + dirVec.y * obj.attackPos.y)
     if target.colliderType == COLLIDER_CIRCLE
-        if CircleCircle(obj.pos, target.pos, obj.attackRadius, target.colliderSize.x)
+        if CircleCircle(attackPos, target.pos, obj.attackRadius, target.colliderSize.x)
             target -> RecieveAttack(obj.id, obj.objName)
     else
         var rayToNearest :float2 
         var overlap: float
         if obj.colliderType == COLLIDER_CIRCLE
-            if CircRect(obj.pos, obj.attackRadius, float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y), obj.direction, obj, rayToNearest, overlap)
+            if CircRect(attackPos, obj.attackRadius, float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y), obj.direction, obj, rayToNearest, overlap)
                 target -> RecieveAttack(obj.id, obj.objName)
             
 // Напоминалка: будем считаться что двигаться могут только круги

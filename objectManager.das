@@ -51,6 +51,7 @@ def UpdateObjects(dt: float)
                 MapBoundaryCheck (obj)
 
 def KillObjects
+    var needToDelete: bool = false
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null
@@ -58,7 +59,7 @@ def KillObjects
                     unsafe
                         obj.spriteSheet |> delete_managed_image()
                         delete(obj)
-    var needToDelete: bool = true
+                    needToDelete = true
 
     while (needToDelete)
         needToDelete = false
@@ -67,7 +68,7 @@ def KillObjects
                 erase(objectContainer, n)
                 needToDelete = true
                 break
-
+/*
 def GetIndexById(i: int): int
     var index: int
     if objectContainer |> length > 0
@@ -76,7 +77,7 @@ def GetIndexById(i: int): int
                 index = n
                 break
     return index
-
+*/
 def DrawObjects
     if objectContainer |> length > 0
         for obj in objectContainer
