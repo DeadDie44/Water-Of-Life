@@ -2,8 +2,8 @@ require daslib/media
 
 require math
 require gameObject
-require collisionHelper
-require mapHelper
+require helpers/collisionHelper
+require helpers/mapHelper
 
 def MapBoundaryCheck (var obj: GameObject?)
     if obj.colliderType == COLLIDER_CIRCLE

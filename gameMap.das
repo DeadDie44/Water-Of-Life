@@ -1,5 +1,5 @@
 require daslib/media
-require mapHelper
+require helpers/mapHelper
 require util
 
 class GameMap

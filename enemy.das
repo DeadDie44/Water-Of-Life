@@ -4,7 +4,7 @@ require gameObject
 require animator
 require objectFactory
 require util
-require mapHelper
+require helpers/mapHelper
 require collisionManager
 
 class Enemy: GameObject

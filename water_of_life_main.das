@@ -1,6 +1,7 @@
 require daslib/media
 
-require spriteHelper
+require helpers/spriteHelper
+require helpers/soundHelper
 require gameMap
 require objectManager
 
@@ -9,26 +10,35 @@ require objectManager
 options log
 
 var
-    GameOn: bool = false
-    buttonStart: ImageHandle
-    buttonExit: ImageHandle
-    tiles: ImageHandle
-    titleScreen: ImageHandle
-    myMap = new GameMap()
+    GameOn      : bool = false
     cameraCenter: float2
+
+    buttonExit : ImageHandle
+    buttonStart: ImageHandle
+    tiles      : ImageHandle
+    titleScreen: ImageHandle
+
+    titleMusic : PcmSound
+
+    myMap = new GameMap()
 
 // 'initialize' runs once when game starts and every hot-reload
 [export]
 def initialize
     set_window_title("Water of Life")
     //set_resolution(get_desktop_width(), get_desktop_height())
-    tiles <- create_managed_image(TILES)
+
+    tiles       <- create_managed_image(TILES)
     titleScreen <- create_managed_image(TITLE_SCREEN)
     buttonStart <- create_managed_image(BUTTON_START)
-    buttonExit <- create_managed_image(BUTTON_EXIT)
+    buttonExit  <- create_managed_image(BUTTON_EXIT)
+
+    titleMusic <- create_sound(TITLE_THEME)
+
     cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
     setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
     InitObjectContainer()
+    PlayMusic()
     return
 
 // this function is called to update game data,
@@ -36,6 +46,7 @@ def initialize
 [export]
 def act(dt: float)
     if GameOn
+        stop_all_sounds()
         //if get_key(VK_ESCAPE)
             //schedule_quit_game()
         UpdateObjects(dt)
@@ -74,15 +85,17 @@ def DrawTitleScreen
     draw_image(titleScreen, 0f,0f)
 
 def HandleTitleMenu
-
     if get_mouse_button_down(MB_LEFT)
         print("\nClick! {screen_to_world(get_mouse_position())}")
         if PointRec(screen_to_world(get_mouse_position()), float4(290f,75f,100f,30f))
             print("\nStart!")
+            GameOn = true
         elif PointRec(screen_to_world(get_mouse_position()), float4(290f,155f,100f,30f))
             print("\nExit!")
             schedule_quit_game()
         
-
 def PointRec(pos: float2; rect: float4): bool
     return pos.x >= rect.x && pos.x <= rect.x + rect.z && pos.y >= rect.y && pos.y <= rect.y + rect.w
+
+def PlayMusic()
+    play_sound_loop(titleMusic)

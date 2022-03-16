@@ -1,6 +1,6 @@
 require daslib/media
 
-require collisionHelper
+require helpers/collisionHelper
 require animator
 require objectFactory
 require util
