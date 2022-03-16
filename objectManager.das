@@ -38,20 +38,46 @@ def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
 
 def UpdateObjects(dt: float)
-    if objectContainer |> length != 0
+    if objectContainer |> length > 0
         for obj in objectContainer
-            if obj.isAlive
+            if obj != null && obj.isAlive
                 obj -> UpdateObject(dt)
                 for target in objectContainer
-                    if obj.id != target.id && target.isAlive
+                    if target != null && obj.id != target.id && target.isAlive
                         if obj.isAttacking
                             CheckAttack(obj, target)   
                         if obj.id != target.id && (obj.movable || target.movable)
                             CheckCollision(obj, target)
                 MapBoundaryCheck (obj)
 
-def DrawObjects
-    if objectContainer |> length != 0
+def KillObjects
+    var killArray: array<int>
+    if objectContainer |> length > 0
         for obj in objectContainer
-            if obj.isAlive
+            if obj != null
+                if !obj.isAlive
+                    obj.spriteSheet |> delete_managed_image()
+                    killArray |> push(obj.id)
+                    print("\nAdding {obj.id} to kill")
+    if killArray |> length > 0
+        print("\nBefore deletion container has {objectContainer |> length} objects")
+        for id in killArray
+            print("\nLooking for {id}")
+            erase(objectContainer, GetIndexById(id))
+        print("\nAfter deletion container has {objectContainer |> length} objects")
+    clear(killArray)
+
+def GetIndexById(i: int&): int
+    var index: int
+    if objectContainer |> length > 0
+        for n in range(0, objectContainer |> length)
+            if objectContainer[n].id == i
+                index = n
+                break
+    return index
+
+def DrawObjects
+    if objectContainer |> length > 0
+        for obj in objectContainer
+            if obj != null && obj.isAlive
                 obj -> DrawObject()

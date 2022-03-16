@@ -49,6 +49,7 @@ def act(dt: float)
         if get_key(VK_ESCAPE)
             schedule_quit_game()
         UpdateObjects(dt)
+        KillObjects()
     else
         if get_key(VK_W) || get_key(VK_UP) || get_axis(AXIS_PRIMARY_Y) < 0f
             print("\nUP")
