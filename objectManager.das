@@ -15,6 +15,10 @@ def InitObjectContainer
     CreateObject(new GameObject(objectFromDesc("father"), float2(80, 100), objectContainer |> length))
     CreateObject(new GameObject(objectFromDesc("barrel"), float2(30, 230), objectContainer |> length))    
     CreateObject(new GameObject(objectFromDesc("crate"), float2(250, 110), objectContainer |> length))
+    CreateObject(new GameObject(objectFromDesc("crate"), float2(50, 250), objectContainer |> length))
+    CreateObject(new GameObject(objectFromDesc("crate"), float2(150, 410), objectContainer |> length))
+    CreateObject(new GameObject(objectFromDesc("crate"), float2(270, 210), objectContainer |> length))
+    CreateObject(new GameObject(objectFromDesc("crate"), float2(350, 110), objectContainer |> length))
     CreateObject(new GameObject(objectFromDesc("torch"), float2(150, 380), objectContainer |> length))
     for i in range(1, 15)
         var x: float = 30f * float(i)
@@ -24,7 +28,6 @@ def InitObjectContainer
         var x: float = 10f * float(i)
         var y: float = 30f * float(i)
         CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
-
     for i in range(1, 25)
         var x: float = 30f * float(i)
         var y: float = 10f * float(i)
@@ -40,11 +43,15 @@ def UpdateObjects(dt: float)
             if obj.isAlive
                 obj -> UpdateObject(dt)
                 for target in objectContainer
-                    if(obj.id != target.id && (obj.movable || target.movable))
-                        CheckCollision(obj, target)
+                    if obj.id != target.id && target.isAlive
+                        if obj.isAttacking
+                            CheckAttack(obj, target)   
+                        if obj.id != target.id && (obj.movable || target.movable)
+                            CheckCollision(obj, target)
                 MapBoundaryCheck (obj)
 
 def DrawObjects
     if objectContainer |> length != 0
         for obj in objectContainer
-            obj -> DrawObject()
+            if obj.isAlive
+                obj -> DrawObject()

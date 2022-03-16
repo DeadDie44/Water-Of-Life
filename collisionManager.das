@@ -27,26 +27,37 @@ def MapBoundaryCheck (var obj: GameObject?)
         if obj.pos.y + obj.colliderSize.y / 2f > float(MAP_HEIGHT) * TILE_SIZE
             obj.pos.y = float(MAP_HEIGHT) * TILE_SIZE - obj.colliderSize.y / 2f
 
-// Напоминалка: двигаться могут только круги
+def CheckAttack (var obj, target: GameObject?)
+    //print("I attack")
+    if target.colliderType == COLLIDER_CIRCLE
+        if CircleCircle(obj.pos, target.pos, obj.attackRadius, target.colliderSize.x)
+            target -> RecieveAttack(obj.id, obj.objName)
+    else
+        var rayToNearest :float2 
+        var overlap: float
+        if obj.colliderType == COLLIDER_CIRCLE
+            if CircRect(obj.pos, obj.attackRadius, float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y), obj.direction, obj, rayToNearest, overlap)
+                target -> RecieveAttack(obj.id, obj.objName)
+            
+// Напоминалка: будем считаться что двигаться могут только круги
 def CheckCollision (var obj, target: GameObject?)
     if obj.colliderType == COLLIDER_CIRCLE && target.colliderType == COLLIDER_CIRCLE
-        if CircleCircle(float3(obj.pos.x ,obj.pos.y, obj.colliderSize.x), float3(target.pos.x, target.pos.y, target.colliderSize.x))
-            ResolveCC(obj, target) 
-    /*elif obj.colliderType == COLLIDER_RECTANGLE && target.colliderType == COLLIDER_RECTANGLE
-        if RectRect(float4(obj.pos.x - obj.colliderSize.x / 2f, obj.pos.y - obj.colliderSize.y / 2f, obj.colliderSize.x, obj.colliderSize.y), 
-        float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y))
-            ResolveRR(obj, target)*/
+        if CircleCircle(obj.pos, target.pos, obj.colliderSize.x, target.colliderSize.x)
+            ResolveCC(obj, target)
     else
         var o: float4 = float4(obj.pos.x, obj.pos.y, obj.colliderSize.x, obj.colliderSize.y)
         var t: float4 = float4(target.pos.x, target.pos.y, target.colliderSize.x, target.colliderSize.y)
+        var rayToNearest :float2 
+        var overlap: float
         if obj.colliderType == COLLIDER_CIRCLE
-            CircRect(float3(o.x, o.y, o.z), float4(t.x - t.z / 2f, t.y - t.w / 2f, t.z, t.w), float2(obj.velocity.x, obj.velocity.y), obj)
+            if CircRect(obj.pos, obj.colliderSize.x, float4(t.x - t.z / 2f, t.y - t.w / 2f, t.z, t.w), obj.vel, obj, rayToNearest, overlap)
+                ResolveCR(obj, rayToNearest, overlap)
         else
-            CircRect(float3(t.x, t.y, t.z), float4(o.x - o.z / 2f, o.y - o.w / 2f, o.z, o.w), float2(target.velocity.x, target.velocity.y), target)
-            
+            if CircRect(target.pos, target.colliderSize.x, float4(o.x - o.z / 2f, o.y - o.w / 2f, o.z, o.w), target.vel, target, rayToNearest, overlap)
+                ResolveCR(target, rayToNearest, overlap)
                 
 def ResolveCC(var obj, target : GameObject?)
-    var distance: float = Distance(float2(obj.pos.x, obj.pos.y), float2(target.pos.x, target.pos.y))
+    var distance: float = Distance(obj.pos, target.pos)
     var overlap : float = 0.5f * (distance - obj.colliderSize.x - target.colliderSize.x)
     var x : float = overlap * (obj.pos.x - target.pos.x) / distance
     var y : float = overlap * (obj.pos.y - target.pos.y) / distance
@@ -57,31 +68,32 @@ def ResolveCC(var obj, target : GameObject?)
     obj.pos += obj.movable? float2(- x, - y) : float2(0f, 0f)
     target.pos += target.movable? float2(x, y) : float2(0f, 0f)
 
-def CircRect(c:float3; r: float4; v:float2; var obj: GameObject?): bool
+def ResolveCR(var obj: GameObject?; rayToNearest: float2&; overlap: float&)
+    var vX = obj.pos.x + obj.vel.x * get_delta_time()
+    var vY = obj.pos.y + obj.vel.y * get_delta_time()
+    obj.pos = float2(vX,vY) - normalize(rayToNearest) * overlap
+
+def CircRect(pos: float2&; radius: float&; rect: float4; v :float2&; var obj: GameObject?; var rayToNearest :float2&; var overlap: float&): bool
     var nearestPoint: float2
-    nearestPoint.x = max(r.x, min(c.x + v.x * get_delta_time(), r.x + r.z))
-    nearestPoint.y = max(r.y, min(c.y + v.y * get_delta_time(), r.y + r.w))
+    nearestPoint.x = max(rect.x, min(pos.x + v.x * get_delta_time(), rect.x + rect.z))
+    nearestPoint.y = max(rect.y, min(pos.y + v.y * get_delta_time(), rect.y + rect.w))
     
-    var rayToNearest: float2
-    rayToNearest.x = nearestPoint.x - (c.x + v.x * get_delta_time())
-    rayToNearest.y = nearestPoint.y - (c.y + v.y * get_delta_time())
-    
-    var overlap: float = c.z - length(rayToNearest)
+    rayToNearest.x = nearestPoint.x - (pos.x + v.x * get_delta_time())
+    rayToNearest.y = nearestPoint.y - (pos.y + v.y * get_delta_time())
+
+    overlap = radius - length(rayToNearest)
     if overlap > 0f
-        var vX = c.x + v.x * get_delta_time()
-        var vY = c.y + v.y * get_delta_time()
-        obj.pos = float2(vX,vY) - normalize(rayToNearest)  * overlap
         return true
     return false
 
-def CircleCircle(c1: float3; c2: float3): bool
-    return (DistanceSquared(float2(c1.x, c1.y), float2(c2.x, c2.y)) < (c1.z + c2.z) * (c1.z + c2.z))
+def CircleCircle(pos1, pos2: float2&; r1, r2: float&): bool
+    return (DistanceSquared(pos1, pos2) < (r1 + r2) * (r1 + r2))
 
-def RectRect(r1: float4; r2: float4): bool
+def RectRect(r1, r2: float4): bool
     return (r1.x < r2.x + r2.z) && (r1.x + r1.z > r2.x) && (r1.y < r2.y + r2.w) && (r1.y + r1.w > r2.y)
 
-def Distance(p1, p2: float2): float
-    return sqrt(DistanceSquared(float2(p1.x, p1.y), float2(p2.x, p2.y)))
+def Distance(p1, p2: float2&): float
+    return sqrt(DistanceSquared(p1, p2))
 
-def DistanceSquared(p1: float2; p2: float2): float
+def DistanceSquared(p1, p2: float2&): float
     return (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)

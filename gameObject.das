@@ -23,7 +23,7 @@ class GameObject
     direction   : float2
     spriteSize  : float2
     pos         : float2
-    velocity    : float2
+    vel         : float2
     objName     : string
 
     spriteSheet : ImageHandle
@@ -54,27 +54,31 @@ class GameObject
 
         animator = new Animator(desc.frames, desc.frameCount, desc.fps)
         animator -> SetAnimationState(AnimState IDLE)
-        print("\n {objName} id:{id} created")
+        print("\n{objName} id:{id} created")
 
-    def loseHealth(damage: int)
+    def RecieveAttack(attackerId:int; attackerName: string)
+        print("\nI am {objName} id {id} took a hit from {attackerName} id {attackerId}!")
+        LoseHealth(100)
+
+    def LoseHealth(damage: int)
         healthPoints -= damage
         if healthPoints <= 0
             healthPoints = 0
             isAlive = false
 
-    def getCurrentHealth: int
+    def GetCurrentHealth: int
         return healthPoints
 
-    def getHealthCap: int
+    def GetHealthCap: int
         return healthCap
 
     def UpdateObject(dt: float)
         if isAttacking && animator.animationState == AnimState IDLE
             isAttacking = false
             cooldown = 0f
-        pos += velocity
+        pos += vel
 
-        velocity *= 0f
+        vel *= 0f
         if cooldown < universalCD
             cooldown += dt
 
@@ -86,7 +90,7 @@ class GameObject
         else
             normalize(move)
             animator -> SetAnimationState(AnimState RUNNING)
-            velocity = move * Speed() * get_delta_time()
+            vel = move * Speed() * get_delta_time()
             direction = move
 
     def Attack()
@@ -110,6 +114,7 @@ class GameObject
         if showCollider
             if colliderType == COLLIDER_CIRCLE
                 fill_circle(pos.x, pos.y, colliderSize.x, 0x44FFFFFF)
+                fill_circle(pos.x, pos.y, attackRadius, 0x44FF5555)
             if colliderType == COLLIDER_RECTANGLE
                 fill_rect(pos.x - colliderSize.x / 2f, pos.y - colliderSize.y / 2f, colliderSize.x, colliderSize.y, 0x44FFFFFF)
 
