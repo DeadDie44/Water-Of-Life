@@ -51,23 +51,24 @@ def UpdateObjects(dt: float)
                 MapBoundaryCheck (obj)
 
 def KillObjects
-    var killArray: array<int>
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null
                 if !obj.isAlive
-                    obj.spriteSheet |> delete_managed_image()
-                    killArray |> push(obj.id)
-                    print("\nAdding {obj.id} to kill")
-    if killArray |> length > 0
-        print("\nBefore deletion container has {objectContainer |> length} objects")
-        for id in killArray
-            print("\nLooking for {id}")
-            erase(objectContainer, GetIndexById(id))
-        print("\nAfter deletion container has {objectContainer |> length} objects")
-    clear(killArray)
+                    unsafe
+                        obj.spriteSheet |> delete_managed_image()
+                        delete(obj)
+    var needToDelete: bool = true
 
-def GetIndexById(i: int&): int
+    while (needToDelete)
+        needToDelete = false
+        for n in range(0, objectContainer |> length)
+            if objectContainer[n] == null
+                erase(objectContainer, n)
+                needToDelete = true
+                break
+
+def GetIndexById(i: int): int
     var index: int
     if objectContainer |> length > 0
         for n in range(0, objectContainer |> length)
