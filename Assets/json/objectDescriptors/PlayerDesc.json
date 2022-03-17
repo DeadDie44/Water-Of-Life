@@ -3,8 +3,8 @@
 	"movable": true,
 	"sprite" : "characters/player.png",
 	
-	"attackPos"    : [12,12],
-	"attackRadius" : 10, 
+	"attackPos"    : [11,11],
+	"attackRadius" : 12, 
 	"baseSpeed"    : 60,
 	"size"         : [48,48],
 	"colliderSize" : [10,22],
