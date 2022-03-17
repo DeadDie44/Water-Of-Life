@@ -35,6 +35,8 @@ def objectFromDesc(objName: string): ObjectDescriptor
                 desc.objName = v as _string
             elif k == "movable"
                 desc.movable = v as _bool
+            elif k == "killable"
+                desc.killable = v as _bool
             elif k == "colliderSize"
                 desc.colliderSize = JsonAsFloat2(v as _array)
             elif k == "attackPos"
@@ -55,6 +57,8 @@ def objectFromDesc(objName: string): ObjectDescriptor
                 desc.fps <- JsonArrayAsFloat(v as _array)
             elif k == "frames"
                 desc.frames <- JsonArrayAsInt(v as _array)
+            elif k == "deathAnimation"
+                desc.deathAnimation <- JsonArrayAsInt(v as _array)
     return <- desc
 
 def JsonAsFloat2(arr: array<JsonValue?>): float2
@@ -77,10 +81,11 @@ def JsonArrayAsFloat(arr: array<JsonValue?>): array<float>
     return <- myArr
 
 struct ObjectDescriptor
-    movable                      : bool
+    movable, killable            : bool
     colliderType, health         : int
     baseSpeed, attackRadius      : float
     sprite, objName              : string
     size, colliderSize,attackPos : float2
+    deathAnimation               : array<int>
     frameCount, frames           : array<int>
     fps                          : array<float>

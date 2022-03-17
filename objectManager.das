@@ -13,8 +13,10 @@ def InitObjectContainer
     clear (objectContainer)
     CreateObject(new Player(objectFromDesc("player"), float2(40, 40), objectContainer |> length))
     CreateObject(new GameObject(objectFromDesc("father"), float2(80, 100), objectContainer |> length))
-    CreateObject(new GameObject(objectFromDesc("barrel"), float2(30, 230), objectContainer |> length))    
+    for i in range(1, 15)
+        CreateObject(new GameObject(objectFromDesc("barrel"), float2(i * 20, i * 35), objectContainer |> length))    
     CreateObject(new GameObject(objectFromDesc("crate"), float2(250, 110), objectContainer |> length))
+    CreateObject(new GameObject(objectFromDesc("crate"), float2(240, 130), objectContainer |> length))
     CreateObject(new GameObject(objectFromDesc("crate"), float2(50, 250), objectContainer |> length))
     CreateObject(new GameObject(objectFromDesc("crate"), float2(150, 410), objectContainer |> length))
     CreateObject(new GameObject(objectFromDesc("crate"), float2(270, 210), objectContainer |> length))
@@ -81,5 +83,5 @@ def GetIndexById(i: int): int
 def DrawObjects
     if objectContainer |> length > 0
         for obj in objectContainer
-            if obj != null && obj.isAlive
+            if obj != null
                 obj -> DrawObject()

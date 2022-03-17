@@ -1,6 +1,7 @@
 {
 	"name"   : "Player",
 	"movable": true,
+	"killable": true,
 	"sprite" : "characters/player.png",
 	
 	"attackPos"    : [11,11],

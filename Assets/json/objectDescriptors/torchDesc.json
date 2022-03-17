@@ -1,6 +1,7 @@
 {
 	"name"   : "Torch",
 	"movable": false,
+	"killable": true,
 	"sprite" : "objects/torches.png",
 	
 	"size"         : [32,32],

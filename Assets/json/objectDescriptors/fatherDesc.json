@@ -1,6 +1,7 @@
 {
 	"name"   : "Father",
 	"movable": false,
+	"killable": false,
 	"sprite" : "characters/father.png",
 	
 	"baseSpeed"    : 60,

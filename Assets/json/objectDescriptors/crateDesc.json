@@ -1,6 +1,7 @@
 {
 	"name"   : "Crate",
 	"movable": false,
+	"killable": true,
 	"sprite" : "objects/static_objects.png",
 	
 	"size"         : [32,32],
@@ -11,5 +12,7 @@
 	
 	"fps"       : [1],
 	"frameCount": [1],
-	"frames"    : [0]
+	"frames"    : [0],
+	
+	"deathAnimation": [12,7,8,16,24,32,40,48,56]
 }

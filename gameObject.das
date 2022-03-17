@@ -8,11 +8,12 @@ require util
 class GameObject
     private healthPoints, healthCap: int
     //***
-    showCollider : bool = true //  для тестов
+    showCollider : bool = false //  для тестов
     //***
     isAlive     : bool
     isAttacking : bool
     movable     : bool
+    killable    : bool
     colliderType: int
     id          : int
     attackRadius: float
@@ -45,6 +46,7 @@ class GameObject
         attackPos    = desc.attackPos
         attackRadius = desc.attackRadius
         movable      = desc.movable
+        killable     = desc.killable
         objName      = desc.objName 
         colliderSize = desc.colliderSize
         colliderType = desc.colliderType
@@ -54,12 +56,14 @@ class GameObject
         healthPoints = healthCap
         spriteSheet  <- create_managed_image(desc.sprite)
 
-        animator = new Animator(desc.frames, desc.frameCount, desc.fps)
+        animator = new Animator(desc.frames, desc.frameCount, desc.deathAnimation, desc.fps)
         animator -> SetAnimationState(AnimState IDLE)
         print("\n{objName} id:{id} created")
 
     def RecieveAttack(attackerId:int; attackerName: string)
         print("\nI am {objName} id {id} took a hit from {attackerName} id {attackerId}!")
+        if !killable
+            return
         LoseHealth(100)
 
     def LoseHealth(damage: int)
@@ -67,6 +71,7 @@ class GameObject
         if healthPoints <= 0
             healthPoints = 0
             isAlive = false
+            animator -> SetAnimationState(AnimState DEATH)
 
     def GetCurrentHealth: int
         return healthPoints
@@ -75,6 +80,8 @@ class GameObject
         return healthCap
 
     def UpdateObject(dt: float)
+        if !isAlive
+            return
         if isAttacking && animator.animationState == AnimState IDLE
             isAttacking = false
             cooldown = 0f
@@ -85,7 +92,7 @@ class GameObject
             cooldown += dt
 
     def Move(move: float2)
-        if !movable || isAttacking   
+        if !isAlive || !movable || isAttacking   
             return
         if move == float2(0f, 0f)
             animator -> SetAnimationState(AnimState IDLE)
@@ -104,6 +111,8 @@ class GameObject
         return baseSpeed
 
     def DrawObject
+        //if spriteSheet == null
+            //return
         animator -> Animate(direction)
         if direction.x > 0f && direction.x > direction.y
             draw_image_transformed(spriteSheet, pos.x + spriteSize.x / 2f, pos.y - spriteSize.y / 2f,
@@ -122,6 +131,3 @@ class GameObject
                 fill_circle(pos.x + dirVec.x * attackPos.x, pos.y + dirVec.y * attackPos.y, attackRadius, 0x44FF5555)
             if colliderType == COLLIDER_RECTANGLE
                 fill_rect(pos.x - colliderSize.x / 2f, pos.y - colliderSize.y / 2f, colliderSize.x, colliderSize.y, 0x44FFFFFF)
-
-    
-    

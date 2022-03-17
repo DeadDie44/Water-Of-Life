@@ -5,6 +5,7 @@ enum AnimState
     IDLE
     RUNNING
     ATTACK
+    DEATH
 
 //Куда смотрит персонаж
 enum Direction
@@ -16,19 +17,22 @@ class Animator
     animationState: AnimState
     direction     : Direction
 
-    currentFrame  : int // Текущий кадр в рамках проигрываемой анимации
+    currentFrame  : int // Текущий кадр в рамках проигрываемой анимации    
     frameTime     : float // Сколько времени прошло со смены кадра
 
-    frames        : array<int> // Кадры всех анимаций, в соотвествии с порядковым номером спрайта в нашем sprite sheet
+    deathAnimation: array<int> // индекс 0 это фпс, индекс 1 это количество кадров. Анимация смерти одинаковая вне зависимости в какую сторону смотришь, так что проще её отдельно вынести, ну или мне просто лень
+    frames        : array<int> // Кадры ориентированных анимаций, в соотвествии с порядковым номером спрайта в нашем sprite sheet
     frameCount    : array<int> // Сколько кадров в анимациях для конкретного animationState (Для простоты считаем что все однотипные анимации длятся одинаковое количество кадров)
 
     fps           : array<float>// Скорость анимации конкретного animationState
 
-    def Animator(framesArray, countArray: array<int>; fpsArray: array<float>)
-        self -> init(framesArray, countArray, fpsArray)
+    def Animator(framesArray, countArray, deathArray: array<int>; fpsArray: array<float>)
+        self -> init(framesArray, countArray, deathArray, fpsArray)
 
-    def init(framesArray, countArray: array<int>; fpsArray: array<float>)
+    def init(framesArray, countArray, deathArray: array<int>; fpsArray: array<float>)
         currentFrame = 0
+
+        deathAnimation := deathArray
         
         frames     := framesArray
         frameCount := countArray
@@ -50,7 +54,10 @@ class Animator
         return int(direction)
 
     def FrameIndex: int
-        return frames[GetFirstFrame() + currentFrame]
+        if animationState != AnimState DEATH
+            return frames[GetFirstFrame() + currentFrame]
+        else
+            return deathAnimation[1 + currentFrame]
 
     // Анимации в frames идут в следующем порядке:
     // Idle Up, Idle Side, Idle Down,
@@ -73,6 +80,14 @@ class Animator
 
     def Animate (directionVector: float2)
         frameTime += get_delta_time()
+
+        if animationState == AnimState DEATH
+            if currentFrame < deathAnimation[1]
+                if frameTime >= 1f / float(deathAnimation[0])
+                    currentFrame++
+                    frameTime = 0f
+                    print("Death frame {currentFrame}")
+            return
 
         if abs(directionVector.x) > abs(directionVector.y)
             direction = Direction SIDE
