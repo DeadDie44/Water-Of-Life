@@ -1,0 +1,18 @@
+{
+	"name"   : "EmptyBarrel",
+	"movable": true,
+	"killable": true,
+	"sprite" : "objects/movable_objects.png",
+	
+	"size"         : [32,32],
+	"colliderSize" : [12,24],
+	"colliderType" : 0,
+
+	"health" : 1,
+	
+	"fps"       : [1],
+	"frameCount": [1],
+	"frames"    : [1],
+	
+	"deathAnimation": [12,7,9,16,24,32,40,48,56]
+}
