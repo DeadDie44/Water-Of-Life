@@ -19,6 +19,7 @@ class GameObject
     attackRadius: float
     baseSpeed   : float
     cooldown    : float
+    hitInvul    : float
     universalCD : float
     attackPos   : float2
     colliderSize: float2
@@ -42,6 +43,7 @@ class GameObject
         pos         = position
         universalCD = 0.5f
         cooldown    = universalCD
+        hitInvul    = 0f
 
         attackPos    = desc.attackPos
         attackRadius = desc.attackRadius
@@ -62,12 +64,13 @@ class GameObject
 
     def RecieveAttack(attackerId:int; attackerName: string)
         print("\nI am {objName} id {id} took a hit from {attackerName} id {attackerId}!")
-        if !killable
+        if !killable || hitInvul < universalCD
             return
-        LoseHealth(100)
+        LoseHealth(10)
 
     def LoseHealth(damage: int)
         healthPoints -= damage
+        hitInvul = 0f
         if healthPoints <= 0
             healthPoints = 0
             isAlive = false
@@ -90,6 +93,8 @@ class GameObject
         vel *= 0f
         if cooldown < universalCD
             cooldown += dt
+        if hitInvul < universalCD
+            hitInvul += dt
 
     def Move(move: float2)
         if !isAlive || !movable || isAttacking   

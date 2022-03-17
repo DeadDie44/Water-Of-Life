@@ -10,7 +10,7 @@
 	"colliderSize" : [8,8],
 	"colliderType" : 0,
 
-	"health" : 1,
+	"health" : 20,
 	
 	"fps"       : [12,12,12],
 	"frameCount": [1,10,0],
