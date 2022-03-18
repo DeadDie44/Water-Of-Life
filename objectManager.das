@@ -12,6 +12,17 @@ var
 def InitObjectContainer
     clear (objectContainer)
     CreateObject(new Player(objectFromDesc("player"), float2(40, 40), objectContainer |> length))
+    // TESTING
+    CreateObject(new Enemy(objectFromDesc("bandit"), float2(400, 400), objectContainer |> length))
+    CreateObject(new Enemy(objectFromDesc("bandit"), float2(340, 430), objectContainer |> length))
+    CreateObject(new Enemy(objectFromDesc("bandit"), float2(410, 370), objectContainer |> length))
+    CreateObject(new Enemy(objectFromDesc("bandit"), float2(323, 354), objectContainer |> length))
+    CreateObject(new Enemy(objectFromDesc("bandit"), float2(346, 430), objectContainer |> length))
+    CreateObject(new Enemy(objectFromDesc("bandit"), float2(310, 270), objectContainer |> length))
+    CreateObject(new Enemy(objectFromDesc("bandit"), float2(150, 400), objectContainer |> length))
+    CreateObject(new Enemy(objectFromDesc("bandit"), float2(440, 130), objectContainer |> length))
+    CreateObject(new Enemy(objectFromDesc("bandit"), float2(210, 270), objectContainer |> length))
+
     CreateObject(new GameObject(objectFromDesc("father"), float2(80, 100), objectContainer |> length))
     for i in range(1, 15)
         CreateObject(new GameObject(objectFromDesc("barrel"), float2(i * 20, i * 35), objectContainer |> length))    
