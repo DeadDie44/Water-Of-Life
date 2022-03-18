@@ -36,6 +36,7 @@ def CheckAttack (var obj, target: GameObject?)
     if target.colliderType == COLLIDER_CIRCLE
         if CircleCircle(attackPos, target.pos, obj.attackRadius, target.colliderSize.x)
             target -> RecieveAttack(obj.id, obj -> GetDamage(), obj.objName)
+            target -> Move(dirVec * 2f)
     else
         var rayToNearest :float2 
         var overlap: float
