@@ -46,7 +46,7 @@ class Enemy: GameObject
             destination = NewDestination()
         previousPos = pos
 
-    def SetRoamArea(a: float3)
+    def SetRoamArea(a: float3) 
         area = a
 
     def NewDestination : float2

@@ -87,17 +87,27 @@ def DrawTitleScreen
     draw_image(titleScreen, 0f,0f)
 
 def HandleTitleMenu
+    if get_key(VK_S)
+        Start()
+    if get_key(VK_E)
+        Exit()
     if get_mouse_button_down(MB_LEFT)
         print("\nClick! {screen_to_world(get_mouse_position())}")
         if PointRec(screen_to_world(get_mouse_position()), float4(290f,75f,100f,30f))
-            print("\nStart!")
-            GameOn = true
-            stop_all_sounds()
-            music <- create_sound(GRASS_THEME)
-            music |> play_sound_loop(0.25f)
+            Start() 
         elif PointRec(screen_to_world(get_mouse_position()), float4(290f,155f,100f,30f))
-            print("\nExit!")
-            schedule_quit_game()
-        
+            Exit()
+
+def Start
+    print("\nStart!")
+    GameOn = true
+    stop_all_sounds()
+    music <- create_sound(GRASS_THEME)
+    music |> play_sound_loop(0.25f)
+
+def Exit
+    print("\nExit!")
+    schedule_quit_game()
+
 def PointRec(pos: float2; rect: float4): bool
     return pos.x >= rect.x && pos.x <= rect.x + rect.z && pos.y >= rect.y && pos.y <= rect.y + rect.w

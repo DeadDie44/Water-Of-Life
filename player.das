@@ -28,6 +28,7 @@ class Player: GameObject
         //move = normalize(move)
 
         if get_key(VK_SPACE) || get_key(VK_SPACE) || get_key(GP_A)
+            print("\nPLAYER POS: {pos}")
             Attack()
         
         Move(move)
