@@ -15,19 +15,24 @@ class GameObject
     canBeRemoved : bool
     movable      : bool
     killable     : bool
+    drawable     : bool
+
     colliderType : int
     id           : int
+
     attackRadius : float
     baseSpeed    : float
     cooldown     : float
     hitInvul     : float
     universalCD  : float
+
     attackPos    : float2
     colliderSize : float2
     direction    : float2
     spriteSize   : float2
     pos          : float2
     vel          : float2
+
     objName      : string
 
     spriteSheet : ImageHandle
@@ -41,11 +46,13 @@ class GameObject
     def init(desc: ObjectDescriptor; position: float2)
         isAlive      = true
         canBeRemoved = false
+        drawable     = true
+
         direction    = float2(0, 1)
         pos          = position
         universalCD  = 0.5f
         cooldown     = universalCD
-        hitInvul     = 0f
+        hitInvul     = universalCD
 
         attackPos    = desc.attackPos
         attackRadius = desc.attackRadius
@@ -101,7 +108,10 @@ class GameObject
         if cooldown < universalCD
             cooldown += dt
         if hitInvul < universalCD
+            drawable = !drawable
             hitInvul += dt
+        else
+            drawable = true
 
     def Move(move: float2)
         if !isAlive || !movable || isAttacking   
@@ -123,6 +133,8 @@ class GameObject
         return baseSpeed
 
     def DrawObject
+        if !drawable
+            return
         if direction.x > 0f && direction.x > direction.y
             draw_image_transformed(spriteSheet, pos.x + spriteSize.x / 2f, pos.y - spriteSize.y / 2f,
             getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
