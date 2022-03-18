@@ -25,7 +25,7 @@ def objectFromDesc(objName: string): ObjectDescriptor
     var jsonTable: table<string; JsonValue?>
 
     if json is _object
-        jsonTable := json as _object
+        jsonTable <- json as _object
         var i:int = 0
         for k,v in keys(jsonTable), values(jsonTable)
             i++

@@ -8,10 +8,11 @@ require helpers/mapHelper
 require collisionManager
 
 class Enemy: GameObject
+    agro       : bool
+    targetPos  : float2
     area       : float3
     areaSize   : float = 145f
     destination: float2
-    waitFor    : float = 1f
     timer      : float
     previousPos: float2
 
@@ -26,10 +27,13 @@ class Enemy: GameObject
     
     def override UpdateObject(dt: float): void
         GameObject`UpdateObject(self, dt)
-        //if abs(pos.x - previousPos.x) < 0.01f || abs(pos.y - previousPos.y) < 0.01f
-            
-        if pos == destination
-            if timer < waitFor
+        if agro
+            destination = targetPos
+            if Distance(pos, targetPos) < colliderSize.x + attackRadius
+                Attack()
+                return
+        if pos == destination    
+            if timer < universalCD * 2f
                 timer += get_delta_time()
                 return
             destination = NewDestination()
@@ -46,10 +50,18 @@ class Enemy: GameObject
             destination = NewDestination()
         previousPos = pos
 
+    def override SpotPlayer(playerPos: float2; radius: float)
+        if attackRadius > 0f
+            targetPos = playerPos
+            if Distance(pos, playerPos) < areaSize
+                agro = true
+            elif Distance(pos, playerPos) > areaSize * 2f
+                agro = false
+
     def SetRoamArea(a: float3) 
         area = a
 
-    def NewDestination : float2
+    def NewDestination : float2  
         var minX, maxX, minY, maxY: float
 
         minX = max(area.x - areaSize, 1f + colliderSize.x)

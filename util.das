@@ -11,10 +11,16 @@ def getSpriteRect(index, nColumns, nRows : int; tileWidth, tileHeight: float): f
 
     return float4(x * tileWidth, y * tileHeight, tileWidth, tileHeight)
 
+def iterateSeed()
+    seed.x += 1
+    seed.y += 1
+    seed.z += 1
+    seed.w += 1
+
 def random_int(a: int)
-    randomize_seed(seed)
+    iterateSeed()
     return random_int(seed) % a
 
 def random_float(a,b:float)
-    randomize_seed(seed)
+    iterateSeed()
     return a + random_float(seed) * (b-a)

@@ -4,6 +4,7 @@ require gameObject
 require animator
 require objectFactory
 
+
 class Player: GameObject
 
     def Player (desc: ObjectDescriptor; position: float2; i: int)

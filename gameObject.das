@@ -124,6 +124,9 @@ class GameObject
             vel = move * Speed() * get_delta_time()
             direction = move
 
+    def SpotPlayer(pos: float2; radius: float)
+        return
+
     def Attack()
         if (cooldown >= universalCD)
             isAttacking = true

@@ -11,17 +11,18 @@ var
 
 def InitObjectContainer
     clear (objectContainer)
+    
     CreateObject(new Player(objectFromDesc("player"), float2(40, 40), objectContainer |> length))
     // TESTING
     CreateObject(new Enemy(objectFromDesc("bandit"), float2(400, 400), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(340, 430), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(410, 370), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(323, 354), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(346, 430), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(310, 270), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(150, 400), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(440, 130), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(210, 270), objectContainer |> length))
+    //CreateObject(new Enemy(objectFromDesc("bandit"), float2(340, 430), objectContainer |> length))
+    //CreateObject(new Enemy(objectFromDesc("bandit"), float2(410, 370), objectContainer |> length))
+    //CreateObject(new Enemy(objectFromDesc("bandit"), float2(323, 354), objectContainer |> length))
+    //CreateObject(new Enemy(objectFromDesc("bandit"), float2(346, 430), objectContainer |> length))
+    //CreateObject(new Enemy(objectFromDesc("bandit"), float2(310, 270), objectContainer |> length))
+    //CreateObject(new Enemy(objectFromDesc("bandit"), float2(150, 400), objectContainer |> length))
+    //CreateObject(new Enemy(objectFromDesc("bandit"), float2(440, 130), objectContainer |> length))
+    //CreateObject(new Enemy(objectFromDesc("bandit"), float2(210, 270), objectContainer |> length))
 
     CreateObject(new GameObject(objectFromDesc("father"), float2(80, 100), objectContainer |> length))
     for i in range(1, 10)
@@ -35,19 +36,22 @@ def InitObjectContainer
     CreateObject(new GameObject(objectFromDesc("crate"), float2(270, 210), objectContainer |> length))
     CreateObject(new GameObject(objectFromDesc("crate"), float2(350, 110), objectContainer |> length))
     CreateObject(new GameObject(objectFromDesc("torch"), float2(150, 380), objectContainer |> length))
-    for i in range(1, 10)
-        var x: float = 30f * float(i)
-        var y: float = 30f * float(i)
+    for i in range(1, 20)
+        var x: float = 25f * float(i) + 12f
+        var y: float = 512f
         CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
-    for i in range(1, 15)
-        var x: float = 10f * float(i)
-        var y: float = 30f * float(i)
+    for i in range(1, 20)
+        var x: float = 512f
+        var y: float = 25f * float(i) + 12f
         CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
-    for i in range(1, 15)
-        var x: float = 30f * float(i)
-        var y: float = 10f * float(i)
+    for i in range(1, 20)
+        var x: float = 20f
+        var y: float = 25f * float(i) + 12f
         CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
-
+    for i in range(1, 20)
+        var x: float = 25f * float(i) + 12f
+        var y: float = 20f 
+        CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
 
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
@@ -64,7 +68,12 @@ def UpdateObjects(dt: float)
                                 CheckAttack(obj, target)   
                             if obj.id != target.id && (obj.movable || target.movable)
                                 CheckCollision(obj, target)
+                    if obj.id != GetPlayer().id
+                        obj -> SpotPlayer(GetPlayer().pos, GetPlayer().colliderSize.x)
                     MapBoundaryCheck (obj)
+
+def GetPlayer: GameObject?
+    return objectContainer[0]
 
 def RemoveObjects
     var needToDelete: bool = false
@@ -84,6 +93,7 @@ def RemoveObjects
                 erase(objectContainer, n)
                 needToDelete = true
                 break
+
 /*
 def GetIndexById(i: int): int
     var index: int
@@ -94,6 +104,7 @@ def GetIndexById(i: int): int
                 break
     return index
 */
+
 def DrawObjects
     if objectContainer |> length > 0
         for obj in objectContainer

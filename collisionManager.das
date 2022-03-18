@@ -28,7 +28,6 @@ def MapBoundaryCheck (var obj: GameObject?)
             obj.pos.y = float(MAP_HEIGHT) * TILE_SIZE - obj.colliderSize.y / 2f
 
 def CheckAttack (var obj, target: GameObject?)
-    //if  target.pos.x > obj.pos.x * obj.direction.x && target.pos.y > obj.pos.y * obj.direction.y
     var dirVec: float2 = float2(obj.direction.x, obj.direction.y)
     if obj.direction.y != 0f
         dirVec.x = 0f
@@ -41,7 +40,7 @@ def CheckAttack (var obj, target: GameObject?)
         var rayToNearest :float2 
         var overlap: float
         if obj.colliderType == COLLIDER_CIRCLE
-            if CircRect(attackPos, obj.attackRadius, float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y), obj.direction, obj, rayToNearest, overlap)
+            if CircRect(attackPos, obj.attackRadius, float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y), obj.direction, rayToNearest, overlap)
                 target -> RecieveAttack(obj.id, obj -> GetDamage(), obj.objName)
             
 // Напоминалка: будем считаться что двигаться могут только круги
@@ -55,10 +54,10 @@ def CheckCollision (var obj, target: GameObject?)
         var rayToNearest :float2 
         var overlap: float
         if obj.colliderType == COLLIDER_CIRCLE
-            if CircRect(obj.pos, obj.colliderSize.x, float4(t.x - t.z / 2f, t.y - t.w / 2f, t.z, t.w), obj.vel, obj, rayToNearest, overlap)
+            if CircRect(obj.pos, obj.colliderSize.x, float4(t.x - t.z / 2f, t.y - t.w / 2f, t.z, t.w), obj.vel, rayToNearest, overlap)
                 ResolveCR(obj, rayToNearest, overlap)
         else
-            if CircRect(target.pos, target.colliderSize.x, float4(o.x - o.z / 2f, o.y - o.w / 2f, o.z, o.w), target.vel, target, rayToNearest, overlap)
+            if CircRect(target.pos, target.colliderSize.x, float4(o.x - o.z / 2f, o.y - o.w / 2f, o.z, o.w), target.vel, rayToNearest, overlap)
                 ResolveCR(target, rayToNearest, overlap)
                 
 def ResolveCC(var obj, target : GameObject?)
@@ -78,7 +77,7 @@ def ResolveCR(var obj: GameObject?; rayToNearest: float2&; overlap: float&)
     var vY = obj.pos.y + obj.vel.y * get_delta_time()
     obj.pos = float2(vX,vY) - normalize(rayToNearest) * overlap
 
-def CircRect(pos: float2&; radius: float&; rect: float4; v :float2&; var obj: GameObject?; var rayToNearest :float2&; var overlap: float&): bool
+def CircRect(pos: float2&; radius: float&; rect: float4; v :float2&; var rayToNearest :float2&; var overlap: float&): bool
     var nearestPoint: float2
     nearestPoint.x = max(rect.x, min(pos.x + v.x * get_delta_time(), rect.x + rect.z))
     nearestPoint.y = max(rect.y, min(pos.y + v.y * get_delta_time(), rect.y + rect.w))
