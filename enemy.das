@@ -55,7 +55,7 @@ class Enemy: GameObject
         minX = max(area.x - areaSize, 1f + colliderSize.x)
         minY = max(area.y - areaSize, 1f + colliderSize.x)
 
-        maxX = min(area.x + areaSize, float(MAP_WIDTH) * TILE_SIZE - colliderSize.x)
-        maxY = min(area.y + areaSize, float(MAP_HEIGHT) * TILE_SIZE - colliderSize.x)
+        maxX = min(area.x + areaSize, float(MAP_WIDTH) * TILE_SIZE - colliderSize.x - 1f)
+        maxY = min(area.y + areaSize, float(MAP_HEIGHT) * TILE_SIZE - colliderSize.x - 1f)
 
         return float2(random_float(minX, maxX), random_float(minY, maxY))
