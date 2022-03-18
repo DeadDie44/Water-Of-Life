@@ -62,11 +62,11 @@ class GameObject
         animator -> SetAnimationState(AnimState IDLE)
         print("\n{objName} id:{id} created")
 
-    def RecieveAttack(attackerId:int; attackerName: string)
+    def RecieveAttack(attackerId, damage: int; attackerName: string)
         print("\nI am {objName} id {id} took a hit from {attackerName} id {attackerId}!")
         if !killable || hitInvul < universalCD
             return
-        LoseHealth(10)
+        LoseHealth(damage)
 
     def LoseHealth(damage: int)
         healthPoints -= damage
@@ -81,6 +81,9 @@ class GameObject
 
     def GetHealthCap: int
         return healthCap
+
+    def GetDamage: int
+        return 10
 
     def UpdateObject(dt: float)
         if !isAlive
@@ -116,9 +119,6 @@ class GameObject
         return baseSpeed
 
     def DrawObject
-        //if spriteSheet == null
-            //return
-        animator -> Animate(direction)
         if direction.x > 0f && direction.x > direction.y
             draw_image_transformed(spriteSheet, pos.x + spriteSize.x / 2f, pos.y - spriteSize.y / 2f,
             getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
@@ -136,3 +136,5 @@ class GameObject
                 fill_circle(pos.x + dirVec.x * attackPos.x, pos.y + dirVec.y * attackPos.y, attackRadius, 0x44FF5555)
             if colliderType == COLLIDER_RECTANGLE
                 fill_rect(pos.x - colliderSize.x / 2f, pos.y - colliderSize.y / 2f, colliderSize.x, colliderSize.y, 0x44FFFFFF)
+
+        animator -> Animate(direction)

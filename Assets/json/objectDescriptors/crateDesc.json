@@ -14,5 +14,5 @@
 	"frameCount": [1],
 	"frames"    : [0],
 	
-	"deathAnimation": [12,7,8,16,24,32,40,48,56]
+	"deathAnimation": [12,8,16,24,32,40,48,56]
 }

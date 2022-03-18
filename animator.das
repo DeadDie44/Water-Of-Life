@@ -20,7 +20,7 @@ class Animator
     currentFrame  : int // Текущий кадр в рамках проигрываемой анимации    
     frameTime     : float // Сколько времени прошло со смены кадра
 
-    deathAnimation: array<int> // индекс 0 это фпс, индекс 1 это количество кадров. Анимация смерти одинаковая вне зависимости в какую сторону смотришь, так что проще её отдельно вынести, ну или мне просто лень
+    deathAnimation: array<int> // индекс 0 это фпс. Анимация смерти одинаковая вне зависимости в какую сторону смотришь, так что проще её отдельно вынести, ну или мне просто лень
     frames        : array<int> // Кадры ориентированных анимаций, в соотвествии с порядковым номером спрайта в нашем sprite sheet
     frameCount    : array<int> // Сколько кадров в анимациях для конкретного animationState (Для простоты считаем что все однотипные анимации длятся одинаковое количество кадров)
 
@@ -31,6 +31,7 @@ class Animator
 
     def init(framesArray, countArray, deathArray: array<int>; fpsArray: array<float>)
         currentFrame = 0
+        frameTime    = 0f
 
         deathAnimation := deathArray
         
@@ -40,6 +41,7 @@ class Animator
 
     def SetAnimationState(state: AnimState)
         if(animationState != state)
+            frameTime    = 0f
             currentFrame = 0
         animationState = state
 
@@ -82,11 +84,10 @@ class Animator
         frameTime += get_delta_time()
 
         if animationState == AnimState DEATH
-            if currentFrame < deathAnimation[1]
+            if currentFrame < deathAnimation |> length - 2
                 if frameTime >= 1f / float(deathAnimation[0])
                     currentFrame++
                     frameTime = 0f
-                    print("Death frame {currentFrame}")
             return
 
         if abs(directionVector.x) > abs(directionVector.y)
