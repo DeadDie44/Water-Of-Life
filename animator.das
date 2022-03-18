@@ -21,7 +21,7 @@ class Animator
     frameTime     : float // Сколько времени прошло со смены кадра
 
     deathAnimation: array<int> // индекс 0 это фпс. Анимация смерти одинаковая вне зависимости в какую сторону смотришь, так что проще её отдельно вынести, ну или мне просто лень
-    frames        : array<int> // Кадры ориентированных анимаций, в соотвествии с порядковым номером спрайта в нашем sprite sheet
+    frames        : array<int> // Кадры анимаций, в соотвествии с порядковым номером спрайта в нашем sprite sheet
     frameCount    : array<int> // Сколько кадров в анимациях для конкретного animationState (Для простоты считаем что все однотипные анимации длятся одинаковое количество кадров)
 
     fps           : array<float>// Скорость анимации конкретного animationState
@@ -34,6 +34,8 @@ class Animator
         frameTime    = 0f
 
         deathAnimation := deathArray
+        if deathAnimation |> length > 0
+            deathAnimation |> push(deathAnimation |> length - 1)
         
         frames     := framesArray
         frameCount := countArray
@@ -46,12 +48,12 @@ class Animator
         animationState = state
 
     def GetAnimationState(): int
-        if (int(animationState) > fps |> length)
+        if int(animationState) > fps |> length
             return fps |> length
         return int(animationState)
 
     def GetDirection(): int
-        if (int(direction) > fps |> length)
+        if int(direction) > fps |> length
             return fps |> length - 1
         return int(direction)
 

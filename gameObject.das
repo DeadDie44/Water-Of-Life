@@ -10,24 +10,25 @@ class GameObject
     //***
     showCollider : bool = false //  для тестов
     //***
-    isAlive     : bool
-    isAttacking : bool
-    movable     : bool
-    killable    : bool
-    colliderType: int
-    id          : int
-    attackRadius: float
-    baseSpeed   : float
-    cooldown    : float
-    hitInvul    : float
-    universalCD : float
-    attackPos   : float2
-    colliderSize: float2
-    direction   : float2
-    spriteSize  : float2
-    pos         : float2
-    vel         : float2
-    objName     : string
+    isAlive      : bool
+    isAttacking  : bool
+    canBeRemoved : bool
+    movable      : bool
+    killable     : bool
+    colliderType : int
+    id           : int
+    attackRadius : float
+    baseSpeed    : float
+    cooldown     : float
+    hitInvul     : float
+    universalCD  : float
+    attackPos    : float2
+    colliderSize : float2
+    direction    : float2
+    spriteSize   : float2
+    pos          : float2
+    vel          : float2
+    objName      : string
 
     spriteSheet : ImageHandle
 
@@ -38,12 +39,13 @@ class GameObject
         self -> init(desc, position)
 
     def init(desc: ObjectDescriptor; position: float2)
-        isAlive     = true
-        direction   = float2(0, 1)
-        pos         = position
-        universalCD = 0.5f
-        cooldown    = universalCD
-        hitInvul    = 0f
+        isAlive      = true
+        canBeRemoved = false
+        direction    = float2(0, 1)
+        pos          = position
+        universalCD  = 0.5f
+        cooldown     = universalCD
+        hitInvul     = 0f
 
         attackPos    = desc.attackPos
         attackRadius = desc.attackRadius
@@ -87,6 +89,8 @@ class GameObject
 
     def UpdateObject(dt: float)
         if !isAlive
+            if animator.currentFrame >= animator.deathAnimation |> length - 2
+                canBeRemoved = true
             return
         if isAttacking && animator.animationState == AnimState IDLE
             isAttacking = false

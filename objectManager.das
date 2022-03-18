@@ -44,22 +44,23 @@ def CreateObject(var obj: GameObject?)
 def UpdateObjects(dt: float)
     if objectContainer |> length > 0
         for obj in objectContainer
-            if obj != null && obj.isAlive
+            if obj != null
                 obj -> UpdateObject(dt)
-                for target in objectContainer
-                    if target != null && obj.id != target.id && target.isAlive
-                        if obj.isAttacking
-                            CheckAttack(obj, target)   
-                        if obj.id != target.id && (obj.movable || target.movable)
-                            CheckCollision(obj, target)
-                MapBoundaryCheck (obj)
+                if obj.isAlive
+                    for target in objectContainer
+                        if target != null && obj.id != target.id && target.isAlive
+                            if obj.isAttacking
+                                CheckAttack(obj, target)   
+                            if obj.id != target.id && (obj.movable || target.movable)
+                                CheckCollision(obj, target)
+                    MapBoundaryCheck (obj)
 
-def KillObjects
+def RemoveObjects
     var needToDelete: bool = false
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null
-                if !obj.isAlive
+                if obj.canBeRemoved
                     unsafe
                         obj.spriteSheet |> delete_managed_image()
                         delete(obj)
