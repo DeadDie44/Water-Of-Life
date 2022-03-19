@@ -3,12 +3,12 @@ require daslib/media
 require helpers/collisionHelper
 require animator
 require objectFactory
-require util
+require util/util  
 
 class GameObject
     private healthPoints, healthCap: int
     //***
-    showCollider : bool = true //  для тестов
+    showCollider : bool = false //  для тестов
     //***
     isAlive      : bool
     isAttacking  : bool
@@ -73,9 +73,9 @@ class GameObject
         print("\n{objName} id:{id} created")
 
     def RecieveAttack(attackerId, damage: int; attackerName: string)
-        print("\nI am {objName} id {id} took a hit from {attackerName} id {attackerId}!")
         if !killable || hitInvul < universalCD
             return
+        print("\nI am {objName} id {id} took a hit from {attackerName} id {attackerId}!")
         LoseHealth(damage)
 
     def LoseHealth(damage: int)
@@ -95,12 +95,12 @@ class GameObject
     def GetDamage: int
         return 10
 
-    def UpdateObject(dt: float)
+    def UpdateObject(dt: float): bool
         if !isAlive
             isAttacking = false
-            if animator.currentFrame >= animator.deathAnimation |> length - 2
+            if id != 0 && animator.currentFrame >= animator.deathAnimation |> length - 2
                 canBeRemoved = true
-            return
+            return false
         if isAttacking && animator.animationState == AnimState IDLE
             isAttacking = false
             cooldown = 0f
@@ -114,6 +114,8 @@ class GameObject
             hitInvul += dt
         else
             drawable = true
+
+        return true
 
     def Move(move: float2)
         if !isAlive || !movable || isAttacking   
