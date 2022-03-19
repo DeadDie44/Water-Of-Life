@@ -33,10 +33,8 @@ class Player: GameObject
 
             if get_key(VK_SPACE) || get_key(VK_SPACE) || get_key(GP_A)
                 Attack()
-                print("\nPLayer pos: {pos}")
 
             Move(move)
-            setup_2d_camera(pos, float(get_screen_width()/270))
         return true
 
     def override Move(move:float2)
