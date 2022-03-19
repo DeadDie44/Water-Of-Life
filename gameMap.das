@@ -4,15 +4,36 @@ require util/util
 require util/mapProcessor
 
 let
-//Размер тайла
     TILE_SIZE      : float = 32f
     TILE_SET_WIDTH : int   = 8
     TILE_SET_HEIGHT: int   = 8
+/*
+0xff000000; // пустота
+0xff00ff00; // трава
+0xff0000ff; // вода
+0xffff0000; // стена леса
+0xff808000; // стена пещеры
+0xff800080; // 
+0xff008080; 
+0xff545454; // пол пещеры
+0xffffffff;
+0xff9900ff; 
+0xfffffe33  // песок
+*/
 
-//Индексы тайлов
-    TILE_EMPTY: int = 0
-//Трава
-    TILE_GRASS: int = 1
+
+enum Tiles
+    TILE_EMPTY
+    TILE_GRASS
+    TILE_WATER
+    TILE_WOODS
+    TILE_CAVE_WALL
+    TILE_5
+    TILE_6
+    TILE_CAVE_FLOOR
+    TILE_8
+    TILE_9
+    TILE_SAND
 
 var
     mapWidth: int
@@ -20,7 +41,7 @@ var
     mapContainer: array<int>
 
 def Walkable(index: int): bool
-    if mapContainer[index] != TILE_EMPTY
+    if mapContainer[index] != int(Tiles TILE_EMPTY) && mapContainer[index] != int(Tiles TILE_WATER) && mapContainer[index] != int(Tiles TILE_WOODS) && mapContainer[index] != int(Tiles TILE_CAVE_WALL)
         return true
     return false
 

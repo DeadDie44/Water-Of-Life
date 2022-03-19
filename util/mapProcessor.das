@@ -2,8 +2,9 @@ require daslib/media
 
 let
     mapFile = "assets/mapLayout.png"
-    colorList = [[uint[9] 0xff000000; 0xff00ff00; 0xff0000ff; 0xffff0000;
-                0xff808000; 0xff800080; 0xff008080; 0xff545454; 0xffffffff]]
+    colorList = [[uint[11] 0xff000000; 0xff00ff00; 0xff0000ff; 0xffff0000;
+                0xff808000; 0xff800080; 0xff008080; 0xff545454; 0xffffffff;
+                0xff9900ff; 0xfffffe33]]
 var
     mapSize: int2
 

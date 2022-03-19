@@ -6,54 +6,44 @@ require player
 require objectFactory
 require collisionManager
 
+/*
+0xff000000; 
+0xff00ff00; 
+0xff0000ff; 
+0xffff0000;
+0xff808000; 
+0xff800080; 
+0xff008080; 
+0xff545454; 
+0xffffffff;
+0xFF9900ff
+
+let
+    objectNames = [[string[10] "NA"; "barrel"; "crate"; "bandit"; "bandit_ranger";
+                    "verlioka_first"; "verlioka_true"; "respawn"; "player";
+                    "kolovershi"; "baba_yaga"; "leshyi"; "" ]]
+
+let
+    NO_OBJECT    : string = "NA"
+    BARREL       : string = "NA"
+    CRATE        : string = "NA"
+    ENEMY_1      : string = "NA"
+    ENEMY_2      : string = "NA"
+    BOSS_1       : string = "NA"
+    BOSS_2       : string = "NA"
+    RESPAWN_POINT: string = "NA"
+    PLAYER_START : string = "NA"
+    KOLOVERSHI   : string = "NA"
+    
+*/
+
+
 var
     objectContainer: array<GameObject?>
 
 def InitObjectContainer
     clear (objectContainer)
-    
     CreateObject(new Player(objectFromDesc("player"), float2(108, 96), objectContainer |> length))
-    // TESTING
-    /*
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(400, 400), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(340, 430), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(410, 370), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(323, 354), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(346, 430), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(310, 270), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(150, 400), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(440, 130), objectContainer |> length))
-    CreateObject(new Enemy(objectFromDesc("bandit"), float2(210, 270), objectContainer |> length))
-
-    CreateObject(new GameObject(objectFromDesc("father"), float2(80, 100), objectContainer |> length))
-    for i in range(1, 10)
-        CreateObject(new GameObject(objectFromDesc("barrel"), float2(i * 20, i * 35), objectContainer |> length))    
-    for i in range(1, 10)
-        CreateObject(new GameObject(objectFromDesc("emptyBarrel"), float2(i * 30, i * 15), objectContainer |> length))    
-    CreateObject(new GameObject(objectFromDesc("crate"), float2(250, 110), objectContainer |> length))
-    CreateObject(new GameObject(objectFromDesc("crate"), float2(240, 130), objectContainer |> length))
-    CreateObject(new GameObject(objectFromDesc("crate"), float2(50, 250), objectContainer |> length))
-    CreateObject(new GameObject(objectFromDesc("crate"), float2(150, 410), objectContainer |> length))
-    CreateObject(new GameObject(objectFromDesc("crate"), float2(270, 210), objectContainer |> length))
-    CreateObject(new GameObject(objectFromDesc("crate"), float2(350, 110), objectContainer |> length))
-    CreateObject(new GameObject(objectFromDesc("torch"), float2(150, 380), objectContainer |> length))
-    for i in range(1, 20)
-        var x: float = 25f * float(i) + 12f
-        var y: float = 512f
-        CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
-    for i in range(1, 20)
-        var x: float = 512f
-        var y: float = 25f * float(i) + 12f
-        CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
-    for i in range(1, 20)
-        var x: float = 20f
-        var y: float = 25f * float(i) + 12f
-        CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
-    for i in range(1, 20)
-        var x: float = 25f * float(i) + 12f
-        var y: float = 20f 
-        CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
-    */
 
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
