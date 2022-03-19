@@ -51,14 +51,6 @@ def act(dt: float)
         UpdateObjects(dt)
         RemoveObjects()
     else
-        if get_key(VK_W) || get_key(VK_UP) || get_axis(AXIS_PRIMARY_Y) < 0f
-            print("\nUP")
-        if get_key(VK_S) || get_key(VK_DOWN) || get_axis(AXIS_PRIMARY_Y) > 0f
-            print("\nDOWN")
-        if get_key(VK_A) || get_key(VK_LEFT) || get_axis(AXIS_PRIMARY_X) < 0f
-            print("\nLEFT")
-        if get_key(VK_D) || get_key(VK_RIGHT) || get_axis(AXIS_PRIMARY_X) > 0f
-            print("\nRIGHT")
         HandleTitleMenu()
     return
 
@@ -87,9 +79,9 @@ def DrawTitleScreen
     draw_image(titleScreen, 0f,0f)
 
 def HandleTitleMenu
-    if get_key(VK_S)
+    if get_key(VK_S) || get_key(VK_RETURN)
         Start()
-    if get_key(VK_E)
+    if get_key(VK_E) || get_key(VK_ESCAPE) 
         Exit()
     if get_mouse_button_down(MB_LEFT)
         print("\nClick! {screen_to_world(get_mouse_position())}")

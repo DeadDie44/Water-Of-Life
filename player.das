@@ -3,6 +3,7 @@ require daslib/media
 require gameObject
 require animator
 require objectFactory
+require helpers/objectHelper
 
 
 class Player: GameObject
@@ -12,6 +13,7 @@ class Player: GameObject
 
     def override init (desc: ObjectDescriptor; position: float2)
         GameObject`init(self, desc, position)
+        faction = int(Faction PLAYER)
     
     def override UpdateObject(dt: float): void
         GameObject`UpdateObject(self, dt)

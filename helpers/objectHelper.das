@@ -1,3 +1,7 @@
+enum Faction
+    NETRUAL
+    ENEMY
+    PLAYER
 let
 //Виды колайдеров
     CIRC_COLLIDER: int = 0

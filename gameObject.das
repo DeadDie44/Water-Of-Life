@@ -8,7 +8,7 @@ require util
 class GameObject
     private healthPoints, healthCap: int
     //***
-    showCollider : bool = false //  для тестов
+    showCollider : bool = true //  для тестов
     //***
     isAlive      : bool
     isAttacking  : bool
@@ -19,6 +19,7 @@ class GameObject
 
     colliderType : int
     id           : int
+    faction      : int
 
     attackRadius : float
     baseSpeed    : float

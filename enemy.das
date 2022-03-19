@@ -5,12 +5,13 @@ require animator
 require objectFactory
 require util
 require helpers/mapHelper
+require helpers/objectHelper
 require collisionManager
 
 class Enemy: GameObject
     agro       : bool
     targetPos  : float2
-    area       : float3
+    area       : float2
     areaSize   : float = 145f
     destination: float2
     timer      : float
@@ -21,9 +22,10 @@ class Enemy: GameObject
 
     def override init (desc: ObjectDescriptor; position: float2)
         GameObject`init(self, desc, position)
-        SetRoamArea(float3(pos.x, pos.y, areaSize))
+        SetRoamArea(pos)
         destination = pos
         previousPos = pos
+        faction = int(Faction ENEMY)
     
     def override UpdateObject(dt: float): void
         GameObject`UpdateObject(self, dt)
@@ -31,8 +33,7 @@ class Enemy: GameObject
             destination = targetPos
             if Distance(pos, targetPos) < colliderSize.x + attackRadius
                 Attack()
-                return
-        if pos == destination    
+        if pos == destination   
             if timer < universalCD * 2f
                 timer += get_delta_time()
                 return
@@ -53,12 +54,14 @@ class Enemy: GameObject
     def override SpotPlayer(playerPos: float2; radius: float)
         if attackRadius > 0f
             targetPos = playerPos
-            if Distance(pos, playerPos) < areaSize
+            if Distance(pos, playerPos) < areaSize / 2f
+                if !agro
+                    destination = pos
                 agro = true
-            elif Distance(pos, playerPos) > areaSize * 2f
+            elif Distance(area, playerPos) > areaSize * 1.5f
                 agro = false
 
-    def SetRoamArea(a: float3) 
+    def SetRoamArea(a: float2) 
         area = a
 
     def NewDestination : float2  

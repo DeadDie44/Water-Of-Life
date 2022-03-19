@@ -64,7 +64,7 @@ def UpdateObjects(dt: float)
                 if obj.isAlive
                     for target in objectContainer
                         if target != null && obj.id != target.id && target.isAlive
-                            if obj.isAttacking
+                            if obj.isAttacking && target.killable
                                 CheckAttack(obj, target)   
                             if obj.id != target.id && (obj.movable || target.movable)
                                 CheckCollision(obj, target)
