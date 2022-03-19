@@ -1,9 +1,10 @@
 require daslib/media
+require daslib/math
 
-require math
 require gameObject
 require helpers/collisionHelper
-require helpers/mapHelper
+require gameMap
+require util/util
 
 def MapBoundaryCheck (var obj: GameObject?)
     if obj.colliderType == COLLIDER_CIRCLE
@@ -12,24 +13,24 @@ def MapBoundaryCheck (var obj: GameObject?)
         if obj.pos.y - obj.colliderSize.x < 0f
             obj.pos.y = obj.colliderSize.x
 
-        if obj.pos.x + obj.colliderSize.x > float(MAP_WIDTH) * TILE_SIZE
-            obj.pos.x = float(MAP_WIDTH) * TILE_SIZE - obj.colliderSize.x
-        if obj.pos.y + obj.colliderSize.x > float(MAP_HEIGHT) * TILE_SIZE
-            obj.pos.y = float(MAP_HEIGHT) * TILE_SIZE - obj.colliderSize.x
+        if obj.pos.x + obj.colliderSize.x > float(mapWidth) * TILE_SIZE
+            obj.pos.x = float(mapWidth) * TILE_SIZE - obj.colliderSize.x
+        if obj.pos.y + obj.colliderSize.x > float(mapHeight) * TILE_SIZE
+            obj.pos.y = float(mapHeight) * TILE_SIZE - obj.colliderSize.x
     else
         if obj.pos.x - obj.colliderSize.x / 2f < 0f
             obj.pos.x = obj.colliderSize.x / 2f
         if obj.pos.y - obj.colliderSize.y / 2f < 0f
             obj.pos.y = obj.colliderSize.y / 2f
 
-        if obj.pos.x + obj.colliderSize.x / 2f > float(MAP_WIDTH) * TILE_SIZE
-            obj.pos.x = float(MAP_WIDTH) * TILE_SIZE - obj.colliderSize.x / 2f
-        if obj.pos.y + obj.colliderSize.y / 2f > float(MAP_HEIGHT) * TILE_SIZE
-            obj.pos.y = float(MAP_HEIGHT) * TILE_SIZE - obj.colliderSize.y / 2f
+        if obj.pos.x + obj.colliderSize.x / 2f > float(mapWidth) * TILE_SIZE
+            obj.pos.x = float(mapWidth) * TILE_SIZE - obj.colliderSize.x / 2f
+        if obj.pos.y + obj.colliderSize.y / 2f > float(mapHeight) * TILE_SIZE
+            obj.pos.y = float(mapHeight) * TILE_SIZE - obj.colliderSize.y / 2f
 
 def CheckAttack (var obj, target: GameObject?)
-    if obj.faction == target.faction
-        return
+    //if obj.faction == target.faction
+        //return
 
     var dirVec: float2 = float2(obj.direction.x, obj.direction.y)
     if obj.direction.y != 0f
@@ -46,7 +47,18 @@ def CheckAttack (var obj, target: GameObject?)
         var overlap: float
         if CircRect(attackPos, obj.attackRadius, float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y), obj.direction, rayToNearest, overlap)
             target -> RecieveAttack(obj.id, obj -> GetDamage(), obj.objName)
-            
+
+def TileCollision (var obj: GameObject?)
+    for index in range (0, mapContainer |> length)
+        if !Walkable(index)
+            var rayToNearest :float2 
+            var overlap: float
+            //var tile: float4 = getSpriteRect(index, mapWidth, mapHeight, TILE_SIZE, TILE_SIZE)
+            var tile: float4 = getSpriteRect(index, mapWidth, mapHeight, TILE_SIZE, TILE_SIZE)
+            if CircRect(obj.pos, obj.colliderSize.x, tile, obj.vel, rayToNearest, overlap)
+                print("\nTile: {tile.x}, {tile.y}, {tile.x + tile.z} , {tile.y + tile.w}")
+                ResolveCR(obj, rayToNearest, overlap)
+
 // Напоминалка: будем считаться что двигаться могут только круги
 def CheckCollision (var obj, target: GameObject?)
     if obj.colliderType == COLLIDER_CIRCLE && target.colliderType == COLLIDER_CIRCLE
@@ -83,6 +95,7 @@ def ResolveCR(var obj: GameObject?; rayToNearest: float2&; overlap: float&)
 
 def CircRect(pos: float2&; radius: float&; rect: float4; v :float2&; var rayToNearest :float2&; var overlap: float&): bool
     var nearestPoint: float2
+    
     nearestPoint.x = max(rect.x, min(pos.x + v.x * get_delta_time(), rect.x + rect.z))
     nearestPoint.y = max(rect.y, min(pos.y + v.y * get_delta_time(), rect.y + rect.w))
     
@@ -91,6 +104,7 @@ def CircRect(pos: float2&; radius: float&; rect: float4; v :float2&; var rayToNe
 
     overlap = radius - length(rayToNearest)
     if overlap > 0f
+        print("\nTile: {rect.x}, {rect.y}, {rect.x + rect.z} , {rect.y + rect.w}")
         return true
     return false
 

@@ -12,8 +12,9 @@ var
 def InitObjectContainer
     clear (objectContainer)
     
-    CreateObject(new Player(objectFromDesc("player"), float2(40, 40), objectContainer |> length))
+    CreateObject(new Player(objectFromDesc("player"), float2(108, 96), objectContainer |> length))
     // TESTING
+    /*
     CreateObject(new Enemy(objectFromDesc("bandit"), float2(400, 400), objectContainer |> length))
     CreateObject(new Enemy(objectFromDesc("bandit"), float2(340, 430), objectContainer |> length))
     CreateObject(new Enemy(objectFromDesc("bandit"), float2(410, 370), objectContainer |> length))
@@ -52,6 +53,7 @@ def InitObjectContainer
         var x: float = 25f * float(i) + 12f
         var y: float = 20f 
         CreateObject(new Enemy(objectFromDesc("kolovershi"), float2(x, y), objectContainer |> length))
+    */
 
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
@@ -70,6 +72,7 @@ def UpdateObjects(dt: float)
                                 CheckCollision(obj, target)
                     if obj.id != GetPlayer().id
                         obj -> SpotPlayer(GetPlayer().pos, GetPlayer().colliderSize.x)
+                    TileCollision (obj)
                     MapBoundaryCheck (obj)
 
 def GetPlayer: GameObject?

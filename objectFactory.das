@@ -1,6 +1,6 @@
 //options persistent_heap = true
 
-require fio
+require daslib/fio
 require daslib/json_boost
 
 def GetJson (fileName:string): JsonValue?
