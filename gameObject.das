@@ -97,6 +97,7 @@ class GameObject
 
     def UpdateObject(dt: float)
         if !isAlive
+            isAttacking = false
             if animator.currentFrame >= animator.deathAnimation |> length - 2
                 canBeRemoved = true
             return
@@ -120,11 +121,21 @@ class GameObject
         if move == float2(0f, 0f)
             animator -> SetAnimationState(AnimState IDLE)
         else
-            normalize(move)
-            animator -> SetAnimationState(AnimState RUNNING)
+            if move.x > 0f && abs(move.x) > abs(move.y)
+                direction.x = 1f
+                direction.y = 0f
+            elif move.x < 0f && abs(move.x) > abs(move.y)
+                direction.x = -1f
+                direction.y = 0f
+            if move.y > 0f && abs(move.x) < abs(move.y)
+                direction.x = 0f
+                direction.y = 1f
+            elif move.y < 0f && abs(move.x) < abs(move.y)
+                direction.x = 0f
+                direction.y = -1f            
             vel = move * Speed() * get_delta_time()
-            direction = move
-
+            animator -> SetAnimationState(AnimState RUNNING)
+            
     def SpotPlayer(pos: float2; radius: float)
         return
 

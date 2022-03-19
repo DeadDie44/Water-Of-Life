@@ -34,6 +34,7 @@ def CheckAttack (var obj, target: GameObject?)
     var dirVec: float2 = float2(obj.direction.x, obj.direction.y)
     if obj.direction.y != 0f
         dirVec.x = 0f
+        
     var attackPos: float2 = float2(obj.pos.x + dirVec.x * obj.attackPos.x, obj.pos.y + dirVec.y * obj.attackPos.y)
     if target.colliderType == COLLIDER_CIRCLE
         if CircleCircle(attackPos, target.pos, obj.attackRadius, target.colliderSize.x)

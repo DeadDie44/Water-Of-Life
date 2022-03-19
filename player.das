@@ -21,14 +21,16 @@ class Player: GameObject
 
         if get_key(VK_W) || get_key(VK_UP) || get_axis(AXIS_PRIMARY_Y) < 0f
             move.y = -1f
+            //direction.y = -1f
         if get_key(VK_S) || get_key(VK_DOWN) || get_axis(AXIS_PRIMARY_Y) > 0f
             move.y = 1f
+            //direction.y = 1f
         if get_key(VK_A) || get_key(VK_LEFT) || get_axis(AXIS_PRIMARY_X) < 0f
             move.x = -1f
+            //direction.x = -1f
         if get_key(VK_D) || get_key(VK_RIGHT) || get_axis(AXIS_PRIMARY_X) > 0f
             move.x = 1f
-
-        //move = normalize(move)
+            //direction.x = 1f
 
         if get_key(VK_SPACE) || get_key(VK_SPACE) || get_key(GP_A)
             print("\nPLAYER POS: {pos}")
@@ -36,3 +38,14 @@ class Player: GameObject
         
         Move(move)
         setup_2d_camera(pos, float(get_screen_width()/270))
+
+    def override Move(move:float2)
+        if !isAlive || !movable || isAttacking   
+            return
+        var m = normalize(move)
+        if m == float2(0f, 0f)
+            animator -> SetAnimationState(AnimState IDLE)
+        else
+            vel = m * Speed() * get_delta_time()
+            animator -> SetAnimationState(AnimState RUNNING)
+            direction = move
