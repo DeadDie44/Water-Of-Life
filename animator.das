@@ -35,7 +35,7 @@ class Animator
 
         deathAnimation := deathArray
         if deathAnimation |> length > 0
-            deathAnimation |> push(deathAnimation |> length - 1)
+            deathAnimation |> push(deathAnimation[deathAnimation |> length - 1])
         
         frames     := framesArray
         frameCount := countArray
