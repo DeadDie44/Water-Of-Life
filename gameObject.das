@@ -8,7 +8,7 @@ require util/util
 class GameObject
     private healthPoints, healthCap: int
     //***
-    showCollider : bool = false //  для тестов
+    showCollider : bool = true //  для тестов
     //***
     isAlive      : bool
     isAttacking  : bool
@@ -70,12 +70,10 @@ class GameObject
 
         animator = new Animator(desc.frames, desc.frameCount, desc.deathAnimation, desc.fps)
         animator -> SetAnimationState(AnimState IDLE)
-        print("\n{objName} id:{id} created")
 
     def RecieveAttack(attackerId, damage: int; attackerName: string)
         if !killable || hitInvul < universalCD
             return
-        print("\nI am {objName} id {id} took a hit from {attackerName} id {attackerId}!")
         LoseHealth(damage)
 
     def LoseHealth(damage: int)

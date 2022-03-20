@@ -1,0 +1,21 @@
+{
+	"name"   : "Verlioka",
+	"movable": true,
+	"killable": true,
+	"sprite" : "characters/verlioka.png",
+	
+	"attackPos"    : [32,32],
+	"attackRadius" : 32, 
+	"baseSpeed"    : 65,
+	"size"         : [96,96],
+	"colliderSize" : [32,22],
+	"colliderType" : 0,
+
+	"health" : 5550,
+	
+	"fps"       : [12,12,12],
+	"frameCount": [1,1,1],
+	"frames"    : [0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2],
+	
+	"deathAnimation": [1,0,0,0]
+}

@@ -1,0 +1,18 @@
+{
+	"name"   : "Blockage2",
+	"movable": false,
+	"killable": false,
+	"sprite" : "objects/static_objects.png",
+	
+	"size"         : [32,32],
+	"colliderSize" : [32,32],
+	"colliderType" : 1,
+
+	"health" : 1,
+	
+	"fps"       : [1],
+	"frameCount": [1],
+	"frames"    : [0],
+	
+	"deathAnimation": [12,8,16,24,32,40,48,56]
+}

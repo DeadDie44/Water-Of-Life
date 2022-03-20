@@ -33,7 +33,7 @@ class Player: GameObject
 
             if get_key(VK_SPACE) || get_key(VK_SPACE) || get_key(GP_A)
                 Attack()
-
+                print("\n Player pos {pos}")
             Move(move)
         return true
 

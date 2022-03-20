@@ -13,9 +13,9 @@ var
     GameOn      : bool = false
     cameraCenter: float2
 
-    buttonExit : ImageHandle
-    buttonStart: ImageHandle
-    titleScreen: ImageHandle
+    buttonExit : Image
+    buttonStart: Image
+    titleScreen: Image
 
     music : PcmSound
 
@@ -25,16 +25,17 @@ def initialize
     set_window_title("Water of Life")
     //set_resolution(get_desktop_width(), get_desktop_height())
 
-    titleScreen <- create_managed_image(TITLE_SCREEN)
-    buttonStart <- create_managed_image(BUTTON_START)
-    buttonExit  <- create_managed_image(BUTTON_EXIT)
+    titleScreen <- create_image(TITLE_SCREEN)
+    buttonStart <- create_image(BUTTON_START)
+    buttonExit  <- create_image(BUTTON_EXIT)
 
     music <- create_sound(TITLE_THEME)
 
     cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
-    setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
+    setup_2d_camera(cameraCenter, float(get_screen_height() / 270))
     InitMap()
     InitObjectContainer()
+    InitDecorations()
     music |> play_sound_loop()
     return
 
@@ -60,6 +61,7 @@ def draw
         enable_alpha_blend()
         DrawGameMap()
         DrawObjects()
+        DrawDecorations()
         disable_alpha_blend()
     else
         enable_alpha_blend()

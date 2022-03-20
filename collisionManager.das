@@ -48,15 +48,18 @@ def CheckAttack (var obj, target: GameObject?)
         if CircRect(attackPos, obj.attackRadius, float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y), obj.direction, rayToNearest, overlap)
             target -> RecieveAttack(obj.id, obj -> GetDamage(), obj.objName)
 
-def TileCollision (var obj: GameObject?)
+def TileCollision (var obj: GameObject?; activeArea: float4)
+    if obj.colliderType != COLLIDER_CIRCLE
+        return
     for index in range (0, mapContainer |> length)
-        if !Walkable(index)
-            var rayToNearest :float2 
-            var overlap: float
-            //var tile: float4 = getSpriteRect(index, mapWidth, mapHeight, TILE_SIZE, TILE_SIZE)
-            var tile: float4 = getSpriteRect(index, mapWidth, mapHeight, TILE_SIZE, TILE_SIZE)
-            if CircRect(obj.pos, obj.colliderSize.x, tile, obj.vel, rayToNearest, overlap)
-                ResolveCR(obj, rayToNearest, overlap)
+        var tile: float4 = getSpriteRect(index, mapWidth, mapHeight, TILE_SIZE, TILE_SIZE)
+        var tilePos: float2 = float2(tile.x, tile.y)
+        if PointRect(tilePos, activeArea) 
+            if !Walkable(index)
+                var rayToNearest :float2 
+                var overlap: float
+                if CircRect(obj.pos, obj.colliderSize.x, tile, obj.vel, rayToNearest, overlap)
+                    ResolveCR(obj, rayToNearest, overlap)
 
 // Напоминалка: будем считаться что двигаться могут только круги
 def CheckCollision (var obj, target: GameObject?)
@@ -77,6 +80,8 @@ def CheckCollision (var obj, target: GameObject?)
                 
 def ResolveCC(var obj, target : GameObject?)
     var distance: float = Distance(obj.pos, target.pos)
+    if distance == 0f
+        distance = 0.01f
     var overlap : float = 0.5f * (distance - obj.colliderSize.x - target.colliderSize.x)
     var x : float = overlap * (obj.pos.x - target.pos.x) / distance
     var y : float = overlap * (obj.pos.y - target.pos.y) / distance
@@ -109,11 +114,14 @@ def CircRect(pos: float2&; radius: float&; rect: float4; v :float2&; var rayToNe
 def CircleCircle(pos1, pos2: float2&; r1, r2: float&): bool
     return (DistanceSquared(pos1, pos2) < (r1 + r2) * (r1 + r2))
 
+def PointRect(point: float2&; rect: float4): bool
+    return (point.x > rect.x) && (point.x < rect.x + rect.z) && (point.y > rect.y) && (point.y < rect.y + rect.w)
+
 def RectRect(r1, r2: float4): bool
     return (r1.x < r2.x + r2.z) && (r1.x + r1.z > r2.x) && (r1.y < r2.y + r2.w) && (r1.y + r1.w > r2.y)
 
 def Distance(p1, p2: float2&): float
-    return sqrt(DistanceSquared(p1, p2))
+    return sqrt(DistanceSquared(p1, p2))    
 
 def DistanceSquared(p1, p2: float2&): float
     return (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)
