@@ -51,10 +51,8 @@ var
 def InitDecorations()
     clear(decorationContainer)
     var decorationArray: array<objectMarker> <- ReadDecoraions()
-    print("\n Into deco array")
     for deco in decorationArray
         if deco.nameIndex > 0
-            print("\n We got {decorationNames[deco.nameIndex]}")
             if decorationNames[deco.nameIndex] != "NA"
                 var dec: Decoration? = new Decoration
                 dec.pos = deco.pos
@@ -65,22 +63,17 @@ def InitDecorations()
 
 def InitObjectContainer
     clear(objectContainer)
-    //CreateObject(new Player(objectFromDesc("player"), float2(108, 96), objectContainer |> length))
     var objectArray: array<objectMarker> <- ReadObjects()
-    print("\nArray size {objectArray |> length}")
 
     for obj in objectArray
         if obj.nameIndex > 0
             if objectNames[obj.nameIndex] == "player"
                 CreateObject(new Player(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+            elif objectNames[obj.nameIndex] == "bandit" || objectNames[obj.nameIndex] == "banditRanger" || objectNames[obj.nameIndex] == "verliokaFirst" || objectNames[obj.nameIndex] == "verliokaTrue" || objectNames[obj.nameIndex] == "kolovershi"
+                CreateObject(new Enemy(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
             else
                 CreateObject(new GameObject(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
-    //var objectsLayout: array<int> <- ReadMap(MAP_OBJECTS_LAYOUT)
-    //for objName in objectsLayout
-        //CreateObject(new GameObject(objectFromDesc(objectNames[objName]), float2(108, 96), objectContainer |> length))
-    //CreateObject(new Player(objectFromDesc("player"), float2(108, 96), objectContainer |> length))
-    //CreateObject(new Enemy(objectFromDesc("verliokaFirst"), float2(540, 960), objectContainer |> length))
 
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
@@ -93,11 +86,12 @@ def UpdateObjects(dt: float)
                     obj -> UpdateObject(dt)
                     if obj.isAlive
                         for target in objectContainer
-                            if target != null && obj.id != target.id && target.isAlive
-                                if obj.isAttacking && target.killable
-                                    CheckAttack(obj, target)   
-                                if obj.id != target.id && (obj.movable || target.movable)
-                                    CheckCollision(obj, target)
+                            if PointRect(target.pos, GetActiveArea())
+                                if target != null && obj.id != target.id && target.isAlive
+                                    if obj.isAttacking && target.killable
+                                        CheckAttack(obj, target)   
+                                    if obj.id != target.id && (obj.movable || target.movable)
+                                        CheckCollision(obj, target)
                         if obj.id != GetPlayer().id
                             obj -> SpotPlayer(GetPlayer().pos, GetPlayer().colliderSize.x)
                         TileCollision (obj, GetActiveArea())
@@ -108,8 +102,8 @@ def GetPlayer: GameObject?
 
 def GetActiveArea: float4
     var area: float4
-    var areaWidth: float = 500f
-    var areaHeight: float = 450f
+    var areaWidth: float = 400f
+    var areaHeight: float = 350f
     area.x = GetPlayer().pos.x - areaWidth / 2f
     area.y = GetPlayer().pos.y - areaHeight / 2f
     area.z = areaWidth
@@ -150,13 +144,10 @@ def DrawObjects
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null
-                if PointRect(obj.pos, GetActiveArea())
-                    obj -> DrawObject()
+                obj -> DrawObject()
 
 def DrawDecorations
     if decorationContainer |> length > 0
         for deco in decorationContainer
-            if PointRect(deco.pos, GetActiveArea())
-                var dRect: float4 = float4(deco.pos.x, deco.pos.y, float(deco.img.width), float(deco.img.height))
-                //draw_image_transformed(deco.img, deco.pos.x + float(deco.img.width / 2), deco.pos.y + float(deco.img.height / 2), dRect, 0xffffffff, float2(deco.img.width, deco.img.height), 0f, 0f, 0f)
-                draw_image(deco.img, deco.pos.x - float(deco.img.width) / 2f, deco.pos.y - float(deco.img.height) / 2f -  float(deco.img.height) / 3f)
+            var dRect: float4 = float4(deco.pos.x, deco.pos.y, float(deco.img.width), float(deco.img.height))
+            draw_image(deco.img, deco.pos.x - float(deco.img.width) / 2f, deco.pos.y - float(deco.img.height) / 2f -  float(deco.img.height) / 3f)

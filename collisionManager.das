@@ -51,15 +51,19 @@ def CheckAttack (var obj, target: GameObject?)
 def TileCollision (var obj: GameObject?; activeArea: float4)
     if obj.colliderType != COLLIDER_CIRCLE
         return
-    for index in range (0, mapContainer |> length)
-        var tile: float4 = getSpriteRect(index, mapWidth, mapHeight, TILE_SIZE, TILE_SIZE)
-        var tilePos: float2 = float2(tile.x, tile.y)
-        if PointRect(tilePos, activeArea) 
-            if !Walkable(index)
-                var rayToNearest :float2 
-                var overlap: float
-                if CircRect(obj.pos, obj.colliderSize.x, tile, obj.vel, rayToNearest, overlap)
-                    ResolveCR(obj, rayToNearest, overlap)
+
+    for y in range(int(activeArea.y) / 32, int(activeArea.y) / 32 + int(activeArea.w) / 32)
+        for x in range(int(activeArea.x) / 32, int(activeArea.x) / 32 + int(activeArea.z) / 32)
+            var index = y * mapWidth + x
+            if x > 0 && y > 0 && x < mapWidth && y < mapHeight
+                var tile: float4 = getSpriteRect(index, mapWidth, mapHeight, TILE_SIZE, TILE_SIZE)
+                var tilePos: float2 = float2(tile.x, tile.y)
+                if HasWalkableNeighbour(index)
+                    if !Walkable(index)
+                        var rayToNearest :float2 
+                        var overlap: float
+                        if CircRect(obj.pos, obj.colliderSize.x, tile, obj.vel, rayToNearest, overlap)
+                            ResolveCR(obj, rayToNearest, overlap)
 
 // Напоминалка: будем считаться что двигаться могут только круги
 def CheckCollision (var obj, target: GameObject?)

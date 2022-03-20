@@ -28,7 +28,10 @@ def ReadMap(): array<int>
 
     for y in range(0, img.width)
         for x in range(0, img.height)
-            map |> push(GetColorIndex(img |> get_pixel(x, y)) + 8 * random_int(8))
+            var index = GetColorIndex(img |> get_pixel(x, y))
+            if img |> get_pixel(x, y) != 0xff000000
+                index += 8 * random_int(8)
+            map |> push(index)
     delete img
 
     return <- map

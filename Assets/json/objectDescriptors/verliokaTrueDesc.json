@@ -7,11 +7,11 @@
 	"attackPos"    : [32,32],
 	"attackRadius" : 32, 
 	"baseSpeed"    : 65,
-	"size"         : [64,64],
+	"size"         : [96,96],
 	"colliderSize" : [32,22],
 	"colliderType" : 0,
 
-	"health" : 5550,
+	"health" : 550,
 	
 	"fps"       : [1],
 	"frameCount": [1],

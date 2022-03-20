@@ -35,30 +35,22 @@ var
     mapWidth    : int
     mapHeight   : int
     mapContainer: array<int>
-    //tileAtlas : array<ImageHandle>
     tiles       : ImageHandle
 
 def Walkable(index: int): bool
+    if index < 0 || index >= mapContainer |> length
+        return false
     if mapContainer[index] % TILE_SET_WIDTH == int(Tile GRASS) || mapContainer[index] % TILE_SET_WIDTH == int(Tile CAVE_FLOOR) || mapContainer[index] % TILE_SET_WIDTH == int(Tile SAND)
         return true
     return false
 
 def InitMap
     mapContainer <- ReadMap()
-    //CreateTileAtlas()
     tiles <- create_managed_image(TILES)
     var mapSize: int2 = GetMapSize()
 
     mapWidth = mapSize.x
     mapHeight = mapSize.y
-/*
-def CreateTileAtlas
-    for t in TILES
-        print("\n Are we even creating: {t}")
-        var handle: ImageHandle
-        handle <- create_managed_image(t)
-        tileAtlas |> push(handle)
-*/
 
 def DrawGameMap()
     for i in range(0, mapContainer |> length)
@@ -66,6 +58,21 @@ def DrawGameMap()
             //var spriteIndex = FindSpriteVariant(i)
             draw_image_region(tiles, float(i % mapHeight) * TILE_SIZE, float(i / mapWidth) * TILE_SIZE,
             getSpriteRect(mapContainer[i], TILE_SET_WIDTH, TILE_SET_HEIGHT, TILE_SIZE, TILE_SIZE))
+
+def HasWalkableNeighbour(i: int): bool 
+    var N, NW, W, SW, S, SE, E, NE: int
+
+    N = i - mapWidth
+    W = i - 1
+    S = i + mapWidth
+    E = i + 1
+
+    NW = N - 1
+    SW = S - 1
+    SE = S + 1
+    NE = N + 1
+
+    return Walkable(N) || Walkable(W) || Walkable(S) || Walkable(E) || Walkable(NW) || Walkable(SW) || Walkable(SE) || Walkable(NE)
 
 /*
 def FindSpriteVariant(i: int): int 
