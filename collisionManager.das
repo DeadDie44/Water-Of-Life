@@ -56,7 +56,6 @@ def TileCollision (var obj: GameObject?)
             //var tile: float4 = getSpriteRect(index, mapWidth, mapHeight, TILE_SIZE, TILE_SIZE)
             var tile: float4 = getSpriteRect(index, mapWidth, mapHeight, TILE_SIZE, TILE_SIZE)
             if CircRect(obj.pos, obj.colliderSize.x, tile, obj.vel, rayToNearest, overlap)
-                print("\nTile: {tile.x}, {tile.y}, {tile.x + tile.z} , {tile.y + tile.w}")
                 ResolveCR(obj, rayToNearest, overlap)
 
 // Напоминалка: будем считаться что двигаться могут только круги
@@ -104,7 +103,6 @@ def CircRect(pos: float2&; radius: float&; rect: float4; v :float2&; var rayToNe
 
     overlap = radius - length(rayToNearest)
     if overlap > 0f
-        print("\nTile: {rect.x}, {rect.y}, {rect.x + rect.z} , {rect.y + rect.w}")
         return true
     return false
 

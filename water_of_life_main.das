@@ -15,12 +15,9 @@ var
 
     buttonExit : ImageHandle
     buttonStart: ImageHandle
-    tiles      : ImageHandle
     titleScreen: ImageHandle
 
     music : PcmSound
-
-    myMap = new GameMap()
 
 // 'initialize' runs once when game starts and every hot-reload
 [export]
@@ -28,7 +25,6 @@ def initialize
     set_window_title("Water of Life")
     //set_resolution(get_desktop_width(), get_desktop_height())
 
-    tiles       <- create_managed_image(TILES)
     titleScreen <- create_managed_image(TITLE_SCREEN)
     buttonStart <- create_managed_image(BUTTON_START)
     buttonExit  <- create_managed_image(BUTTON_EXIT)
@@ -37,6 +33,7 @@ def initialize
 
     cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
     setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
+    InitMap()
     InitObjectContainer()
     music |> play_sound_loop()
     return
@@ -61,7 +58,7 @@ def act(dt: float)
 def draw 
     if GameOn
         enable_alpha_blend()
-        myMap -> DrawGameMap(tiles)
+        DrawGameMap()
         DrawObjects()
         disable_alpha_blend()
     else
@@ -85,7 +82,6 @@ def HandleTitleMenu
     if get_key(VK_E) || get_key(VK_ESCAPE) 
         Exit()
     if get_mouse_button_down(MB_LEFT)
-        print("\nClick! {screen_to_world(get_mouse_position())}")
         if PointRec(screen_to_world(get_mouse_position()), float4(290f,75f,100f,30f))
             Start() 
         elif PointRec(screen_to_world(get_mouse_position()), float4(290f,155f,100f,30f))
@@ -99,7 +95,6 @@ def Start
     music |> play_sound_loop(0.25f)
 
 def Exit
-    print("\nExit!")
     schedule_quit_game()
 
 def PointRec(pos: float2; rect: float4): bool
