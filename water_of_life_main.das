@@ -32,7 +32,7 @@ def initialize
     music <- create_sound(TITLE_THEME)
 
     cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
-    setup_2d_camera(cameraCenter, float(get_screen_height() / 270))
+    setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
     InitMap()
     InitObjectContainer()
     InitDecorations()

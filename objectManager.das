@@ -30,6 +30,7 @@ require util/util
 0xff67dbf8; 
 0xffea2cba
 */
+
 let
     objectNames = [[string[20] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
                     "verliokaFirst"; "verliokaTrue"; "respawn"; "player";
@@ -60,11 +61,11 @@ def InitDecorations()
                 if random_float(0f,1f) > 0.5f
                     dec.img |> flip_image_x()
                 decorationContainer |> push(dec)
+    clear(decorationArray)
 
 def InitObjectContainer
     clear(objectContainer)
     var objectArray: array<objectMarker> <- ReadObjects()
-
     for obj in objectArray
         if obj.nameIndex > 0
             if objectNames[obj.nameIndex] == "player"
@@ -82,11 +83,11 @@ def UpdateObjects(dt: float)
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null
-                if PointRect(obj.pos, GetActiveArea())              
+                if PointRect(obj.pos, GetActiveArea(GetPlayer()))              
                     obj -> UpdateObject(dt)
                     if obj.isAlive
                         for target in objectContainer
-                            if PointRect(target.pos, GetActiveArea())
+                            if PointRect(target.pos, GetActiveArea(obj))
                                 if target != null && obj.id != target.id && target.isAlive
                                     if obj.isAttacking && target.killable
                                         CheckAttack(obj, target)   
@@ -94,18 +95,18 @@ def UpdateObjects(dt: float)
                                         CheckCollision(obj, target)
                         if obj.id != GetPlayer().id
                             obj -> SpotPlayer(GetPlayer().pos, GetPlayer().colliderSize.x)
-                        TileCollision (obj, GetActiveArea())
+                        TileCollision (obj, GetActiveArea(obj))
                         MapBoundaryCheck (obj)
 
 def GetPlayer: GameObject?
     return objectContainer[0]
 
-def GetActiveArea: float4
+def GetActiveArea(obj: GameObject?): float4
     var area: float4
     var areaWidth: float = 400f
     var areaHeight: float = 350f
-    area.x = GetPlayer().pos.x - areaWidth / 2f
-    area.y = GetPlayer().pos.y - areaHeight / 2f
+    area.x = obj.pos.x - areaWidth / 2f
+    area.y = obj.pos.y - areaHeight / 2f
     area.z = areaWidth
     area.w = areaHeight
     return area
