@@ -5,6 +5,9 @@ require animator
 require objectFactory
 require util/util  
 
+let
+    universalCD: float  = 0.5f
+
 class GameObject
     private healthPoints, healthCap: int
     //***
@@ -25,7 +28,7 @@ class GameObject
     baseSpeed    : float
     cooldown     : float
     hitInvul     : float
-    universalCD  : float
+    //universalCD  : float
 
     attackPos    : float2
     colliderSize : float2
@@ -51,7 +54,7 @@ class GameObject
 
         direction    = float2(0, 1)
         pos          = position
-        universalCD  = 0.5f
+        
         cooldown     = universalCD
         hitInvul     = universalCD
 

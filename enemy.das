@@ -14,7 +14,9 @@ class Enemy: GameObject
     area       : float2
     areaSize   : float = 100f
     destination: float2
-    timer      : float
+    standTimer : float
+    stuckTimer : float
+    stuckRect  : float4
     previousPos: float2
 
     def Enemy (desc: ObjectDescriptor; position: float2; i: int)
@@ -33,23 +35,43 @@ class Enemy: GameObject
                 destination = targetPos
                 if Distance(pos, targetPos) < colliderSize.x + attackRadius
                     Attack()
+
             if pos == destination   
-                if timer < universalCD * 2f
-                    timer += get_delta_time()
+                if standTimer < universalCD * 2f
+                    standTimer += get_delta_time()
                     return false
                 destination = NewDestination()
-                timer = 0f
+                standTimer = 0f
+
             else
+                if stuckTimer == 0f
+                    stuckRect = float4(pos.x, pos.y, 0f, 0f)
+                stuckTimer += get_delta_time()
                 var move: float2 = float2(0f, 0f)
+
                 if abs(pos.x - destination.x) < Speed() * dt && abs(pos.y - destination.y) < Speed() * dt
                     pos.x = destination.x
                     pos.y = destination.y
                 else
                     move = (destination - pos) / Distance(destination, pos) * Speed() * dt
                 Move(move)
-            if abs(pos.x - previousPos.x) < 0.1f && abs(pos.y - previousPos.y) < 0.1f
-                destination = NewDestination()
-            previousPos = pos
+
+                if stuckTimer >= universalCD * 2f
+                    // Мы всё ещё находимся внутри прямоугольника в котором мы топтались в течении таймера?
+                    if pos.x > stuckRect.x && pos.x < stuckRect.x + stuckRect.z && pos.y > stuckRect.y && pos.y < stuckRect.y + stuckRect.w
+                        destination = NewDestination()
+                    stuckTimer = 0f
+                    stuckRect = float4(pos.x, pos.y, 0f, 0f)
+
+                if stuckTimer != 0f // Пока идёт таймер запоминаем прямоугольник в рамках которого мы топчемся
+                    if stuckRect.x > pos.x
+                        stuckRect.x = pos.x
+                    if stuckRect.y > pos.y
+                        stuckRect.y = pos.y
+                    if stuckRect.x + stuckRect.z < pos.x
+                        stuckRect.z = pos.x - stuckRect.x
+                    if stuckRect.y + stuckRect.w < pos.y
+                        stuckRect.w = pos.y - stuckRect.y
         return true
 
     def override SpotPlayer(playerPos: float2; radius: float)
