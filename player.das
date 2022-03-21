@@ -21,6 +21,7 @@ class Player: GameObject
 
     def override init (desc: ObjectDescriptor; position: float2)
         GameObject`init(self, desc, position)
+        animator -> SetTeleTimer(0.15f)
         faction = int(Faction PLAYER)
         UpdateWeapon()
 
@@ -84,7 +85,7 @@ class Player: GameObject
     def override Move(move:float2)
         if !isAlive   
             return
-        if isAttacking
+        if isAttacking || isTelegraph
             return
         var m = normalize(move)
         if m == float2(0f, 0f)
@@ -96,15 +97,15 @@ class Player: GameObject
     
     def override DrawObject(): void
         GameObject`DrawObject(self)
-
-        if !drawable || !isAttacking
+        if !drawable
             return
-        if direction.x > 0f && direction.x > direction.y
-            draw_image_transformed(weaponSheet, pos.x + spriteSize.x / 2f, pos.y - spriteSize.y / 2f,
-            getSpriteRect(animator -> FrameIndex(), weaponSheet.width / int(spriteSize.x), weaponSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
-            0xFFFFFFFF, float2(-spriteSize.x, spriteSize.y), 0f, 0f, 0f)
-        else
-            draw_image_region(weaponSheet, pos.x - spriteSize.x / 2f, pos.y - spriteSize.y / 2f, 
-            getSpriteRect(animator -> FrameIndex(), weaponSheet.width / int(spriteSize.x), weaponSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y))
+        if  isAttacking || isTelegraph
+            if direction.x > 0f && direction.x > direction.y
+                draw_image_transformed(weaponSheet, displace.x + pos.x + spriteSize.x / 2f, displace.y + pos.y - spriteSize.y / 2f,
+                getSpriteRect(animator -> FrameIndex(), weaponSheet.width / int(spriteSize.x), weaponSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
+                0xFFFFFFFF, float2(-spriteSize.x, spriteSize.y), 0f, 0f, 0f)
+            else
+                draw_image_region(weaponSheet, displace.x + pos.x - spriteSize.x / 2f, displace.y + pos.y - spriteSize.y / 2f, 
+                getSpriteRect(animator -> FrameIndex(), weaponSheet.width / int(spriteSize.x), weaponSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y))
 
         return

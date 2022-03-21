@@ -15,6 +15,7 @@ class GameObject
     //***
     isAlive      : bool
     isAttacking  : bool
+    isTelegraph  : bool
     canBeRemoved : bool
     movable      : bool
     killable     : bool
@@ -28,11 +29,11 @@ class GameObject
     baseSpeed    : float
     cooldown     : float
     hitInvul     : float
-    //universalCD  : float
 
     attackPos    : float2
     colliderSize : float2
     direction    : float2
+    displace     : float2
     spriteSize   : float2
     pos          : float2
     vel          : float2
@@ -101,11 +102,18 @@ class GameObject
     def UpdateObject(dt: float): bool
         if !isAlive
             isAttacking = false
+            isTelegraph = false
             if id != 0 && animator.currentFrame >= animator.deathAnimation |> length - 2
                 canBeRemoved = true
             return false
         if isAttacking && animator.animationState == AnimState IDLE
+            print("Attack finished")
             isAttacking = false
+            cooldown = 0f
+        elif isTelegraph && animator.animationState == AnimState ATTACK
+            print("Telegraph finished")
+            isTelegraph = false
+            isAttacking = true
             cooldown = 0f
         pos += vel
 
@@ -121,7 +129,7 @@ class GameObject
         return true
 
     def Move(move: float2)
-        if !isAlive || !movable || isAttacking   
+        if !isAlive || !movable || isAttacking || isTelegraph     
             return
         if move == float2(0f, 0f)
             animator -> SetAnimationState(AnimState IDLE)
@@ -146,21 +154,30 @@ class GameObject
 
     def Attack()
         if (cooldown >= universalCD)
-            isAttacking = true
-            animator -> SetAnimationState(AnimState ATTACK)
+            isTelegraph = true
+            //isAttacking = true
+            animator -> SetAnimationState(AnimState TELE)
 
     def Speed() : float
         return baseSpeed
 
+    
+ 
     def DrawObject
         if !drawable
             return
+        
+        if isTelegraph
+            displace.x = random_float(0f, 0.5f)
+            displace.y = random_float(0f, 0.5f)
+        // Если телеграфируем то пусть трясётся спрайт
+        
         if direction.x > 0f && direction.x > direction.y
-            draw_image_transformed(spriteSheet, pos.x + spriteSize.x / 2f, pos.y - spriteSize.y / 2f,
+            draw_image_transformed(spriteSheet, displace.x + pos.x + spriteSize.x / 2f, displace.x + pos.y - spriteSize.y / 2f,
             getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
             0xFFFFFFFF, float2(-spriteSize.x, spriteSize.y), 0f, 0f, 0f)
         else
-            draw_image_region(spriteSheet, pos.x - spriteSize.x / 2f, pos.y - spriteSize.y / 2f, 
+            draw_image_region(spriteSheet, displace.x + pos.x - spriteSize.x / 2f, displace.x + pos.y - spriteSize.y / 2f, 
             getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y))
 
         if showCollider

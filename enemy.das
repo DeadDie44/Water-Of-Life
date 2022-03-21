@@ -29,6 +29,7 @@ class Enemy: GameObject
     
     def override UpdateObject(dt: float): bool
         if GameObject`UpdateObject(self, dt)
+            var move: float2 = float2(0f, 0f)
             if agro
                 destination = targetPos
                 if Distance(pos, targetPos) < colliderSize.x + attackRadius
@@ -40,19 +41,18 @@ class Enemy: GameObject
                     return false
                 destination = NewDestination()
                 timer = 0f
-
             else
-                var move: float2 = float2(0f, 0f)
                 if abs(pos.x - destination.x) < Speed() * dt && abs(pos.y - destination.y) < Speed() * dt
                     pos.x = destination.x
                     pos.y = destination.y
                 else
                     move = (destination - pos) / Distance(destination, pos) * Speed() * dt
-                Move(move)
-                
+
             if abs(pos.x - previousPos.x) < 0.1f && abs(pos.y - previousPos.y) < 0.1f
                 destination = NewDestination()
+
             previousPos = pos
+            Move(move)
         return true
 
     def override SpotPlayer(playerPos: float2; radius: float)

@@ -113,8 +113,8 @@ def GetActiveArea(obj: GameObject?): float4
 
 def GetDrawArea(): float4
     var area: float4
-    var areaWidth: float = 640f
-    var areaHeight: float = 640f
+    var areaWidth: float = 540f
+    var areaHeight: float = 540f
     area.x = GetPlayer().pos.x - areaWidth / 2f
     area.y = GetPlayer().pos.y - areaHeight / 2f
     area.z = areaWidth

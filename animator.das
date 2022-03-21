@@ -6,6 +6,7 @@ enum AnimState
     RUNNING
     ATTACK
     DEATH
+    TELE
 
 //Куда смотрит персонаж
 enum Direction
@@ -13,12 +14,19 @@ enum Direction
     SIDE
     DOWN
 
+    // Анимации в frames идут в следующем порядке:
+    // Idle Up, Idle Side, Idle Down,
+    // Running Up, Running Side, Running Down,
+    // Attack Up, Attack Side, Attack Down
+
 class Animator
     animationState: AnimState
     direction     : Direction
 
     currentFrame  : int // Текущий кадр в рамках проигрываемой анимации    
     frameTime     : float // Сколько времени прошло со смены кадра
+    telegraphTime : float
+    telegraphCD   : float
 
     deathAnimation: array<int> // индекс 0 это фпс. Анимация смерти одинаковая вне зависимости в какую сторону смотришь, так что проще её отдельно вынести, ну или мне просто лень
     frames        : array<int> // Кадры анимаций, в соотвествии с порядковым номером спрайта в нашем sprite sheet
@@ -32,6 +40,7 @@ class Animator
     def init(framesArray, countArray, deathArray: array<int>; fpsArray: array<float>)
         currentFrame = 0
         frameTime    = 0f
+        telegraphCD  = 0.5f 
 
         deathAnimation := deathArray
         if deathAnimation |> length > 0
@@ -41,11 +50,22 @@ class Animator
         frameCount := countArray
         fps        := fpsArray
 
-    def SetAnimationState(state: AnimState)
-        if(animationState != state)
-            frameTime    = 0f
-            currentFrame = 0
-        animationState = state
+    def FrameIndex: int
+        if animationState == AnimState TELE
+            return FindState(int(AnimState ATTACK)) + GetDirection() * frameCount[int(AnimState ATTACK)]
+        if animationState != AnimState DEATH
+            return frames[GetFirstFrame() + currentFrame]
+        else
+            return deathAnimation[1 + currentFrame]
+
+    def FindState(state: int): int
+        var i:int = 0
+        if frameCount |> length == 1
+            return 0
+        for n in range(0, state)
+            i += frameCount |> length * frameCount[n]
+
+        return i
 
     def GetAnimationState(): int
         if int(animationState) >= fps |> length
@@ -57,31 +77,21 @@ class Animator
             return fps |> length - 1
         return int(direction)
 
-    def FrameIndex: int
-        if animationState != AnimState DEATH
-            return frames[GetFirstFrame() + currentFrame]
-        else
-            return deathAnimation[1 + currentFrame]
-
-    // Анимации в frames идут в следующем порядке:
-    // Idle Up, Idle Side, Idle Down,
-    // Running Up, Running Side, Running Down,
-    // Attack Up, Attack Side, Attack Down
     def GetFirstFrame: int
-        return FindState() + GetDirection() * frameCount[GetAnimationState()]  
-
-    def FindState(): int
-        var i:int = 0
-        if frameCount |> length == 1
-            return 0
-        for n in range(0, GetAnimationState())
-            i += frameCount |> length * frameCount[n]
-
-        return i
+        return FindState(GetAnimationState()) + GetDirection() * frameCount[GetAnimationState()]
 
     def GetLastFrame: int
         return GetFirstFrame() + frameCount[GetAnimationState()]
 
+    def SetAnimationState(state: AnimState)
+        if(animationState != state)
+            frameTime    = 0f
+            currentFrame = 0
+        animationState = state
+
+    def SetTeleTimer(f: float)
+        telegraphCD = f
+    
     def Animate (directionVector: float2)
         frameTime += get_delta_time()
 
@@ -90,6 +100,14 @@ class Animator
                 if frameTime >= 1f / float(deathAnimation[0])
                     currentFrame++
                     frameTime = 0f
+            return
+           
+        if animationState == AnimState TELE
+            if telegraphTime < telegraphCD
+                telegraphTime += get_delta_time()
+            else
+                telegraphTime = 0f
+                animationState = AnimState ATTACK
             return
 
         if abs(directionVector.x) > abs(directionVector.y)
