@@ -48,12 +48,12 @@ class Animator
         animationState = state
 
     def GetAnimationState(): int
-        if int(animationState) > fps |> length
-            return fps |> length
+        if int(animationState) >= fps |> length
+            return fps |> length - 1
         return int(animationState)
 
     def GetDirection(): int
-        if int(direction) > fps |> length
+        if int(direction) >= fps |> length
             return fps |> length - 1
         return int(direction)
 
