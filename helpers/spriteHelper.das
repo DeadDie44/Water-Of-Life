@@ -11,7 +11,13 @@ let public
 
     //TILES = [[string[6] TILES_GRASS; TILES_WATER; TILES_WOODS; TILES_CAVE_WALLS; TILES_CAVE_FLOOR; TILES_SAND]]
 
-    PLAYER: string = SRPITE_ROOT + "characters/player.png"
+    WEAPON_CLUB: string = SRPITE_ROOT + "characters/weapons/club.png"
+
+    WEAPON_MACE: string = SRPITE_ROOT + "characters/weapons/mace.png"
+
+    WEAPON_AXE: string = SRPITE_ROOT + "characters/weapons/axe.png"
+
+    WEAPON_SWORD: string = SRPITE_ROOT + "characters/weapons/sword.png"
 
     TORCHES: string = SRPITE_ROOT + "objects/torches.png"
 

@@ -91,7 +91,7 @@ class GameObject
         return healthCap
 
     def GetDamage: int
-        return 10
+        return 1
 
     def UpdateObject(dt: float): bool
         if !isAlive

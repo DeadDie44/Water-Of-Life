@@ -150,5 +150,4 @@ def DrawObjects
 def DrawDecorations
     if decorationContainer |> length > 0
         for deco in decorationContainer
-            var dRect: float4 = float4(deco.pos.x, deco.pos.y, float(deco.img.width), float(deco.img.height))
             draw_image(deco.img, deco.pos.x - float(deco.img.width) / 2f, deco.pos.y - float(deco.img.height) / 2f -  float(deco.img.height) / 3f)

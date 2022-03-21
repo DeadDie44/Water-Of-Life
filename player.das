@@ -4,15 +4,35 @@ require gameObject
 require animator
 require objectFactory
 require helpers/objectHelper
+require helpers/spriteHelper
+require util/util  
 
+let
+    weaponsList = [[string[4] WEAPON_CLUB; WEAPON_MACE; WEAPON_AXE; WEAPON_SWORD]]
 
+var
+    weaponSheet: ImageHandle
+    
 class Player: GameObject
+    weaponIndex: int = 0
+
     def Player (desc: ObjectDescriptor; position: float2; i: int)
         GameObject`GameObject(self, desc, position, i)
 
     def override init (desc: ObjectDescriptor; position: float2)
         GameObject`init(self, desc, position)
         faction = int(Faction PLAYER)
+        UpdateWeapon()
+
+    def SetWeapon(index:int)
+        weaponIndex = index
+
+    def UpdateWeapon()
+        print("\n length {weaponsList |> length}, weapon {weaponsList[weaponIndex]}")
+        weaponSheet <- create_managed_image(weaponsList[weaponIndex])
+
+    def override GetDamage: int
+        return 1 + 1 * weaponIndex
 
     def override UpdateObject(dt: float): bool
         if GameObject`UpdateObject(self, dt)
@@ -30,6 +50,30 @@ class Player: GameObject
             if get_key(VK_D) || get_key(VK_RIGHT) || get_axis(AXIS_PRIMARY_X) > 0f
                 move.x = 1f
                 //direction.x = 1f
+
+            if get_key(VK_1)
+                SetWeapon(0)
+                if weaponIndex > weaponsList |> length - 1
+                    SetWeapon (0)
+                UpdateWeapon()
+
+            if get_key(VK_2)
+                SetWeapon(1)
+                if weaponIndex > weaponsList |> length - 1
+                    SetWeapon (0)
+                UpdateWeapon()
+
+            if get_key(VK_3)
+                SetWeapon(2)
+                if weaponIndex > weaponsList |> length - 1
+                    SetWeapon (0)
+                UpdateWeapon()
+
+            if get_key(VK_4)
+                SetWeapon(3)
+                if weaponIndex > weaponsList |> length - 1
+                    SetWeapon (0)
+                UpdateWeapon()
 
             if get_key(VK_SPACE) || get_key(VK_SPACE) || get_key(GP_A)
                 Attack()
@@ -49,3 +93,18 @@ class Player: GameObject
             vel = m * Speed() * get_delta_time()
             animator -> SetAnimationState(AnimState RUNNING)
             direction = move
+    
+    def override DrawObject(): void
+        GameObject`DrawObject(self)
+
+        if !drawable || !isAttacking
+            return
+        if direction.x > 0f && direction.x > direction.y
+            draw_image_transformed(weaponSheet, pos.x + spriteSize.x / 2f, pos.y - spriteSize.y / 2f,
+            getSpriteRect(animator -> FrameIndex(), weaponSheet.width / int(spriteSize.x), weaponSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
+            0xFFFFFFFF, float2(-spriteSize.x, spriteSize.y), 0f, 0f, 0f)
+        else
+            draw_image_region(weaponSheet, pos.x - spriteSize.x / 2f, pos.y - spriteSize.y / 2f, 
+            getSpriteRect(animator -> FrameIndex(), weaponSheet.width / int(spriteSize.x), weaponSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y))
+
+        return
