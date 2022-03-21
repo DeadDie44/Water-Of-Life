@@ -52,11 +52,11 @@ class Animator
 
     def FrameIndex: int
         if animationState == AnimState TELE
-            return FindState(int(AnimState ATTACK)) + GetDirection() * frameCount[int(AnimState ATTACK)]
-        if animationState != AnimState DEATH
-            return frames[GetFirstFrame() + currentFrame]
-        else
+            return FindState(int(AnimState ATTACK)) + GetDirection() * frameCount[int(AnimState ATTACK)] - frameCount[int(AnimState ATTACK)] + 1
+        if animationState == AnimState DEATH
             return deathAnimation[1 + currentFrame]
+
+        return frames[GetFirstFrame() + currentFrame]
 
     def FindState(state: int): int
         var i:int = 0
