@@ -103,8 +103,8 @@ def GetPlayer: GameObject?
 
 def GetActiveArea(obj: GameObject?): float4
     var area: float4
-    var areaWidth: float = 100f + obj.colliderSize.x
-    var areaHeight: float = 100f + obj.colliderSize.y
+    var areaWidth: float = 130f + obj.colliderSize.x
+    var areaHeight: float = 130f + obj.colliderSize.y
     area.x = obj.pos.x - areaWidth / 2f
     area.y = obj.pos.y - areaHeight / 2f
     area.z = areaWidth
