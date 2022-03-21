@@ -12,7 +12,7 @@ class Enemy: GameObject
     agro       : bool
     targetPos  : float2
     area       : float2
-    areaSize   : float = 145f
+    areaSize   : float = 100f
     destination: float2
     timer      : float
     previousPos: float2

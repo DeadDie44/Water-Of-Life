@@ -68,6 +68,8 @@ class GameObject
         healthPoints = healthCap
         spriteSheet  <- create_managed_image(desc.sprite)
 
+        if colliderType == COLLIDER_CIRCLE
+            colliderSize.y = colliderSize.x
         animator = new Animator(desc.frames, desc.frameCount, desc.deathAnimation, desc.fps)
         animator -> SetAnimationState(AnimState IDLE)
 
