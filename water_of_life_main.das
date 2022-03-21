@@ -16,6 +16,7 @@ var
     buttonExit : Image
     buttonStart: Image
     titleScreen: Image
+    hud: Image
 
     music : PcmSound
 
@@ -28,6 +29,7 @@ def initialize
     titleScreen <- create_image(TITLE_SCREEN)
     buttonStart <- create_image(BUTTON_START)
     buttonExit  <- create_image(BUTTON_EXIT)
+    hud <- create_image(HUD_TEST)
 
     music <- create_sound(TITLE_THEME)
 
@@ -62,6 +64,7 @@ def draw
         DrawGameMap()
         DrawObjects()
         DrawDecorations()
+        DrawHUD()
         disable_alpha_blend()
     else
         enable_alpha_blend()
@@ -70,6 +73,9 @@ def draw
         draw_image(buttonExit, 290f, 155f)
         disable_alpha_blend()
     
+def DrawHUD
+    draw_image(hud,GetPlayer().pos.x - float(hud.width / 2), GetPlayer().pos.y - float(hud.height / 2))
+
 def DisplayText(pos:float2; text:string; size: int)
     set_font_name("assets/fonts/SquareCaps.ttf")  // set_font_name("mono"), set_font_name("sans"), set_font_name("*.ttf")
     set_font_size(size)

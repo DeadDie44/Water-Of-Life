@@ -20,3 +20,5 @@ let public
     BUTTON_START: string = SRPITE_ROOT + "button_start.png"
 
     BUTTON_EXIT: string = SRPITE_ROOT + "button_exit.png"
+
+    HUD_TEST: string = SRPITE_ROOT + "hud/HUDtest.png"
