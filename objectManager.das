@@ -83,30 +83,40 @@ def UpdateObjects(dt: float)
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null
-                if PointRect(obj.pos, GetActiveArea(GetPlayer()))              
-                    obj -> UpdateObject(dt)
-                    if obj.isAlive
-                        for target in objectContainer
-                            if PointRect(target.pos, GetActiveArea(obj))
-                                if target != null && obj.id != target.id && target.isAlive
-                                    if obj.isAttacking && target.killable
-                                        CheckAttack(obj, target)   
-                                    if obj.id != target.id && (obj.movable || target.movable)
-                                        CheckCollision(obj, target)
-                        if obj.id != GetPlayer().id
-                            obj -> SpotPlayer(GetPlayer().pos, GetPlayer().colliderSize.x)
-                        TileCollision (obj, GetActiveArea(obj))
-                        MapBoundaryCheck (obj)
+                //if PointRect(obj.pos, GetActiveArea(GetPlayer()))              
+                obj -> UpdateObject(dt)
+                if obj.isAlive
+                    for target in objectContainer
+                        if PointRect(target.pos, GetActiveArea(obj))
+                            if target != null && obj.id != target.id && target.isAlive
+                                if obj.isAttacking && target.killable
+                                    CheckAttack(obj, target)   
+                                if obj.id != target.id && (obj.movable || target.movable)
+                                    CheckCollision(obj, target)
+                    if obj.id != GetPlayer().id
+                        obj -> SpotPlayer(GetPlayer().pos, GetPlayer().colliderSize.x)
+                    TileCollision (obj, GetActiveArea(obj))
+                    MapBoundaryCheck (obj)
 
 def GetPlayer: GameObject?
     return objectContainer[0]
 
 def GetActiveArea(obj: GameObject?): float4
     var area: float4
-    var areaWidth: float = 400f
-    var areaHeight: float = 350f
+    var areaWidth: float = 100f + obj.colliderSize.x
+    var areaHeight: float = 100f + obj.colliderSize.y
     area.x = obj.pos.x - areaWidth / 2f
     area.y = obj.pos.y - areaHeight / 2f
+    area.z = areaWidth
+    area.w = areaHeight
+    return area
+
+def GetDrawArea(): float4
+    var area: float4
+    var areaWidth: float = 640f
+    var areaHeight: float = 640f
+    area.x = GetPlayer().pos.x - areaWidth / 2f
+    area.y = GetPlayer().pos.y - areaHeight / 2f
     area.z = areaWidth
     area.w = areaHeight
     return area
@@ -145,9 +155,11 @@ def DrawObjects
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null
+                //if PointRect(obj.pos, GetDrawingArea())  
                 obj -> DrawObject()
 
 def DrawDecorations
     if decorationContainer |> length > 0
         for deco in decorationContainer
-            draw_image(deco.img, deco.pos.x - float(deco.img.width) / 2f, deco.pos.y - float(deco.img.height) / 2f -  float(deco.img.height) / 3f)
+            if PointRect(deco.pos, GetDrawArea())  
+                draw_image(deco.img, deco.pos.x - float(deco.img.width) / 2f, deco.pos.y - float(deco.img.height) / 2f -  float(deco.img.height) / 3f)

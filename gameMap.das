@@ -52,12 +52,16 @@ def InitMap
     mapWidth = mapSize.x
     mapHeight = mapSize.y
 
-def DrawGameMap()
-    for i in range(0, mapContainer |> length)
-        if mapContainer[i] != int(Tile EMPTY)
-            //var spriteIndex = FindSpriteVariant(i)
-            draw_image_region(tiles, float(i % mapHeight) * TILE_SIZE, float(i / mapWidth) * TILE_SIZE,
-            getSpriteRect(mapContainer[i], TILE_SET_WIDTH, TILE_SET_HEIGHT, TILE_SIZE, TILE_SIZE))
+def DrawGameMap(drawArea: float4)
+    //for i in range(0, mapContainer |> length)
+    for y in range(int(drawArea.y / TILE_SIZE), int(drawArea.y / TILE_SIZE + drawArea.w / TILE_SIZE))
+        for x in range(int(drawArea.x / TILE_SIZE), int(drawArea.x / TILE_SIZE + drawArea.z / TILE_SIZE))
+            if x >= 0 && y >= 0
+                var i = y * mapWidth + x
+                if mapContainer[i] != int(Tile EMPTY)
+                    //var spriteIndex = FindSpriteVariant(i)
+                    draw_image_region(tiles, float(i % mapHeight) * TILE_SIZE, float(i / mapWidth) * TILE_SIZE,
+                    getSpriteRect(mapContainer[i], TILE_SET_WIDTH, TILE_SET_HEIGHT, TILE_SIZE, TILE_SIZE))
 
 def HasWalkableNeighbour(i: int): bool 
     var N, NW, W, SW, S, SE, E, NE: int

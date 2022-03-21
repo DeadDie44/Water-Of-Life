@@ -49,7 +49,7 @@ def act(dt: float)
         if get_key(VK_ESCAPE)
             schedule_quit_game()
         UpdateObjects(dt)
-        setup_2d_camera(GetPlayer().pos, float(get_screen_width() / 270))
+        setup_2d_camera(GetPlayer().pos, float(get_screen_width() / 270 / 4))
         RemoveObjects()
     else
         HandleTitleMenu()
@@ -61,7 +61,7 @@ def act(dt: float)
 def draw 
     if GameOn
         enable_alpha_blend()
-        DrawGameMap()
+        DrawGameMap(GetDrawArea())
         DrawObjects()
         DrawDecorations()
         DrawHUD()
