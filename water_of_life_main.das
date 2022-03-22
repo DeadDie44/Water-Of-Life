@@ -5,6 +5,7 @@ require helpers/soundHelper
 require hud
 require gameMap
 require objectManager
+require myFont
 
 // options debugger            // uncomment for debug in VS Code
 // require daslib/debug        // uncomment for debug in VS Code
@@ -34,9 +35,11 @@ def initialize
 
     cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
     setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
+    InitFont()
     InitMap()
     InitObjectContainer()
     InitDecorations()
+    
     music |> play_sound_loop()
     return
 
@@ -64,6 +67,7 @@ def draw
         DrawObjects()
         DrawDecorations()
         DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
+        //TestDrawFont(GetPlayer().pos)
         disable_alpha_blend()
     else
         enable_alpha_blend()
