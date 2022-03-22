@@ -11,6 +11,7 @@ require gameMap
 class Enemy: GameObject
     agro       : bool
     targetPos  : float2
+    agroRadius : float = 70f
     area       : float2
     areaSize   : float = 100f
     destination: float2
@@ -26,6 +27,8 @@ class Enemy: GameObject
         destination = pos
         previousPos = pos
         faction = int(Faction ENEMY)
+        staminaCap = 10
+        stamina = staminaCap
     
     def override UpdateObject(dt: float): bool
         if GameObject`UpdateObject(self, dt)
@@ -58,11 +61,11 @@ class Enemy: GameObject
     def override SpotPlayer(playerPos: float2; radius: float)
         if attackRadius > 0f
             targetPos = playerPos
-            if Distance(pos, playerPos) < areaSize / 2f
+            if Distance(pos, playerPos) < agroRadius
                 if !agro
                     destination = pos
                 agro = true
-            elif Distance(area, playerPos) > areaSize * 1.5f
+            elif Distance(area, playerPos) > agroRadius * 2f
                 agro = false
 
     def SetRoamArea(a: float2) 

@@ -77,6 +77,7 @@ class Player: GameObject
                 UpdateWeapon()
 
             if get_key(VK_SPACE) || get_key(GP_A)
+                print("\n Stamina {stamina}")
                 Attack()
                 //print("\n Player pos {pos}")
 
@@ -87,10 +88,12 @@ class Player: GameObject
         return true
 
     def Roll()
-        if !isAttacking && !isTelegraph && stamina >= rollCost
+        if !isRolling && !isAttacking && !isTelegraph && stamina >= rollCost
             print("\nRoll out?")
+            LoseStamina(rollCost)
             isRolling = true
             animator -> SetAnimationState(AnimState ROLLING)
+            
 
     def override Move(move:float2)
         if !isAlive   

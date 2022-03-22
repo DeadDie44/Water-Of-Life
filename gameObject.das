@@ -74,7 +74,10 @@ class GameObject
         spriteSize   = desc.size
         baseSpeed    = desc.baseSpeed
         healthCap    = desc.health
+        staminaCap   = desc.stamina
+
         health = healthCap
+        stamina = staminaCap
         spriteSheet  <- create_managed_image(desc.sprite)
 
         if colliderType == COLLIDER_CIRCLE
@@ -100,8 +103,6 @@ class GameObject
         if stamina < 0 
             stamina = 0
 
-    
-
     def ReplenishHealth(i: int)
         if health + i > healthCap
             health = healthCap
@@ -113,8 +114,6 @@ class GameObject
             stamina = staminaCap
         else
             stamina += i
-
-
 
     def UpdateObject(dt: float): bool
         if !isAlive
@@ -175,13 +174,14 @@ class GameObject
             elif move.y < 0f && abs(move.x) < abs(move.y)
                 direction.x = 0f
                 direction.y = -1f            
-            vel = move * GetSpeed() * get_delta_time()
+            vel = move * Speed() * get_delta_time()
             animator -> SetAnimationState(AnimState RUNNING)
 
     def Attack()
-        if isRolling
+        if isAttacking || isTelegraph || isRolling
             return
         if (stamina >= attackCost && cooldown >= universalCD)
+            LoseStamina(attackCost)
             isTelegraph = true
             //isAttacking = true
             animator -> SetAnimationState(AnimState TELE)
@@ -234,7 +234,7 @@ class GameObject
     def GetStaminaCap: int
         return staminaCap
 
-    def GetSpeed() : float
+    def Speed() : float
         return baseSpeed
 
     def SpotPlayer(pos: float2; radius: float)
