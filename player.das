@@ -87,7 +87,7 @@ class Player: GameObject
         return true
 
     def Roll()
-        if !isAttacking && !isTelegraph
+        if !isAttacking && !isTelegraph && stamina >= rollCost
             print("\nRoll out?")
             isRolling = true
             animator -> SetAnimationState(AnimState ROLLING)

@@ -70,10 +70,10 @@ def InitObjectContainer
         if obj.nameIndex > 0
             if objectNames[obj.nameIndex] == "player"
                 CreateObject(new Player(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
-            //elif objectNames[obj.nameIndex] == "bandit" || objectNames[obj.nameIndex] == "banditRanger" || objectNames[obj.nameIndex] == "verliokaFirst" || objectNames[obj.nameIndex] == "verliokaTrue" || objectNames[obj.nameIndex] == "kolovershi"
-                //CreateObject(new Enemy(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
-            //else
-                //CreateObject(new GameObject(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+            elif objectNames[obj.nameIndex] == "bandit" || objectNames[obj.nameIndex] == "banditRanger" || objectNames[obj.nameIndex] == "verliokaFirst" || objectNames[obj.nameIndex] == "verliokaTrue" || objectNames[obj.nameIndex] == "kolovershi"
+                CreateObject(new Enemy(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+            else
+                CreateObject(new GameObject(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
 
 def CreateObject(var obj: GameObject?)

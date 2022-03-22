@@ -6,10 +6,13 @@ require objectFactory
 require util/util  
 
 let
+    attackCost: int = 2
+    rollCost: int = 3
     universalCD: float  = 0.5f
 
 class GameObject
-    private healthPoints, healthCap: int
+    private health, healthCap: int
+    private stamina, staminaCap: int
     //***
     showCollider : bool = true //  для тестов
     //***
@@ -29,7 +32,8 @@ class GameObject
     attackRadius : float
     baseSpeed    : float
     cooldown     : float
-    hitInvul     : float
+    hitInvulCD   : float
+    staminaCD    : float
 
     attackPos    : float2
     colliderSize : float2
@@ -58,7 +62,7 @@ class GameObject
         pos          = position
         
         cooldown     = universalCD
-        hitInvul     = universalCD
+        hitInvulCD   = universalCD
 
         attackPos    = desc.attackPos
         attackRadius = desc.attackRadius
@@ -70,7 +74,7 @@ class GameObject
         spriteSize   = desc.size
         baseSpeed    = desc.baseSpeed
         healthCap    = desc.health
-        healthPoints = healthCap
+        health = healthCap
         spriteSheet  <- create_managed_image(desc.sprite)
 
         if colliderType == COLLIDER_CIRCLE
@@ -79,26 +83,38 @@ class GameObject
         animator -> SetAnimationState(AnimState IDLE)
 
     def RecieveAttack(attackerId, damage: int; attackerName: string)
-        if !killable || hitInvul < universalCD || isRolling
+        if !killable || hitInvulCD < universalCD || isRolling
             return
         LoseHealth(damage)
 
     def LoseHealth(damage: int)
-        healthPoints -= damage
-        hitInvul = 0f
-        if healthPoints <= 0
-            healthPoints = 0
+        health -= damage
+        hitInvulCD = 0f
+        if health <= 0
+            health = 0
             isAlive = false
             animator -> SetAnimationState(AnimState DEATH)
 
-    def GetCurrentHealth: int
-        return healthPoints
+    def LoseStamina(cost: int)
+        stamina -= cost
+        if stamina < 0 
+            stamina = 0
 
-    def GetHealthCap: int
-        return healthCap
+    
 
-    def GetDamage: int
-        return 1
+    def ReplenishHealth(i: int)
+        if health + i > healthCap
+            health = healthCap
+        else
+            health += i
+
+    def ReplenishStamina(i: int)
+        if stamina + i > staminaCap
+            stamina = staminaCap
+        else
+            stamina += i
+
+
 
     def UpdateObject(dt: float): bool
         if !isAlive
@@ -122,15 +138,24 @@ class GameObject
         pos += vel
 
         vel *= 0f
-        if cooldown < universalCD
-            cooldown += dt
-        if hitInvul < universalCD
-            drawable = !drawable
-            hitInvul += dt
-        else
-            drawable = true
+        
+        TickTimers(dt)
 
         return true
+
+    def TickTimers(dt: float)
+        if staminaCD < universalCD
+            staminaCD += dt
+        else
+            ReplenishStamina(1)
+            staminaCD = 0f
+        if cooldown < universalCD
+            cooldown += dt
+        if hitInvulCD < universalCD
+            drawable = !drawable
+            hitInvulCD += dt
+        else
+            drawable = true
 
     def Move(move: float2)
         if !isAlive || !movable || isAttacking || isTelegraph     
@@ -150,22 +175,16 @@ class GameObject
             elif move.y < 0f && abs(move.x) < abs(move.y)
                 direction.x = 0f
                 direction.y = -1f            
-            vel = move * Speed() * get_delta_time()
+            vel = move * GetSpeed() * get_delta_time()
             animator -> SetAnimationState(AnimState RUNNING)
-            
-    def SpotPlayer(pos: float2; radius: float)
-        return
 
     def Attack()
         if isRolling
             return
-        if (cooldown >= universalCD)
+        if (stamina >= attackCost && cooldown >= universalCD)
             isTelegraph = true
             //isAttacking = true
             animator -> SetAnimationState(AnimState TELE)
-
-    def Speed() : float
-        return baseSpeed
 
     def DrawObject
         if !drawable
@@ -199,3 +218,24 @@ class GameObject
                 fill_rect(pos.x - colliderSize.x / 2f, pos.y - colliderSize.y / 2f, colliderSize.x, colliderSize.y, 0x44FFFFFF)
 
         animator -> Animate(direction)
+
+    def GetDamage: int
+        return 1
+
+    def GetCurrentHealth: int
+        return health
+
+    def GetHealthCap: int
+        return healthCap
+
+    def GetCurrentStamina: int
+        return stamina
+
+    def GetStaminaCap: int
+        return staminaCap
+
+    def GetSpeed() : float
+        return baseSpeed
+
+    def SpotPlayer(pos: float2; radius: float)
+        return
