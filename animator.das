@@ -52,22 +52,18 @@ class Animator
         fps        := fpsArray
 
     def FrameIndex: int
-        if animationState == AnimState ROLLING
-            return FindState(GetAnimationState()) + int(Direction UP) * frameCount[GetAnimationState()]
         if animationState == AnimState TELE
-            return FindState(int(AnimState ATTACK)) + GetDirection() * frameCount[int(AnimState ATTACK)] - frameCount[int(AnimState ATTACK)] + 1
+            return GetFirstFrame(int(AnimState ATTACK)) - frameCount[int(AnimState ATTACK)] + 1
         if animationState == AnimState DEATH
             return deathAnimation[1 + currentFrame]
-
-        return frames[GetFirstFrame() + currentFrame]
+        return frames[GetFirstFrame(GetAnimationState()) + currentFrame]
 
     def FindState(state: int): int
         var i:int = 0
         if frameCount |> length == 1
             return 0
         for n in range(0, state)
-            i += frameCount |> length * frameCount[n]
-
+            i += 3 * frameCount[n]
         return i
 
     def GetAnimationState(): int
@@ -80,11 +76,11 @@ class Animator
             return fps |> length - 1
         return int(direction)
 
-    def GetFirstFrame: int
-        return FindState(GetAnimationState()) + GetDirection() * frameCount[GetAnimationState()]
+    def GetFirstFrame(state: int): int
+        return FindState(state) + GetDirection() * frameCount[state]
 
     def GetLastFrame: int
-        return GetFirstFrame() + frameCount[GetAnimationState()]
+        return GetFirstFrame(GetAnimationState()) + frameCount[GetAnimationState()]
 
     def SetAnimationState(state: AnimState)
         if(animationState != state)

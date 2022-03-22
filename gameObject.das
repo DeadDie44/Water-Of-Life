@@ -79,7 +79,7 @@ class GameObject
         animator -> SetAnimationState(AnimState IDLE)
 
     def RecieveAttack(attackerId, damage: int; attackerName: string)
-        if !killable || hitInvul < universalCD
+        if !killable || hitInvul < universalCD || isRolling
             return
         LoseHealth(damage)
 
@@ -167,29 +167,26 @@ class GameObject
     def Speed() : float
         return baseSpeed
 
-    
- 
     def DrawObject
         if !drawable
             return
         
+        // Если телеграфируем то пусть трясётся спрайт
         if isTelegraph
             displace.x = random_float(0f, 0.5f)
             displace.y = random_float(0f, 0.5f)
-        // Если телеграфируем то пусть трясётся спрайт
         
-        var transfom: float2 = spriteSize
+        var transform: float2
+        transform.x = 1f
+        transform.y = 1f
         if direction.x > 0f && direction.x > direction.y
-            transfom.x *= -1f
-        if isRolling
-            transfom.y *= -1f
-        if direction.x > 0f && direction.x > direction.y
-            draw_image_transformed(spriteSheet, displace.x + pos.x + spriteSize.x / 2f, displace.x + pos.y - spriteSize.y / 2f,
-            getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
-            0xFFFFFFFF, transfom, 0f, 0f, 0f)
-        else
-            draw_image_region(spriteSheet, displace.x + pos.x - spriteSize.x / 2f, displace.x + pos.y - spriteSize.y / 2f, 
-            getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y))
+            transform.x *= -1f
+        if isRolling && direction.y > 0f
+            transform.y *= -1f
+
+        draw_image_transformed(spriteSheet, displace.x + pos.x - spriteSize.x * transform.x / 2f, displace.x + pos.y - spriteSize.y * transform.y / 2f,
+        getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
+        0xFFFFFFFF, float2(spriteSize.x * transform.x, spriteSize.y * transform.y), 0f, 0f, 0f)
 
         if showCollider
             if colliderType == COLLIDER_CIRCLE
