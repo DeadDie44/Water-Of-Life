@@ -14,7 +14,7 @@ var
     weaponSheet: ImageHandle
     
 class Player: GameObject
-    weaponIndex: int = 0
+    private weaponIndex: int = 0
 
     def Player (desc: ObjectDescriptor; position: float2; i: int)
         GameObject`GameObject(self, desc, position, i)
@@ -24,9 +24,6 @@ class Player: GameObject
         animator -> SetTeleTimer(0.15f)
         faction = int(Faction PLAYER)
         UpdateWeapon()
-
-    def SetWeapon(index:int)
-        weaponIndex = index
 
     def UpdateWeapon()
         print("\n length {weaponsList |> length}, weapon {weaponsList[weaponIndex]}")
@@ -125,3 +122,9 @@ class Player: GameObject
                 getSpriteRect(animator -> FrameIndex(), weaponSheet.width / int(spriteSize.x), weaponSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y))
 
         return
+
+    def override GetWeapon(): int
+        return weaponIndex
+
+    def SetWeapon(index:int)
+        weaponIndex = index

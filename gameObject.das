@@ -234,6 +234,9 @@ class GameObject
     def GetStaminaCap: int
         return staminaCap
 
+    def GetWeapon(): int
+        return 0
+
     def Speed() : float
         return baseSpeed
 
