@@ -32,3 +32,7 @@ let public
     HUD_SHEET: string = SRPITE_ROOT + "hud/hud_sheet.png"
 
     FONT: string = SRPITE_ROOT + "font.png"
+    
+    TEXT_BOX: string = SRPITE_ROOT + "hud/text_box.png"
+
+    TEST: string = SRPITE_ROOT + "test.png"

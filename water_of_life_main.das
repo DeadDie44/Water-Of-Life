@@ -39,7 +39,7 @@ def initialize
     InitMap()
     InitObjectContainer()
     InitDecorations()
-    
+    InitText(1)
     music |> play_sound_loop()
     return
 
@@ -67,7 +67,7 @@ def draw
         DrawObjects()
         DrawDecorations()
         DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
-        //TestDrawFont(GetPlayer().pos)
+        DrawText(GetPlayer().pos)
         disable_alpha_blend()
     else
         enable_alpha_blend()
