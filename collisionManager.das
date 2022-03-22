@@ -29,8 +29,8 @@ def MapBoundaryCheck (var obj: GameObject?)
             obj.pos.y = float(mapHeight) * TILE_SIZE - obj.colliderSize.y / 2f
 
 def CheckAttack (var obj, target: GameObject?)
-    //if obj.faction == target.faction
-        //return
+    if obj.faction == target.faction
+        return
 
     var dirVec: float2 = float2(obj.direction.x, obj.direction.y)
     if obj.direction.y != 0f

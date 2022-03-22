@@ -5,6 +5,7 @@ enum AnimState
     IDLE
     RUNNING
     ATTACK
+    ROLLING
     DEATH
     TELE
 
@@ -51,6 +52,8 @@ class Animator
         fps        := fpsArray
 
     def FrameIndex: int
+        if animationState == AnimState ROLLING
+            return FindState(GetAnimationState()) + int(Direction UP) * frameCount[GetAnimationState()]
         if animationState == AnimState TELE
             return FindState(int(AnimState ATTACK)) + GetDirection() * frameCount[int(AnimState ATTACK)] - frameCount[int(AnimState ATTACK)] + 1
         if animationState == AnimState DEATH
@@ -121,6 +124,6 @@ class Animator
             currentFrame++
             frameTime = 0f
             if currentFrame >= frameCount[GetAnimationState()]
-                if animationState == AnimState ATTACK
+                if animationState == AnimState ATTACK || animationState == AnimState ROLLING
                     animationState = AnimState IDLE
                 currentFrame = 0

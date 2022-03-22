@@ -76,11 +76,21 @@ class Player: GameObject
                     SetWeapon (0)
                 UpdateWeapon()
 
-            if get_key(VK_SPACE) || get_key(VK_SPACE) || get_key(GP_A)
+            if get_key(VK_SPACE) || get_key(GP_A)
                 Attack()
-                print("\n Player pos {pos}")
+                //print("\n Player pos {pos}")
+
+            if get_key(VK_LSHIFT) || get_key(GP_B)
+                Roll()
+
             Move(move)
         return true
+
+    def Roll()
+        if !isAttacking && !isTelegraph
+            print("\nRoll out?")
+            isRolling = true
+            animator -> SetAnimationState(AnimState ROLLING)
 
     def override Move(move:float2)
         if !isAlive   
@@ -88,12 +98,15 @@ class Player: GameObject
         if isAttacking || isTelegraph
             return
         var m = normalize(move)
-        if m == float2(0f, 0f)
-            animator -> SetAnimationState(AnimState IDLE)
+        if isRolling
+            vel = direction * (Speed() * 2f) * get_delta_time()
         else
-            vel = m * Speed() * get_delta_time()
-            animator -> SetAnimationState(AnimState RUNNING)
-            direction = move
+            if m == float2(0f, 0f)
+                animator -> SetAnimationState(AnimState IDLE)
+            else
+                vel = m * Speed() * get_delta_time()
+                animator -> SetAnimationState(AnimState RUNNING)
+                direction = move
     
     def override DrawObject(): void
         GameObject`DrawObject(self)

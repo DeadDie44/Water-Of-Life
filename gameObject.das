@@ -16,6 +16,7 @@ class GameObject
     isAlive      : bool
     isAttacking  : bool
     isTelegraph  : bool
+    isRolling    : bool
     canBeRemoved : bool
     movable      : bool
     killable     : bool
@@ -106,12 +107,15 @@ class GameObject
             if id != 0 && animator.currentFrame >= animator.deathAnimation |> length - 2
                 canBeRemoved = true
             return false
-        if isAttacking && animator.animationState == AnimState IDLE
-            print("Attack finished")
+        if isRolling && animator.animationState == AnimState IDLE
+            print("\nRoll finished")
+            isRolling = false
+        elif isAttacking && animator.animationState == AnimState IDLE
+            print("\nAttack finished")
             isAttacking = false
             cooldown = 0f
         elif isTelegraph && animator.animationState == AnimState ATTACK
-            print("Telegraph finished")
+            print("\nTelegraph finished")
             isTelegraph = false
             isAttacking = true
             cooldown = 0f
@@ -153,6 +157,8 @@ class GameObject
         return
 
     def Attack()
+        if isRolling
+            return
         if (cooldown >= universalCD)
             isTelegraph = true
             //isAttacking = true
@@ -172,10 +178,15 @@ class GameObject
             displace.y = random_float(0f, 0.5f)
         // Если телеграфируем то пусть трясётся спрайт
         
+        var transfom: float2 = spriteSize
+        if direction.x > 0f && direction.x > direction.y
+            transfom.x *= -1f
+        if isRolling
+            transfom.y *= -1f
         if direction.x > 0f && direction.x > direction.y
             draw_image_transformed(spriteSheet, displace.x + pos.x + spriteSize.x / 2f, displace.x + pos.y - spriteSize.y / 2f,
             getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
-            0xFFFFFFFF, float2(-spriteSize.x, spriteSize.y), 0f, 0f, 0f)
+            0xFFFFFFFF, transfom, 0f, 0f, 0f)
         else
             draw_image_region(spriteSheet, displace.x + pos.x - spriteSize.x / 2f, displace.x + pos.y - spriteSize.y / 2f, 
             getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y))
