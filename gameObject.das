@@ -18,6 +18,7 @@ class GameObject
     //***
     isAlive      : bool
     isAttacking  : bool
+    isInteracting: bool
     isTelegraph  : bool
     isRolling    : bool
     canBeRemoved : bool
@@ -143,7 +144,7 @@ class GameObject
         return true
 
     def TickTimers(dt: float)
-        if staminaCD < universalCD
+        if staminaCD < universalCD * 2f
             staminaCD += dt
         else
             ReplenishStamina(1)
@@ -219,6 +220,10 @@ class GameObject
 
         animator -> Animate(direction)
 
+    def InteractWith(): string
+        print("\n I am {objName} id {id}, i've been interacted")
+        return objName
+    
     def GetDamage: int
         return 1
 

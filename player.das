@@ -33,6 +33,8 @@ class Player: GameObject
 
     def override UpdateObject(dt: float): bool
         if GameObject`UpdateObject(self, dt)
+            isInteracting = false
+
             var move = float2(0f,0f)
 
             if get_key(VK_W) || get_key(VK_UP) || get_axis(AXIS_PRIMARY_Y) < 0f
@@ -48,6 +50,7 @@ class Player: GameObject
                 move.x = 1f
                 //direction.x = 1f
 
+            /*
             if get_key(VK_1)
                 SetWeapon(0)
                 if weaponIndex > weaponsList |> length - 1
@@ -71,10 +74,14 @@ class Player: GameObject
                 if weaponIndex > weaponsList |> length - 1
                     SetWeapon (0)
                 UpdateWeapon()
+            */
 
             if get_key(VK_SPACE) || get_key(GP_A)
                 Attack()
                 //print("\n Player pos {pos}")
+
+            if get_key(VK_E)
+                isInteracting = true
 
             if get_key(VK_LSHIFT) || get_key(GP_B)
                 Roll()
@@ -87,7 +94,6 @@ class Player: GameObject
             LoseStamina(rollCost)
             isRolling = true
             animator -> SetAnimationState(AnimState ROLLING)
-            
 
     def override Move(move:float2)
         if !isAlive   

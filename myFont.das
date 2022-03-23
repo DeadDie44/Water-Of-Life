@@ -38,7 +38,7 @@ def InitText(id: int)
     textLines <- ProcessText(textContainer[id])
     print("\nWe made {textLines |> length} lines")
 
-def DrawText(center: float2)
+def DrawTextBox(center: float2)
     if !showText
         return
 
@@ -48,22 +48,23 @@ def DrawText(center: float2)
 
     for line in range (0, lineLimit)
         if currentLine + line < textLines |> length
-            DisplayText(textLines[currentLine + line], fontPos, line)
+            DrawText(textLines[currentLine + line], fontPos, line)
 
-def ScrollText
-    if !showText
+def ScrollText (var menuOn: bool&)
+    if !menuOn
         return
-        
     currentLine = currentLine + lineLimit < textLines |> length ? currentLine + lineLimit : 0
+    print("\n show text {showText}, ")
     if currentLine == 0
         showText = false
+        menuOn = false
 
 def ProcessText(text: string): array<string>
     var textArray: array<string>
     if text |> length - 1 > symbolLimit.x
         var remnant: int = text |> length
         var tick: int
-        //var sliceDelta: int = 0
+
         while(remnant >= 0)
             var sliceDelta: int = 0
             var sliceLength: int = remnant < symbolLimit.x ? remnant : symbolLimit.x
@@ -76,8 +77,7 @@ def ProcessText(text: string): array<string>
             textArray |> push(slice(text, sliceStart, sliceEnd - sliceDelta))
             print("\nSegment {tick}: {textArray[tick]}")
             remnant -= symbolLimit.x - sliceDelta
-            tick++
-            
+            tick++   
     else
         textArray |> push(text)
 
@@ -93,7 +93,7 @@ def FindWordStart(text: string&; index: int&): int
 
     return firstChar
 
-def DisplayText(text: string; pos: float2; line: int)
+def DrawText(text: string; pos: float2; line: int)
     if text |> length > 0   
         var x: int = 0
         var y: int = 0

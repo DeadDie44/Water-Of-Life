@@ -1,9 +1,10 @@
 require daslib/media
 require daslib/math
 
+require gameMap
 require gameObject
 require helpers/collisionHelper
-require gameMap
+//require helpers/objectHelper
 require util/util
 
 def MapBoundaryCheck (var obj: GameObject?)
@@ -29,24 +30,37 @@ def MapBoundaryCheck (var obj: GameObject?)
             obj.pos.y = float(mapHeight) * TILE_SIZE - obj.colliderSize.y / 2f
 
 def CheckAttack (var obj, target: GameObject?)
-    if obj.faction == target.faction
+    if obj.faction == target.faction// || obj.faction == int(Faction NEUTRAL) || target.faction == int(Faction NEUTRAL)
         return
 
     var dirVec: float2 = float2(obj.direction.x, obj.direction.y)
     if obj.direction.y != 0f
         dirVec.x = 0f
+    
+    if CanInteract(obj, target)
+        target -> RecieveAttack(obj.id, obj -> GetDamage(), obj.objName)
+        if target.movable
+            target.vel = dirVec * 2f
+
+def CanInteract(var obj, target: GameObject?): bool
+    if obj.faction == target.faction// || obj.faction == int(Faction NEUTRAL) || target.faction == int(Faction NEUTRAL)
+        return false
+
+    var dirVec: float2 = float2(obj.direction.x, obj.direction.y)
+    if obj.direction.y != 0f
+        dirVec.x = 0f
         
-    var attackPos: float2 = float2(obj.pos.x + dirVec.x * obj.attackPos.x, obj.pos.y + dirVec.y * obj.attackPos.y)
+    var interactPos: float2 = float2(obj.pos.x + dirVec.x * obj.attackPos.x, obj.pos.y + dirVec.y * obj.attackPos.y)
     if target.colliderType == COLLIDER_CIRCLE
-        if CircleCircle(attackPos, target.pos, obj.attackRadius, target.colliderSize.x)
-            target -> RecieveAttack(obj.id, obj -> GetDamage(), obj.objName)
-            if (target.movable)
-                target.vel = dirVec * 2f
+        if CircleCircle(interactPos, target.pos, obj.attackRadius, target.colliderSize.x)
+            return true
     else
         var rayToNearest :float2 
         var overlap: float
-        if CircRect(attackPos, obj.attackRadius, float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y), obj.direction, rayToNearest, overlap)
-            target -> RecieveAttack(obj.id, obj -> GetDamage(), obj.objName)
+        if CircRect(interactPos, obj.attackRadius, float4(target.pos.x - target.colliderSize.x / 2f, target.pos.y - target.colliderSize.y / 2f, target.colliderSize.x, target.colliderSize.y), obj.direction, rayToNearest, overlap)
+            return true
+            
+    return false
 
 def TileCollision (var obj: GameObject?; activeArea: float4)
     if obj.colliderType != COLLIDER_CIRCLE

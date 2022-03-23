@@ -1,5 +1,5 @@
 enum Faction
-    NETRUAL
+    NEUTRAL
     ENEMY
     PLAYER
 let

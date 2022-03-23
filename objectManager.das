@@ -1,10 +1,11 @@
 require daslib/media
 
-require gameObject
+require collisionManager
 require enemy
+require gameObject
 require player
 require objectFactory
-require collisionManager
+require npc
 require util/mapProcessor
 require util/util
 
@@ -34,7 +35,7 @@ require util/util
 let
     objectNames = [[string[20] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
                     "verliokaFirst"; "verliokaTrue"; "respawn"; "player";
-                    "kolovershi"; "babaYaga"; "leshyi"; "NA"; "NA"; "NA";
+                    "kolovershi"; "babaYaga"; "leshyi"; "secretBabaYaga"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "blockage1"; "blockage2"]]
     decorationNames = [[string[20] "NA"; "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "NA";
@@ -46,10 +47,11 @@ struct Decoration
     img: Image
 
 var
+    NPCContainer: array<NPC?>
     objectContainer: array<GameObject?>
     decorationContainer: array<Decoration?>
 
-def InitDecorations()
+def InitDecorations
     clear(decorationContainer)
     var decorationArray: array<objectMarker> <- ReadDecoraions()
     for deco in decorationArray
@@ -68,12 +70,15 @@ def InitObjectContainer
     var objectArray: array<objectMarker> <- ReadObjects()
     for obj in objectArray
         if obj.nameIndex > 0
-            if objectNames[obj.nameIndex] == "player"
-                CreateObject(new Player(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
-            elif objectNames[obj.nameIndex] == "bandit" || objectNames[obj.nameIndex] == "banditRanger" || objectNames[obj.nameIndex] == "verliokaFirst" || objectNames[obj.nameIndex] == "verliokaTrue" || objectNames[obj.nameIndex] == "kolovershi"
-                CreateObject(new Enemy(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+            if objectNames[obj.nameIndex] == "babaYaga" || objectNames[obj.nameIndex] == "leshyi" || objectNames[obj.nameIndex] == "secretBabaYaga"
+                NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), NPCContainer |> length))
             else
-                CreateObject(new GameObject(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+                if objectNames[obj.nameIndex] == "player"
+                    CreateObject(new Player(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+                elif objectNames[obj.nameIndex] == "bandit" || objectNames[obj.nameIndex] == "banditRanger" || objectNames[obj.nameIndex] == "verliokaFirst" || objectNames[obj.nameIndex] == "verliokaTrue" || objectNames[obj.nameIndex] == "kolovershi"
+                    CreateObject(new Enemy(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+                else
+                    CreateObject(new GameObject(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
 
 def CreateObject(var obj: GameObject?)
@@ -82,21 +87,32 @@ def CreateObject(var obj: GameObject?)
 def UpdateObjects(dt: float)
     if objectContainer |> length > 0
         for obj in objectContainer
-            if obj != null
-                //if PointRect(obj.pos, GetActiveArea(GetPlayer()))              
+            if obj != null            
                 obj -> UpdateObject(dt)
                 if obj.isAlive
                     for target in objectContainer
                         if PointRect(target.pos, GetActiveArea(obj))
                             if target != null && obj.id != target.id && target.isAlive
                                 if obj.isAttacking && target.killable
-                                    CheckAttack(obj, target)   
-                                if obj.id != target.id && (obj.movable || target.movable)
+                                    CheckAttack(obj, target)
+                                if(obj.movable || target.movable)
                                     CheckCollision(obj, target)
                     if obj.id != GetPlayer().id
                         obj -> SpotPlayer(GetPlayer().pos, GetPlayer().colliderSize.x)
-                    TileCollision (obj, GetActiveArea(obj))
-                    MapBoundaryCheck (obj)
+                    TileCollision(obj, GetActiveArea(obj))
+                    MapBoundaryCheck(obj)
+
+def UpdateNPCs(dt: float; var interact: bool&)
+    if NPCContainer |> length > 0
+        for npc in NPCContainer
+            if npc != null
+                //npc -> UpdateObject(dt)
+                CheckCollision(GetPlayer(), npc)
+                if GetPlayer().isInteracting && CanInteract(GetPlayer(), npc)
+                    npc -> InteractWith()
+                    interact = true
+                    return
+
 
 def GetPlayer: GameObject?
     return objectContainer[0]
@@ -111,10 +127,10 @@ def GetActiveArea(obj: GameObject?): float4
     area.w = areaHeight
     return area
 
-def GetDrawArea(): float4
+def GetDrawArea: float4
     var area: float4
-    var areaWidth: float = 540f
-    var areaHeight: float = 540f
+    var areaWidth: float = 500f
+    var areaHeight: float = 450f
     area.x = GetPlayer().pos.x - areaWidth / 2f
     area.y = GetPlayer().pos.y - areaHeight / 2f
     area.z = areaWidth
@@ -155,8 +171,15 @@ def DrawObjects
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null
-                //if PointRect(obj.pos, GetDrawingArea())  
-                obj -> DrawObject()
+                if PointRect(obj.pos, GetDrawArea())  
+                    obj -> DrawObject()
+
+def DrawNPCs
+    if NPCContainer |> length > 0
+        for npc in NPCContainer
+            if npc != null
+                if PointRect(npc.pos, GetDrawArea())  
+                    npc -> DrawObject()
 
 def DrawDecorations
     if decorationContainer |> length > 0

@@ -14,6 +14,7 @@ options log
 
 var
     GameOn      : bool = false
+    MenuOn      : bool = false
     cameraCenter: float2
 
     buttonExit : Image
@@ -36,12 +37,15 @@ def initialize
 
     cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
     setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
+
     InitFont()
     InitMap()
     InitObjectContainer()
     InitDecorations()
     InitText(0)
+
     music |> play_sound_loop(0.5f)
+    show_mouse_cursor()
     return
 
 // this function is called to update game data,
@@ -51,11 +55,18 @@ def act(dt: float)
     if GameOn
         if get_key(VK_ESCAPE)
             schedule_quit_game()
-        if get_key_up(VK_SPACE)
-            ScrollText()
-        UpdateObjects(dt)
+        if MenuOn
+            if !showText
+                showText = true
+            if get_key_up(VK_SPACE)
+                ScrollText(MenuOn)
+                print("\nMenuOn {MenuOn}")
+                print("\nInteracting? {GetPlayer().isInteracting}")
+        else
+            UpdateObjects(dt)
+            UpdateNPCs(dt, MenuOn)
+            RemoveObjects()
         setup_2d_camera(GetPlayer().pos, float(get_screen_width() / 270))
-        RemoveObjects()
     else
         HandleTitleMenu()
     return
@@ -68,9 +79,11 @@ def draw
         enable_alpha_blend()
         DrawGameMap(GetDrawArea())
         DrawObjects()
+        DrawNPCs()
         DrawDecorations()
         DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
-        DrawText(GetPlayer().pos)
+        if MenuOn
+            DrawTextBox(GetPlayer().pos)
         disable_alpha_blend()
     else
         enable_alpha_blend()
