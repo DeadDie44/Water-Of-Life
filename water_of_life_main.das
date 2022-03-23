@@ -41,7 +41,7 @@ def initialize
     InitObjectContainer()
     InitDecorations()
     InitText(0)
-    music |> play_sound_loop()
+    music |> play_sound_loop(0.5f)
     return
 
 // this function is called to update game data,

@@ -17,14 +17,16 @@ let
     textContainer = [[string[2]"Hello world! I am a testing text, because somebody doesn't want to use standart fonts with built-in methods. And so here we have a text made with sprites. I am here for testing, for if not tested this would look really bad. In fact it's probably not looking good right this moment. But oh well, I am sure it can be fixed in a week... while trying to finish core mechanics during the very same week and putting everything in place and stuff... Fun! And since we at it I might as well just keep going, after all it is important to have proper test cases. I mean if it managed to slice text properly in two parts, that doesn't mean it can keep going indefinitely. I mean mistake in algorithm and callculations might not show up on low number of passes, but what if it's just a coincidentaly satisfy those conditions. So yeah let's hope I won't need to write longer texts for this demo, because I just couldn't be bothered.";
     "The quick brown fox jumps over the lazy dog. THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG. For a reason I want to see all letters to make sure the shapes are alright."]]
 
+    lineLimit: int = 5
+
     symbolSize: float2 = float2(5, 10)
     symbolLimit: int2 = int2(50, 5)
 
 var
     fontImage: ImageHandle
     textBox: Image
-    textSegments: array<string>
-    currentSegment: int
+    textLines: array<string>
+    currentLine: int
     testTimer: float = 0f
 
 def InitFont()
@@ -32,78 +34,77 @@ def InitFont()
     textBox <- create_image(TEXT_BOX)
 
 def InitText(id: int)
-    textSegments <- ProcessText(textContainer[id])
+    textLines <- ProcessText(textContainer[id])
 
 def DrawText(center: float2)
     var boxPos: float2 = float2(center.x - 156f, center.y + 20f )
     var fontPos: float2 = float2(boxPos.x + 5f, boxPos.y + 5f)
     draw_image(textBox, boxPos.x, boxPos.y)
 
-    DisplayText(textSegments[currentSegment], fontPos)
+    for line in range (0, lineLimit)
+        if currentLine + line < textLines |> length
+            DisplayText(textLines[currentLine + line], fontPos, line)
+
     testTimer += get_delta_time()
     if testTimer > 2f
         testTimer = 0f
-        currentSegment++
-        if currentSegment > textSegments |> length - 1
-            currentSegment = 0
+        currentLine += lineLimit
+        if currentLine > textLines |> length - 1
+            currentLine = 0
 
 def ProcessText(text: string): array<string>
     var textArray: array<string>
-    if text |> length - 1 > symbolLimit.x * symbolLimit.y
-        var remnant: int = text |> length - 1
+    if text |> length - 1 > symbolLimit.x
+        var remnant: int = text |> length
         var tick: int
-        var sliceDelta: int = 0
+        //var sliceDelta: int = 0
         while(remnant >= 0)
-            var sliceLength: int = remnant < symbolLimit.x * symbolLimit.y - sliceDelta ? remnant - sliceDelta : symbolLimit.x * symbolLimit.y - sliceDelta
+            var sliceDelta: int = 0
+            var sliceLength: int = remnant < symbolLimit.x ? remnant : symbolLimit.x
+            var sliceStart = text |> length - remnant
+            var sliceEnd = sliceStart + sliceLength
 
-            var sliceStart = tick * (symbolLimit.x * symbolLimit.y) - sliceDelta
-            var sliceEnd = tick * (symbolLimit.x * symbolLimit.y) + sliceLength - sliceDelta
-
-            if remnant > symbolLimit.x * symbolLimit.y && !is_white_space(character_at(text, sliceEnd)) && !is_white_space(character_at(text, sliceEnd - 1))
+            if remnant >= symbolLimit.x && !is_white_space(character_at(text, sliceEnd)) && !is_white_space(character_at(text, sliceEnd - 1))
                 sliceDelta += FindWordStart(text, sliceEnd)
 
-            textArray |> push(slice(text, sliceStart, sliceEnd - (remnant > symbolLimit.x * symbolLimit.y ? sliceDelta : 0)))
+            textArray |> push(slice(text, sliceStart, sliceEnd - sliceDelta))
 
-            remnant -= symbolLimit.x * symbolLimit.y - sliceDelta
+            remnant -= symbolLimit.x - sliceDelta
             tick++
+            
     else
         textArray |> push(text)
 
     return <- textArray
 
 def FindWordStart(text: string&; index: int&): int
-    var firstChar: int = 0
+    var firstChar: int = 0  
 
     while true
-        print("\n looking at char {to_char(character_at(text, index - firstChar))}")
-        print("\n previous char {to_char(character_at(text, index - firstChar - 1))}")
         if (is_white_space(character_at(text, index - firstChar - 1)))
             break
         firstChar++
-    print("\n returning char {to_char(character_at(text, index - firstChar))}  {firstChar}")
+
     return firstChar
 
-def DisplayText(text: string; pos: float2)
+def DisplayText(text: string; pos: float2; line: int)
     if text |> length > 0   
         var x: int = 0
         var y: int = 0
         for char in text
             for i in range(0, lowerCases |> length)
                 if lowerCases[i] == to_char(char)
-                    draw_image_region(fontImage, GetPos(pos, x, y).x, GetPos(pos, x, y).y, GetLowerCase(i))
+                    draw_image_region(fontImage, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetLowerCase(i))
             for i in range(0, upperCases |> length)
                 if upperCases[i] == to_char(char)
-                    draw_image_region(fontImage, GetPos(pos, x, y).x, GetPos(pos, x, y).y, GetUpperCase(i))
+                    draw_image_region(fontImage, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetUpperCase(i))
             for i in range(0, numbers |> length)
                 if numbers[i] == to_char(char)
-                    draw_image_region(fontImage, GetPos(pos, x, y).x, GetPos(pos, x, y).y, GetNumber(i))
+                    draw_image_region(fontImage, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetNumber(i))
             for i in range(0, punctuationsMarks |> length)
                 if punctuationsMarks[i] == to_char(char)
-                    draw_image_region(fontImage, GetPos(pos, x, y).x, GetPos(pos, x, y).y, GetPunctuation(i))
+                    draw_image_region(fontImage, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetPunctuation(i))
             x++
-            if x == symbolLimit.x
-                x = 0
-                y++
 
 def GetPos(pos: float2; x, y: int): float2
     return float2(1f + float(x) + pos.x + symbolSize.x * float(x), 1f + float(y) + pos.y + symbolSize.y * float(y))
