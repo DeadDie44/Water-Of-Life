@@ -6,6 +6,7 @@ require hud
 require gameMap
 require objectManager
 require myFont
+require collisionManager
 
 // options debugger            // uncomment for debug in VS Code
 // require daslib/debug        // uncomment for debug in VS Code
@@ -39,7 +40,7 @@ def initialize
     InitMap()
     InitObjectContainer()
     InitDecorations()
-    InitText(1)
+    InitText(0)
     music |> play_sound_loop()
     return
 
@@ -76,11 +77,6 @@ def draw
         draw_image(buttonExit, 290f, 155f)
         disable_alpha_blend()
 
-def DisplayText(pos:float2; text:string; size: int)
-    set_font_name("assets/fonts/SquareCaps.ttf")  // set_font_name("mono"), set_font_name("sans"), set_font_name("*.ttf")
-    set_font_size(size)
-    text_out(pos.x, pos.y, text, 0xFFFFFFFF)
-
 def DrawTitleScreen
     draw_image(titleScreen, 0f,0f)
 
@@ -88,12 +84,13 @@ def HandleTitleMenu
     if get_key(VK_S) || get_key(VK_RETURN)
         Start()
     if get_key(VK_E) || get_key(VK_ESCAPE) 
-        Exit()
+        schedule_quit_game()
     if get_mouse_button_down(MB_LEFT)
-        if PointRec(screen_to_world(get_mouse_position()), float4(290f,75f,100f,30f))
+        var mousePos = screen_to_world(get_mouse_position())
+        if PointRect(mousePos, float4(290f,75f,100f,30f))
             Start() 
-        elif PointRec(screen_to_world(get_mouse_position()), float4(290f,155f,100f,30f))
-            Exit()
+        elif PointRect(mousePos, float4(290f,155f,100f,30f))
+            schedule_quit_game()
 
 def Start
     print("\nStart!")
@@ -102,9 +99,3 @@ def Start
     stop_all_sounds()
     music <- create_sound(GRASS_THEME)
     music |> play_sound_loop(0.25f)
-
-def Exit
-    schedule_quit_game()
-
-def PointRec(pos: float2; rect: float4): bool
-    return pos.x >= rect.x && pos.x <= rect.x + rect.z && pos.y >= rect.y && pos.y <= rect.y + rect.w

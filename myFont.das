@@ -1,4 +1,6 @@
 require daslib/media
+require strings
+
 require helpers/spriteHelper
 
 let
@@ -12,7 +14,7 @@ let
 
     punctuationsMarks = [[string[8] "."; ","; ":"; ";"; "!"; "?"; "-"; "'"]]
 
-    textContainer = [[string[2]"Hello world! I am a testing text, because somebody doesn't want to use standart fonts with built-in methods. And so here we have a text made with sprites. I am here for testing, for if not tested this would look really bad. In fact it's probably not looking good right this moment. But oh well, I am sure it can be fixed in a week... while trying to finish core mechanics during the very same week and putting everythin in place and stuff... Fun! And since we at it I might as well jsut kepp going, after all it is important to have proper test cases. I mean if it managed to slice text properly in two parts, that doesn't mean it can keep going indefinitely. I mean mistake in algorithm and callculations might not show up on low number of passes, but what if it's just a concidentaly satisfy those conditions. So yeah let's hope I won't need to write longer texts for this demo, because I just couldn't be bothered.";
+    textContainer = [[string[2]"Hello world! I am a testing text, because somebody doesn't want to use standart fonts with built-in methods. And so here we have a text made with sprites. I am here for testing, for if not tested this would look really bad. In fact it's probably not looking good right this moment. But oh well, I am sure it can be fixed in a week... while trying to finish core mechanics during the very same week and putting everything in place and stuff... Fun! And since we at it I might as well just keep going, after all it is important to have proper test cases. I mean if it managed to slice text properly in two parts, that doesn't mean it can keep going indefinitely. I mean mistake in algorithm and callculations might not show up on low number of passes, but what if it's just a coincidentaly satisfy those conditions. So yeah let's hope I won't need to write longer texts for this demo, because I just couldn't be bothered.";
     "The quick brown fox jumps over the lazy dog. THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG. For a reason I want to see all letters to make sure the shapes are alright."]]
 
     symbolSize: float2 = float2(5, 10)
@@ -47,25 +49,42 @@ def DrawText(center: float2)
 
 def ProcessText(text: string): array<string>
     var textArray: array<string>
-    if text |> length > symbolLimit.x * symbolLimit.y
-        var remnant: int = text |> length
+    if text |> length - 1 > symbolLimit.x * symbolLimit.y
+        var remnant: int = text |> length - 1
         var tick: int
+        var sliceDelta: int = 0
         while(remnant >= 0)
-            var sliceDelta: int
-            if remnant < symbolLimit.x * symbolLimit.y
-                sliceDelta = remnant
-            else
-                sliceDelta = symbolLimit.x * symbolLimit.y
-            textArray |> push(slice(text, tick * (symbolLimit.x * symbolLimit.y), tick * (symbolLimit.x * symbolLimit.y) + sliceDelta))
-            remnant -= symbolLimit.x * symbolLimit.y
+            var sliceLength: int = remnant < symbolLimit.x * symbolLimit.y - sliceDelta ? remnant - sliceDelta : symbolLimit.x * symbolLimit.y - sliceDelta
 
+            var sliceStart = tick * (symbolLimit.x * symbolLimit.y) - sliceDelta
+            var sliceEnd = tick * (symbolLimit.x * symbolLimit.y) + sliceLength - sliceDelta
+
+            if remnant > symbolLimit.x * symbolLimit.y && !is_white_space(character_at(text, sliceEnd)) && !is_white_space(character_at(text, sliceEnd - 1))
+                sliceDelta += FindWordStart(text, sliceEnd)
+
+            textArray |> push(slice(text, sliceStart, sliceEnd - (remnant > symbolLimit.x * symbolLimit.y ? sliceDelta : 0)))
+
+            remnant -= symbolLimit.x * symbolLimit.y - sliceDelta
             tick++
     else
         textArray |> push(text)
+
     return <- textArray
-            
+
+def FindWordStart(text: string&; index: int&): int
+    var firstChar: int = 0
+
+    while true
+        print("\n looking at char {to_char(character_at(text, index - firstChar))}")
+        print("\n previous char {to_char(character_at(text, index - firstChar - 1))}")
+        if (is_white_space(character_at(text, index - firstChar - 1)))
+            break
+        firstChar++
+    print("\n returning char {to_char(character_at(text, index - firstChar))}  {firstChar}")
+    return firstChar
+
 def DisplayText(text: string; pos: float2)
-    if text |> length > 0
+    if text |> length > 0   
         var x: int = 0
         var y: int = 0
         for char in text

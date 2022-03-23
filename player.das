@@ -26,7 +26,6 @@ class Player: GameObject
         UpdateWeapon()
 
     def UpdateWeapon()
-        print("\n length {weaponsList |> length}, weapon {weaponsList[weaponIndex]}")
         weaponSheet <- create_managed_image(weaponsList[weaponIndex])
 
     def override GetDamage: int
@@ -74,7 +73,6 @@ class Player: GameObject
                 UpdateWeapon()
 
             if get_key(VK_SPACE) || get_key(GP_A)
-                print("\n Stamina {stamina}")
                 Attack()
                 //print("\n Player pos {pos}")
 
@@ -86,7 +84,6 @@ class Player: GameObject
 
     def Roll()
         if !isRolling && !isAttacking && !isTelegraph && stamina >= rollCost
-            print("\nRoll out?")
             LoseStamina(rollCost)
             isRolling = true
             animator -> SetAnimationState(AnimState ROLLING)
