@@ -26,17 +26,22 @@ var
     fontImage: ImageHandle
     textBox: Image
     textLines: array<string>
-    currentLine: int
-    testTimer: float = 0f
+    currentLine: int = 0
+    showText: bool
 
 def InitFont()
     fontImage <- create_managed_image(FONT)
     textBox <- create_image(TEXT_BOX)
+    showText = true
 
 def InitText(id: int)
     textLines <- ProcessText(textContainer[id])
+    print("\nWe made {textLines |> length} lines")
 
 def DrawText(center: float2)
+    if !showText
+        return
+
     var boxPos: float2 = float2(center.x - 156f, center.y + 20f )
     var fontPos: float2 = float2(boxPos.x + 5f, boxPos.y + 5f)
     draw_image(textBox, boxPos.x, boxPos.y)
@@ -45,12 +50,13 @@ def DrawText(center: float2)
         if currentLine + line < textLines |> length
             DisplayText(textLines[currentLine + line], fontPos, line)
 
-    testTimer += get_delta_time()
-    if testTimer > 2f
-        testTimer = 0f
-        currentLine += lineLimit
-        if currentLine > textLines |> length - 1
-            currentLine = 0
+def ScrollText
+    if !showText
+        return
+        
+    currentLine = currentLine + lineLimit < textLines |> length ? currentLine + lineLimit : 0
+    if currentLine == 0
+        showText = false
 
 def ProcessText(text: string): array<string>
     var textArray: array<string>
@@ -68,7 +74,7 @@ def ProcessText(text: string): array<string>
                 sliceDelta += FindWordStart(text, sliceEnd)
 
             textArray |> push(slice(text, sliceStart, sliceEnd - sliceDelta))
-
+            print("\nSegment {tick}: {textArray[tick]}")
             remnant -= symbolLimit.x - sliceDelta
             tick++
             

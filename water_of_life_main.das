@@ -51,6 +51,8 @@ def act(dt: float)
     if GameOn
         if get_key(VK_ESCAPE)
             schedule_quit_game()
+        if get_key_up(VK_SPACE)
+            ScrollText()
         UpdateObjects(dt)
         setup_2d_camera(GetPlayer().pos, float(get_screen_width() / 270))
         RemoveObjects()
@@ -88,7 +90,8 @@ def HandleTitleMenu
     if get_mouse_button_down(MB_LEFT)
         var mousePos = screen_to_world(get_mouse_position())
         if PointRect(mousePos, float4(290f,75f,100f,30f))
-            Start() 
+            Start()
+            hide_mouse_cursor()
         elif PointRect(mousePos, float4(290f,155f,100f,30f))
             schedule_quit_game()
 
