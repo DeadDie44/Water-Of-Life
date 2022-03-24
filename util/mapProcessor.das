@@ -36,6 +36,24 @@ def ReadMap(): array<int>
 
     return <- map
 
+def ReadLayout(layout: string): array<objectMarker>
+    print("\nTrying to read {layout}}")
+    var objectArray: array<objectMarker>
+
+    var img: Image
+    img <- create_image(layout)
+
+    for y in range(0, img.width)
+        for x in range(0, img.height)
+            if img |> get_pixel(x, y) != 0xff000000
+                var myMarker: objectMarker
+                myMarker.pos = float2(x * 32 + 16, y * 32 + 16)
+                myMarker.index = GetColorIndex(img |> get_pixel(x, y))
+                objectArray |> push(myMarker)
+    delete img
+
+    return <- objectArray
+
 def ReadObjects(): array<objectMarker>
     print("\nTrying to read objects")
     var objectArray: array<objectMarker>
@@ -48,7 +66,7 @@ def ReadObjects(): array<objectMarker>
             if img |> get_pixel(x, y) == 0xff007f7f
                 var myMarker: objectMarker
                 myMarker.pos = float2(x * 32 + 16, y * 32 + 16)
-                myMarker.nameIndex = GetColorIndex(img |> get_pixel(x, y))
+                myMarker.index = GetColorIndex(img |> get_pixel(x, y))
                 objectArray |> push(myMarker)
                 break;
 
@@ -57,25 +75,7 @@ def ReadObjects(): array<objectMarker>
             if img |> get_pixel(x, y) != 0xff000000 && img |> get_pixel(x, y) != 0xff007f7f
                 var myMarker: objectMarker
                 myMarker.pos = float2(x * 32 + 16, y * 32 + 16)
-                myMarker.nameIndex = GetColorIndex(img |> get_pixel(x, y))
-                objectArray |> push(myMarker)
-    delete img
-
-    return <- objectArray
-
-def ReadDecoraions(): array<objectMarker>
-    print("\nTrying to read decorations")
-    var objectArray: array<objectMarker>
-
-    var img: Image
-    img <- create_image(MAP_DECORATIONS_LAYOUT)
-
-    for y in range(0, img.width)
-        for x in range(0, img.height)
-            if img |> get_pixel(x, y) != 0xff000000
-                var myMarker: objectMarker
-                myMarker.pos = float2(x * 32 + 16, y * 32 + 16)
-                myMarker.nameIndex = GetColorIndex(img |> get_pixel(x, y))
+                myMarker.index = GetColorIndex(img |> get_pixel(x, y))
                 objectArray |> push(myMarker)
     delete img
 
@@ -90,4 +90,4 @@ def GetColorIndex(color: uint): int
 
 struct objectMarker
     pos: float2
-    nameIndex: int
+    index: int

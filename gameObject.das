@@ -3,7 +3,7 @@ require daslib/media
 require helpers/collisionHelper
 require animator
 require objectFactory
-require util/util  
+require util/util
 
 let
     attackCost: int = 2

@@ -15,7 +15,7 @@ options log
 
 var
     GameOn      : bool = false
-    DialogOn      : bool = false
+    DialogOn    : bool = false
     cameraCenter: float2
 
     buttonExit : Image
@@ -43,6 +43,7 @@ def initialize
     InitQuests()
     InitMap()
     InitObjectContainer()
+    InitItems()
     InitDecorations()
     
     music |> play_sound_loop(0.5f)
@@ -81,6 +82,7 @@ def draw
         DrawGameMap(GetDrawArea())
         DrawObjects()
         DrawNPCs()
+        DrawItems()
         DrawDecorations()
         DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
         if DialogOn

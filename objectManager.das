@@ -3,6 +3,8 @@ require daslib/media
 require collisionManager
 require enemy
 require gameObject
+require item
+require helpers/SpriteHelper
 require player
 require objectFactory
 require myFont
@@ -49,19 +51,27 @@ struct Decoration
     img: Image
 
 var
+    itemSheet: ImageHandle
     NPCContainer: array<NPC?>
     objectContainer: array<GameObject?>
     decorationContainer: array<Decoration?>
+    itemContainer: array<objectMarker>
+
+def InitItems
+    clear(itemContainer)
+    MakeItems()
+    itemSheet <- create_managed_image(ITEMS)
+    itemContainer <- ReadLayout(MAP_ITEMS_LAYOUT)
 
 def InitDecorations
     clear(decorationContainer)
-    var decorationArray: array<objectMarker> <- ReadDecoraions()
+    var decorationArray: array<objectMarker> <- ReadLayout(MAP_DECORATIONS_LAYOUT)
     for deco in decorationArray
-        if deco.nameIndex > 0
-            if decorationNames[deco.nameIndex] != "NA"
+        if deco.index > 0
+            if decorationNames[deco.index] != "NA"
                 var dec: Decoration? = new Decoration
                 dec.pos = deco.pos
-                dec.img <- create_image("assets/sprites/decorations/{decorationNames[deco.nameIndex]}.png")
+                dec.img <- create_image("assets/sprites/decorations/{decorationNames[deco.index]}.png")
                 if random_float(0f,1f) > 0.5f
                     dec.img |> flip_image_x()
                 decorationContainer |> push(dec)
@@ -71,16 +81,16 @@ def InitObjectContainer
     clear(objectContainer)
     var objectArray: array<objectMarker> <- ReadObjects()
     for obj in objectArray
-        if obj.nameIndex > 0
-            if objectNames[obj.nameIndex] == "babaYaga" || objectNames[obj.nameIndex] == "leshy" || objectNames[obj.nameIndex] == "secretBabaYaga"
-                NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), NPCContainer |> length))
+        if obj.index > 0
+            if objectNames[obj.index] == "babaYaga" || objectNames[obj.index] == "leshy" || objectNames[obj.index] == "secretBabaYaga"
+                NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), NPCContainer |> length))
             else
-                if objectNames[obj.nameIndex] == "player"
-                    CreateObject(new Player(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
-                elif objectNames[obj.nameIndex] == "bandit" || objectNames[obj.nameIndex] == "banditRanger" || objectNames[obj.nameIndex] == "verliokaFirst" || objectNames[obj.nameIndex] == "verliokaTrue" || objectNames[obj.nameIndex] == "kolovershi"
-                    CreateObject(new Enemy(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+                if objectNames[obj.index] == "player"
+                    CreateObject(new Player(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+                elif objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
+                    CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
                 else
-                    CreateObject(new GameObject(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+                    CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
 
 def CreateObject(var obj: GameObject?)
@@ -116,7 +126,7 @@ def UpdateNPCs(dt: float; var interact: bool&)
                     if GetQuest(name).progress % 2 == 0
                         GetQuest(name).progress++
                     interact = true
-                    
+
                     return
 
 
@@ -186,6 +196,12 @@ def DrawNPCs
             if npc != null
                 if PointRect(npc.pos, GetDrawArea())  
                     npc -> DrawObject()
+
+def DrawItems
+    if itemContainer |> length > 0
+        for item in itemContainer
+            if PointRect(item.pos, GetDrawArea())  
+                draw_image_region(itemSheet, item.pos.x - 16f, item.pos.y - 16f, getSpriteRect(items[item.index - 1].sprite, 8, 8, 32f, 32f))
 
 def DrawDecorations
     if decorationContainer |> length > 0
