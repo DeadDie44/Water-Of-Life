@@ -67,6 +67,7 @@ def act(dt: float)
         else
             UpdateObjects(dt)
             UpdateNPCs(dt, DialogOn)
+            UpdateItems(dt)
             RemoveObjects()
         setup_2d_camera(GetPlayer().pos, float(get_screen_width() / 270))
     else

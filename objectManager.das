@@ -96,6 +96,22 @@ def InitObjectContainer
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
 
+def UpdateItems(dt: float)
+    if itemContainer |> length > 0
+        var toRemove: bool = false
+        var index: int
+        for i in range(0, itemContainer |> length)
+            var itemSize: float = 16f
+            if CircleCircle(itemContainer[i].pos, GetPlayer().pos, itemSize, GetPlayer().colliderSize.x)
+                print("\n Items on map length {itemContainer |> length}")
+                print("\n I am item {GetItemByIndex(itemContainer[i].index).itemName}, put your feet off me")
+                GetPlayer() -> PickUpItem(itemContainer[i].index)
+                toRemove = true
+                index = i
+                break
+        if toRemove
+            erase(itemContainer, index)
+
 def UpdateObjects(dt: float)
     if objectContainer |> length > 0
         for obj in objectContainer
@@ -128,7 +144,6 @@ def UpdateNPCs(dt: float; var interact: bool&)
                     interact = true
 
                     return
-
 
 def GetPlayer: GameObject?
     return objectContainer[0]

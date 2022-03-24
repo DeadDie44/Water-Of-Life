@@ -4,6 +4,7 @@ require helpers/collisionHelper
 require animator
 require objectFactory
 require util/util
+require item
 
 let
     attackCost: int = 2
@@ -49,6 +50,8 @@ class GameObject
     spriteSheet : ImageHandle
 
     animator    : Animator?
+
+    inventory   : array<Item?>
 
     def GameObject(desc: ObjectDescriptor; position: float2; i: int)
         id = i
@@ -224,6 +227,29 @@ class GameObject
         print("\n I am {objName} id {id}, i've been interacted")
         return objName
     
+    def PickUpItem(index: int)
+        print("\n Am i picked up {GetItemByIndex(index).itemName}")
+        inventory |> push(GetItemByIndex(index))
+        return
+
+    def RemoveItem(itemName: string)
+        erase(inventory, FindItem(itemName))
+        return
+    
+    def FindItem(itemName: string): int
+        if inventory |> length > 0
+            for item in range(0, inventory |> length)
+                if inventory[item].itemName == itemName
+                    return item
+        return 0
+
+    def HasItem(itemName: string): bool
+        if inventory |> length > 0
+            for item in inventory
+                if item.itemName == itemName
+                    return true
+        return false
+
     def GetDamage: int
         return 1
 
