@@ -7,6 +7,7 @@ require gameMap
 require objectManager
 require myFont
 require collisionManager
+require questManager
 
 // options debugger            // uncomment for debug in VS Code
 // require daslib/debug        // uncomment for debug in VS Code
@@ -14,7 +15,7 @@ options log
 
 var
     GameOn      : bool = false
-    MenuOn      : bool = false
+    DialogOn      : bool = false
     cameraCenter: float2
 
     buttonExit : Image
@@ -39,11 +40,11 @@ def initialize
     setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
 
     InitFont()
+    InitQuests()
     InitMap()
     InitObjectContainer()
     InitDecorations()
-    InitText(0)
-
+    
     music |> play_sound_loop(0.5f)
     show_mouse_cursor()
     return
@@ -55,16 +56,16 @@ def act(dt: float)
     if GameOn
         if get_key(VK_ESCAPE)
             schedule_quit_game()
-        if MenuOn
+        if DialogOn
             if !showText
                 showText = true
             if get_key_up(VK_SPACE)
-                ScrollText(MenuOn)
-                print("\nMenuOn {MenuOn}")
+                ScrollText(DialogOn)
+                print("\nMenuOn {DialogOn}")
                 print("\nInteracting? {GetPlayer().isInteracting}")
         else
             UpdateObjects(dt)
-            UpdateNPCs(dt, MenuOn)
+            UpdateNPCs(dt, DialogOn)
             RemoveObjects()
         setup_2d_camera(GetPlayer().pos, float(get_screen_width() / 270))
     else
@@ -82,7 +83,7 @@ def draw
         DrawNPCs()
         DrawDecorations()
         DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
-        if MenuOn
+        if DialogOn
             DrawTextBox(GetPlayer().pos)
         disable_alpha_blend()
     else

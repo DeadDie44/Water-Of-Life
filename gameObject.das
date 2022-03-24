@@ -144,7 +144,7 @@ class GameObject
         return true
 
     def TickTimers(dt: float)
-        if staminaCD < universalCD * 2f
+        if staminaCD < universalCD * 1.5f
             staminaCD += dt
         else
             ReplenishStamina(1)

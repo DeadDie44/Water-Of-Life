@@ -5,7 +5,9 @@ require enemy
 require gameObject
 require player
 require objectFactory
+require myFont
 require npc
+require questManager
 require util/mapProcessor
 require util/util
 
@@ -35,7 +37,7 @@ require util/util
 let
     objectNames = [[string[20] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
                     "verliokaFirst"; "verliokaTrue"; "respawn"; "player";
-                    "kolovershi"; "babaYaga"; "leshyi"; "secretBabaYaga"; "NA"; "NA";
+                    "kolovershi"; "babaYaga"; "leshy"; "secretBabaYaga"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "blockage1"; "blockage2"]]
     decorationNames = [[string[20] "NA"; "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "NA";
@@ -70,7 +72,7 @@ def InitObjectContainer
     var objectArray: array<objectMarker> <- ReadObjects()
     for obj in objectArray
         if obj.nameIndex > 0
-            if objectNames[obj.nameIndex] == "babaYaga" || objectNames[obj.nameIndex] == "leshyi" || objectNames[obj.nameIndex] == "secretBabaYaga"
+            if objectNames[obj.nameIndex] == "babaYaga" || objectNames[obj.nameIndex] == "leshy" || objectNames[obj.nameIndex] == "secretBabaYaga"
                 NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.nameIndex]), float2(obj.pos.x, obj.pos.y), NPCContainer |> length))
             else
                 if objectNames[obj.nameIndex] == "player"
@@ -106,11 +108,15 @@ def UpdateNPCs(dt: float; var interact: bool&)
     if NPCContainer |> length > 0
         for npc in NPCContainer
             if npc != null
-                //npc -> UpdateObject(dt)
                 CheckCollision(GetPlayer(), npc)
                 if GetPlayer().isInteracting && CanInteract(GetPlayer(), npc)
-                    npc -> InteractWith()
+                    var name: string = npc -> InteractWith()
+
+                    InitText(GetQuest(name).dialogText[GetQuest(name).progress])
+                    if GetQuest(name).progress % 2 == 0
+                        GetQuest(name).progress++
                     interact = true
+                    
                     return
 
 
