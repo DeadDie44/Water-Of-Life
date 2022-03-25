@@ -1,8 +1,8 @@
 {
-	"name"   : "Blockage2",
+	"name"   : "Door",
 	"movable": false,
 	"killable": false,
-	"sprite" : "objects/static_objects.png",
+	"sprite" : "objects/doors.png",
 	
 	"size"         : [32,32],
 	"colliderSize" : [32,32],

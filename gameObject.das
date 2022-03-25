@@ -23,6 +23,7 @@ class GameObject
     isTelegraph  : bool
     isRolling    : bool
     canBeRemoved : bool
+    hidden       : bool
     movable      : bool
     killable     : bool
     drawable     : bool
@@ -120,6 +121,9 @@ class GameObject
             stamina += i
 
     def UpdateObject(dt: float): bool
+        if hidden
+            return false
+
         if !isAlive
             isAttacking = false
             isTelegraph = false
@@ -161,7 +165,7 @@ class GameObject
             drawable = true
 
     def Move(move: float2)
-        if !isAlive || !movable || isAttacking || isTelegraph     
+        if hidden || !isAlive || !movable || isAttacking || isTelegraph     
             return
         if move == float2(0f, 0f)
             animator -> SetAnimationState(AnimState IDLE)
@@ -191,7 +195,7 @@ class GameObject
             animator -> SetAnimationState(AnimState TELE)
 
     def DrawObject
-        if !drawable
+        if !drawable || hidden
             return
         
         // Если телеграфируем то пусть трясётся спрайт

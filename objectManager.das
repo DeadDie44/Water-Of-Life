@@ -40,8 +40,8 @@ require util/util
 let
     objectNames = [[string[20] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
                     "verliokaFirst"; "verliokaTrue"; "respawn"; "player";
-                    "kolovershi"; "babaYaga"; "leshy"; "secretBabaYaga"; "blockage1"; "NA";
-                    "NA"; "NA"; "NA"; "blockage2"; "blockage3"]]
+                    "kolovershi"; "babaYaga"; "leshy"; "secretBabaYaga"; "door"; "bossGate";
+                    "bossTrigger1"; "bossTrigger2"; "NA"; "blockage1"; "blockage2"]]
     decorationNames = [[string[20] "NA"; "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "tree1"; "tree2"; "tree3";
@@ -51,12 +51,20 @@ struct Decoration
     pos: float2
     img: Image
 
+struct BossTrigger
+    activated: bool
+    pos: float2
+    bossPos: float2
+    doorPos: float2
+    bossName: string
+
 var
     itemSheet: ImageHandle
     NPCContainer: array<NPC?>
     objectContainer: array<GameObject?>
     decorationContainer: array<Decoration?>
     itemContainer: array<objectMarker>
+    bossTriggers: array<BossTrigger?>
 
 def InitItems
     clear(itemContainer)
@@ -90,14 +98,37 @@ def InitObjectContainer
                     CreateObject(new Player(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
                 elif objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
                     CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 300 + objectContainer |> length))
-                elif starts_with(objectNames[obj.index], "blockage")
+                elif starts_with(objectNames[obj.index], "door")
                     CreateObject(new DoorTrigger(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 500 + objectContainer |> length))
+                elif objectNames[obj.index] == "bossTrigger1"
+                    var trigger: BossTrigger? = new BossTrigger
+                    trigger.pos = obj.pos
+                    trigger.bossPos = float2(trigger.pos.x + 96f, trigger.pos.y + 96f)
+                    trigger.doorPos = float2(trigger.pos.x - 64f, trigger.pos.y)
+                    trigger.bossName = "verliokaFirst"
+                    bossTriggers |> push(trigger)
+                elif objectNames[obj.index] == "bossTrigger2"
+                    var trigger: BossTrigger? = new BossTrigger
+                    trigger.pos = obj.pos
+                    trigger.bossPos = float2(trigger.pos.x, trigger.pos.y - 160f)
+                    trigger.doorPos = float2(trigger.pos.x, trigger.pos.y - 64f)
+                    trigger.bossName = "verliokaTrue"
+                    bossTriggers |> push(trigger)
                 else
                     CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
 
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
+
+def UpdateTriggers()
+    if bossTriggers |> length > 0
+        for trigger in bossTriggers
+            if !trigger.activated && PointRect(GetPlayer().pos, float4(trigger.pos.x, trigger.pos.y, 32f, 32f))
+                trigger.activated = true
+                CreateObject(new Enemy(objectFromDesc(trigger.bossName), trigger.bossPos, 300 + objectContainer |> length))
+                CreateObject(new GameObject(objectFromDesc("bossGate"), trigger.doorPos, 500 + objectContainer |> length))
+                print("\nyo")
 
 def UpdateItems(dt: float)
     if itemContainer |> length > 0
@@ -121,10 +152,10 @@ def UpdateObjects(dt: float)
         for obj in objectContainer
             if obj != null            
                 obj -> UpdateObject(dt)
-                if obj.isAlive
+                if obj.isAlive && !obj.hidden
                     for target in objectContainer
                         if PointRect(target.pos, GetActiveArea(obj))
-                            if target != null && obj.id != target.id && target.isAlive
+                            if target != null && obj.id != target.id && target.isAlive && !target.hidden
                                 if obj.isAttacking && target.killable
                                     CheckAttack(obj, target)
                                 if(obj.movable || target.movable)
@@ -133,6 +164,7 @@ def UpdateObjects(dt: float)
                         obj -> SpotPlayer(GetPlayer())
                     TileCollision(obj, GetActiveArea(obj))
                     MapBoundaryCheck(obj)
+    UpdateTriggers()
 
 def UpdateNPCs(dt: float; var interact: bool&)
     if NPCContainer |> length > 0

@@ -14,12 +14,7 @@ class DoorTrigger: GameObject
         GameObject`init(self, desc, position)
 
     def override SpotPlayer(var player: GameObject?)
-        print("\n Sup player {Distance(pos, player.pos)}")
         if Distance(pos, player.pos) < colliderSize.x
-            print("\n Touch me player")
             if player -> HasItem("Old Key")
-                print("\n You got the thing player")
                 LoseHealth(health)
-            else
-                print("\n You ain't no good")
         return

@@ -1,7 +1,8 @@
 require daslib/media
 
-require gameObject
 require animator
+require gameObject
+require myFont
 require objectFactory
 require helpers/objectHelper
 require helpers/spriteHelper

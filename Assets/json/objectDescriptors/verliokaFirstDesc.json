@@ -1,5 +1,5 @@
 {
-	"name"   : "VerliokaFirst",
+	"name"   : "Verlioka",
 	"movable": true,
 	"killable": true,
 	"sprite" : "characters/verlioka.png",
