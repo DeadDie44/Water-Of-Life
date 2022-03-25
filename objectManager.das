@@ -83,12 +83,12 @@ def InitObjectContainer
     for obj in objectArray
         if obj.index > 0
             if objectNames[obj.index] == "babaYaga" || objectNames[obj.index] == "leshy" || objectNames[obj.index] == "secretBabaYaga"
-                NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), NPCContainer |> length))
+                NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 200 + NPCContainer |> length))
             else
                 if objectNames[obj.index] == "player"
                     CreateObject(new Player(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
                 elif objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
-                    CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+                    CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 300 + objectContainer |> length))
                 else
                     CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
@@ -103,9 +103,10 @@ def UpdateItems(dt: float)
         for i in range(0, itemContainer |> length)
             var itemSize: float = 16f
             if CircleCircle(itemContainer[i].pos, GetPlayer().pos, itemSize, GetPlayer().colliderSize.x)
-                print("\n Items on map length {itemContainer |> length}")
-                print("\n I am item {GetItemByIndex(itemContainer[i].index).itemName}, put your feet off me")
                 GetPlayer() -> PickUpItem(itemContainer[i].index)
+                var quest: Quest? = GetQuestByTrigger(GetItemByIndex(itemContainer[i].index).itemName)
+                if quest != null
+                    ProgressQuest(quest)
                 toRemove = true
                 index = i
                 break
@@ -138,9 +139,9 @@ def UpdateNPCs(dt: float; var interact: bool&)
                 if GetPlayer().isInteracting && CanInteract(GetPlayer(), npc)
                     var name: string = npc -> InteractWith()
 
-                    InitText(GetQuest(name).dialogText[GetQuest(name).progress])
-                    if GetQuest(name).progress % 2 == 0
-                        GetQuest(name).progress++
+                    InitText(GetQuestByName(name).dialogText[GetQuestByName(name).progress])
+                    if GetQuestByName(name).progress % 2 == 0
+                        GetQuestByName(name).progress++
                     interact = true
 
                     return

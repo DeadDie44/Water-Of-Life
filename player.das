@@ -91,6 +91,8 @@ class Player: GameObject
                 if inventory |> length > 0
                     for item in inventory
                         print("\nI got: {item.itemName}")
+                else
+                    print("\nThere is no items")
                 
             Move(move)
         return true

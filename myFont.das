@@ -50,7 +50,7 @@ def ScrollText (var DialogOn: bool&)
     if !DialogOn
         return
     currentLine = currentLine + lineLimit < textLines |> length ? currentLine + lineLimit : 0
-    print("\n show text {showText}, ")
+
     if currentLine == 0
         showText = false
         DialogOn = false
@@ -71,7 +71,6 @@ def ProcessText(text: string): array<string>
                 sliceDelta += FindWordStart(text, sliceEnd)
 
             textArray |> push(slice(text, sliceStart, sliceEnd - sliceDelta))
-            print("\nSegment {tick}: {textArray[tick]}")
             remnant -= symbolLimit.x - sliceDelta
             tick++   
     else

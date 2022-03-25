@@ -56,7 +56,7 @@ def initialize
 def act(dt: float)
     if GameOn
         if get_key(VK_ESCAPE)
-            schedule_quit_game()
+            Exit()
         if DialogOn
             if !showText
                 showText = true
@@ -103,14 +103,18 @@ def HandleTitleMenu
     if get_key(VK_S) || get_key(VK_RETURN)
         Start()
     if get_key(VK_E) || get_key(VK_ESCAPE) 
-        schedule_quit_game()
+        Exit()
     if get_mouse_button_down(MB_LEFT)
         var mousePos = screen_to_world(get_mouse_position())
         if PointRect(mousePos, float4(290f,75f,100f,30f))
             Start()
             hide_mouse_cursor()
         elif PointRect(mousePos, float4(290f,155f,100f,30f))
-            schedule_quit_game()
+            Exit()
+
+def Exit
+    show_mouse_cursor()
+    schedule_quit_game()
 
 def Start
     print("\nStart!")
