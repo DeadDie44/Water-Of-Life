@@ -271,5 +271,5 @@ class GameObject
     def Speed() : float
         return baseSpeed
 
-    def SpotPlayer(pos: float2; radius: float)
+    def SpotPlayer(player: GameObject?)
         return

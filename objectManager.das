@@ -2,6 +2,7 @@ require daslib/media
 
 require collisionManager
 require enemy
+require doorTrigger
 require gameObject
 require item
 require helpers/SpriteHelper
@@ -39,8 +40,8 @@ require util/util
 let
     objectNames = [[string[20] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
                     "verliokaFirst"; "verliokaTrue"; "respawn"; "player";
-                    "kolovershi"; "babaYaga"; "leshy"; "secretBabaYaga"; "NA"; "NA";
-                    "NA"; "NA"; "NA"; "blockage1"; "blockage2"]]
+                    "kolovershi"; "babaYaga"; "leshy"; "secretBabaYaga"; "blockage1"; "NA";
+                    "NA"; "NA"; "NA"; "blockage2"; "blockage3"]]
     decorationNames = [[string[20] "NA"; "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "tree1"; "tree2"; "tree3";
@@ -89,6 +90,8 @@ def InitObjectContainer
                     CreateObject(new Player(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
                 elif objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
                     CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 300 + objectContainer |> length))
+                elif starts_with(objectNames[obj.index], "blockage")
+                    CreateObject(new DoorTrigger(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 500 + objectContainer |> length))
                 else
                     CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
@@ -127,7 +130,7 @@ def UpdateObjects(dt: float)
                                 if(obj.movable || target.movable)
                                     CheckCollision(obj, target)
                     if obj.id != GetPlayer().id
-                        obj -> SpotPlayer(GetPlayer().pos, GetPlayer().colliderSize.x)
+                        obj -> SpotPlayer(GetPlayer())
                     TileCollision(obj, GetActiveArea(obj))
                     MapBoundaryCheck(obj)
 

@@ -58,14 +58,14 @@ class Enemy: GameObject
             Move(move)
         return true
 
-    def override SpotPlayer(playerPos: float2; radius: float)
+    def override SpotPlayer(player: GameObject?)
         if attackRadius > 0f
-            targetPos = playerPos
-            if Distance(pos, playerPos) < agroRadius + colliderSize.x
+            targetPos = player.pos
+            if Distance(pos, player.pos) < agroRadius + colliderSize.x
                 if !agro
                     destination = pos
                 agro = true
-            elif Distance(area, playerPos) > agroRadius * 2f  + colliderSize.x
+            elif Distance(area, player.pos) > agroRadius * 2f  + colliderSize.x
                 agro = false
 
     def SetRoamArea(a: float2) 
