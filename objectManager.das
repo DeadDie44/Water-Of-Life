@@ -65,6 +65,9 @@ var
     decorationContainer: array<Decoration?>
     itemContainer: array<objectMarker>
     bossTriggers: array<BossTrigger?>
+    respawnPoints: array<float2>
+
+    currentRespawn: int
 
 def InitItems
     clear(itemContainer)
@@ -95,6 +98,8 @@ def InitObjectContainer
                 NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 200 + NPCContainer |> length))
             else
                 if objectNames[obj.index] == "player"
+                    currentRespawn = 0
+                    respawnPoints |> push(obj.pos)
                     CreateObject(new Player(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
                 elif objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
                     CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 300 + objectContainer |> length))
@@ -114,6 +119,8 @@ def InitObjectContainer
                     trigger.doorPos = float2(trigger.pos.x, trigger.pos.y - 64f)
                     trigger.bossName = "verliokaTrue"
                     bossTriggers |> push(trigger)
+                elif objectNames[obj.index] == "respawn"
+                    respawnPoints |> push(obj.pos)
                 else
                     CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
@@ -146,8 +153,13 @@ def UpdateItems(dt: float)
                 break
         if toRemove
             erase(itemContainer, index)
+def GameOver()
+    var i = 0
 
 def UpdateObjects(dt: float)
+    if !GetPlayer().isAlive
+        GameOver()
+        return
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null            
@@ -165,6 +177,8 @@ def UpdateObjects(dt: float)
                     TileCollision(obj, GetActiveArea(obj))
                     MapBoundaryCheck(obj)
     UpdateTriggers()
+    UpdateItems(dt)
+    RemoveObjects()
 
 def UpdateNPCs(dt: float; var interact: bool&)
     if NPCContainer |> length > 0
@@ -240,6 +254,9 @@ def DrawObjects
             if obj != null
                 if PointRect(obj.pos, GetDrawArea())  
                     obj -> DrawObject()
+    DrawNPCs()
+    DrawItems()
+    DrawDecorations()
 
 def DrawNPCs
     if NPCContainer |> length > 0

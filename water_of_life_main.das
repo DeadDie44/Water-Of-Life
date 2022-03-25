@@ -67,8 +67,6 @@ def act(dt: float)
         else
             UpdateObjects(dt)
             UpdateNPCs(dt, DialogOn)
-            UpdateItems(dt)
-            RemoveObjects()
         setup_2d_camera(GetPlayer().pos, float(get_screen_width() / 270))
     else
         HandleTitleMenu()
@@ -77,27 +75,22 @@ def act(dt: float)
 // this function will be called every frame after 'act',
 // you can draw anything in this function
 [export]
-def draw 
+def draw
+    enable_alpha_blend()
     if GameOn
-        enable_alpha_blend()
         DrawGameMap(GetDrawArea())
         DrawObjects()
-        DrawNPCs()
-        DrawItems()
-        DrawDecorations()
         DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
         if DialogOn
             DrawTextBox(GetPlayer().pos)
-        disable_alpha_blend()
     else
-        enable_alpha_blend()
         DrawTitleScreen()
-        draw_image(buttonStart, 290f, 75f)
-        draw_image(buttonExit, 290f, 155f)
-        disable_alpha_blend()
+    disable_alpha_blend()
 
 def DrawTitleScreen
     draw_image(titleScreen, 0f,0f)
+    draw_image(buttonStart, 290f, 75f)
+    draw_image(buttonExit, 290f, 155f)
 
 def HandleTitleMenu
     if get_key(VK_S) || get_key(VK_RETURN)
