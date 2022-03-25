@@ -1,6 +1,7 @@
 require daslib/media
 
 require collisionManager
+require boss
 require enemy
 require doorTrigger
 require gameObject
@@ -116,7 +117,7 @@ def InitObjectContainer
                     var trigger: BossTrigger? = new BossTrigger
                     trigger.pos = obj.pos
                     trigger.bossPos = float2(trigger.pos.x, trigger.pos.y - 160f)
-                    trigger.doorPos = float2(trigger.pos.x, trigger.pos.y - 64f)
+                    trigger.doorPos = float2(trigger.pos.x, trigger.pos.y + 64f)
                     trigger.bossName = "verliokaTrue"
                     bossTriggers |> push(trigger)
                 elif objectNames[obj.index] == "respawn"
@@ -128,14 +129,43 @@ def InitObjectContainer
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
 
+def BossKilled()
+    objectContainer[GetIndexById(999)] -> LoseHealth(1)
+
+def UpdateObjects(dt: float)
+    if !GetPlayer().isAlive
+        GameOver()
+        return
+    if objectContainer |> length > 0
+        for obj in objectContainer
+            if obj != null           
+                obj -> UpdateObject(dt)
+                if obj.isAlive
+                    for target in objectContainer
+                        if PointRect(target.pos, GetActiveArea(obj))
+                            if target != null && obj.id != target.id && target.isAlive
+                                if obj.isAttacking && target.killable
+                                    CheckAttack(obj, target)
+                                if(obj.movable || target.movable)
+                                    CheckCollision(obj, target)
+                    if obj.id != GetPlayer().id
+                        obj -> SpotPlayer(GetPlayer())
+                    TileCollision(obj, GetActiveArea(obj))
+                    MapBoundaryCheck(obj)
+    UpdateTriggers()
+    UpdateItems(dt)
+    RemoveObjects()
+
 def UpdateTriggers()
     if bossTriggers |> length > 0
-        for trigger in bossTriggers
-            if !trigger.activated && PointRect(GetPlayer().pos, float4(trigger.pos.x, trigger.pos.y, 32f, 32f))
+        for trigger in bossTriggers            
+            if !trigger.activated && PointRect(GetPlayer().pos, float4(trigger.pos.x - 16f, trigger.pos.y - 16f, 32f, 32f))
                 trigger.activated = true
-                CreateObject(new Enemy(objectFromDesc(trigger.bossName), trigger.bossPos, 300 + objectContainer |> length))
-                CreateObject(new GameObject(objectFromDesc("bossGate"), trigger.doorPos, 500 + objectContainer |> length))
-                print("\nyo")
+                var boss: Boss? = new Boss(objectFromDesc(trigger.bossName), trigger.bossPos, 666)
+                var fPointer = @@ BossKilled
+                boss.fPointer = fPointer
+                CreateObject(boss)
+                CreateObject(new GameObject(objectFromDesc("bossGate"), trigger.doorPos, 999))
 
 def UpdateItems(dt: float)
     if itemContainer |> length > 0
@@ -155,30 +185,6 @@ def UpdateItems(dt: float)
             erase(itemContainer, index)
 def GameOver()
     var i = 0
-
-def UpdateObjects(dt: float)
-    if !GetPlayer().isAlive
-        GameOver()
-        return
-    if objectContainer |> length > 0
-        for obj in objectContainer
-            if obj != null            
-                obj -> UpdateObject(dt)
-                if obj.isAlive && !obj.hidden
-                    for target in objectContainer
-                        if PointRect(target.pos, GetActiveArea(obj))
-                            if target != null && obj.id != target.id && target.isAlive && !target.hidden
-                                if obj.isAttacking && target.killable
-                                    CheckAttack(obj, target)
-                                if(obj.movable || target.movable)
-                                    CheckCollision(obj, target)
-                    if obj.id != GetPlayer().id
-                        obj -> SpotPlayer(GetPlayer())
-                    TileCollision(obj, GetActiveArea(obj))
-                    MapBoundaryCheck(obj)
-    UpdateTriggers()
-    UpdateItems(dt)
-    RemoveObjects()
 
 def UpdateNPCs(dt: float; var interact: bool&)
     if NPCContainer |> length > 0
@@ -237,7 +243,6 @@ def RemoveObjects
                 needToDelete = true
                 break
 
-/*
 def GetIndexById(i: int): int
     var index: int
     if objectContainer |> length > 0
@@ -246,7 +251,6 @@ def GetIndexById(i: int): int
                 index = n
                 break
     return index
-*/
 
 def DrawObjects
     if objectContainer |> length > 0
