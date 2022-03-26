@@ -92,9 +92,9 @@ class GameObject
     def RecieveAttack(attackerId, damage: int; attackerName: string)
         if !killable || hitInvulCD < universalCD || isRolling
             return
-        LoseHealth(damage)
+        LoseHealth(damage, attackerName)
 
-    def LoseHealth(damage: int)
+    def LoseHealth(damage: int; source: string)
         health -= damage
         hitInvulCD = 0f
         if health <= 0

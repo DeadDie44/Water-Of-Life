@@ -17,6 +17,7 @@ var
 class Player: GameObject
     private weaponIndex: int = 0
     gameOver: function
+    changeRespawn: function
 
     def Player (desc: ObjectDescriptor; position: float2; i: int)
         GameObject`GameObject(self, desc, position, i)
@@ -30,10 +31,13 @@ class Player: GameObject
     def UpdateWeapon()
         weaponSheet <- create_managed_image(weaponsList[weaponIndex])
 
-    def override LoseHealth(damage: int)
-        GameObject`LoseHealth(self, damage)
+    def override LoseHealth(damage: int; source: string)
+        GameObject`LoseHealth(self, damage, source)
         if!isAlive
             invoke(gameOver)
+            print("\nYo game over yo he killed yo: {source}")
+            if source == "VerliokaFirst"
+                invoke(changeRespawn)
 
     def override GetDamage: int
         return 1 + 1 * weaponIndex

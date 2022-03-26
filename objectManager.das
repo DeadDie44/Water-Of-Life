@@ -69,7 +69,13 @@ var
     respawnPoints: array<float2>
     gameoverCallback: function
 
-    currentRespawn: int
+    currentRespawn: float2
+
+def SetRespawn(index: int)
+    currentRespawn = respawnPoints[index]
+
+def RespawnAfterFirstBoss()
+    currentRespawn = respawnPoints[1]
 
 def InitItems
     clear(itemContainer)
@@ -111,13 +117,14 @@ def InitObjectContainer(callback: function)
                     if playerExists
                         oldPlayer -> ReplenishHealth(oldPlayer -> GetHealthCap())
                         oldPlayer.isAlive = true
-                        oldPlayer.pos = respawnPoints[currentRespawn]
+                        oldPlayer.pos = currentRespawn
                         CreateObject(oldPlayer)
                     else
-                        currentRespawn = 0
+                        currentRespawn = obj.pos
                         respawnPoints |> push(obj.pos)
                         var player: Player? = new Player(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length)
                         player.gameOver = callback
+                        player.changeRespawn = @@ RespawnAfterFirstBoss
                         CreateObject(player)
 
                 elif objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
@@ -142,7 +149,7 @@ def InitObjectContainer(callback: function)
                     bossTriggers |> push(trigger)
 
                 elif objectNames[obj.index] == "respawn" && !playerExists
-                    respawnPoints |> push(obj.pos)
+                    respawnPoints |> push(float2(obj.pos.x, obj.pos.y + 18f))
                 else
                     CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
@@ -151,7 +158,7 @@ def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
 
 def BossKilled()
-    objectContainer[GetIndexById(999)] -> LoseHealth(1)
+    objectContainer[GetIndexById(999)] -> LoseHealth(1,"")
 
 def UpdateObjects(dt: float)
     if objectContainer |> length > 0

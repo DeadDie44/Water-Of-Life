@@ -39,8 +39,8 @@ class Boss: GameObject
             Move(move)
         return true
 
-    def override LoseHealth(damage: int)
-        GameObject`LoseHealth(self, damage)
+    def override LoseHealth(damage: int; source: string)
+        GameObject`LoseHealth(self, damage, source)
         if !isAlive
             invoke(fPointer)
 
