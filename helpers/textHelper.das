@@ -2,10 +2,10 @@ var
     textTable: table<string; string>
 
 def MakeTable
-    textTable["Old Lady.Intro1"] = "Hello there, general obi-bobby kenobi. I was like mugged by those muggers can you go kick em up."
-    textTable["Old Lady.Reminder1"] = "Yes yes I remind you to do stuff, kill all the bandit blokes."
-    textTable["Old Lady.Intro2"] = "Ah so the stuff turned out to be to not stuffed, well go and die in that cave over there."
-    textTable["Old Lady.Reminder2"] = "La-la-la."
+    textTable["Old Lady.Intro1"] = "My, my, who do we have here. It's not often we see new faces around these parts, but I must admit I am really lucky to see you on this day. I do hope that the old lady's plea for help won't be to bothersome for you. You see I was robbed recently, the evildoer took something very dear to me and quite frankly I lost all hope of ever seeing this thing again. Would you please, kindly go and retrive this item for me? It's a little thing, it should be wrapped in small white cloth. The bandit's camp is to the east near the river. I'll wait for you here."
+    textTable["Old Lady.Reminder1"] = "Don't worry about me. I'll be just fine standing here."
+    textTable["Old Lady.Intro2"] = "Oh my, a key? No it's not what was stolen from me, how odd. Maybe it is a key that could open something that evildoers used to store their loot? Thinking about it there is a cave to the south, maybe you'll find something there."
+    textTable["Old Lady.Reminder2"] = "It is quite an unfortunate turn of events, but I do hope you'll find something in that cave."
 
     textTable["Baba Yaga.Intro1"] = "So yeah, you dead, i saved you though. You need to drink the dead water so that it heals you and stuff, here take this shield and go find that tree, for the tree has water of life stuffed somewhere which can bring anyone back to live and cure them and that sort of stuff."
     textTable["Baba Yaga.Reminder1"] = "Off you go then, search for a big tree. It is somewhere deep within the forest"
