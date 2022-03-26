@@ -12,7 +12,7 @@ let
 
     numbers = [[string[10] "0"; "1"; "2"; "3"; "4"; "5"; "6"; "7"; "8"; "9"]]
 
-    punctuationsMarks = [[string[8] "."; ","; ":"; ";"; "!"; "?"; "-"; "'"]]
+    punctuationsMarks = [[string[9] "."; ","; ":"; ";"; "!"; "?"; "-"; "'"; "*"]]
 
     lineLimit: int = 5
 

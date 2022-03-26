@@ -2,6 +2,7 @@ require daslib/media
 
 require helpers/spriteHelper
 require helpers/soundHelper
+require helpers/textHelper
 require hud
 require gameMap
 require objectManager
@@ -15,8 +16,11 @@ options log
 
 var
     GameOn      : bool = false
+    Prologue    : bool = true
     Death       : bool = false
     DialogOn    : bool = false
+    
+    prologueScroll: float2
     cameraCenter: float2
 
     buttonExit : Image
@@ -54,6 +58,9 @@ def act(dt: float)
     if get_key(VK_ESCAPE)
         Exit()
     if GameOn
+        if Prologue
+            prologueScroll += float2(0f, -5f * get_delta_time())
+            return
         if !Death
             if DialogOn
                 if !showText
@@ -79,14 +86,17 @@ def act(dt: float)
 def draw
     enable_alpha_blend()
     if GameOn
-        if Death
-            draw_image(deathScreen, GetPlayer().pos.x - float(deathScreen.width / 2), GetPlayer().pos.y - float(deathScreen.height / 2), 0xFFFFFFFF)
+        if !Prologue
+            if Death
+                draw_image(deathScreen, GetPlayer().pos.x - float(deathScreen.width / 2), GetPlayer().pos.y - float(deathScreen.height / 2), 0xFFFFFFFF)
+            else
+                DrawGameMap(GetDrawArea())
+                DrawObjects()
+                DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
+                if DialogOn
+                    DrawTextBox(GetPlayer().pos)
         else
-            DrawGameMap(GetDrawArea())
-            DrawObjects()
-            DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
-            if DialogOn
-                DrawTextBox(GetPlayer().pos)
+            DrawPrologue(cameraCenter - float2(150f, -80f))
     else
         DrawTitleScreen()
     disable_alpha_blend()
@@ -106,6 +116,12 @@ def FisrstStart
     InitFont()
     InitQuests()
     InitItems()
+
+def DrawPrologue(pos: float2)
+    textLines <- ProcessText(textTable["Prologue"])
+    for i in range(0, textLines |> length)
+        DrawText(textLines[i], pos + prologueScroll, i)
+    
 
 def DrawTitleScreen
     draw_image(titleScreen, 0f,0f)
@@ -135,4 +151,4 @@ def Start
     GameOn = true
     stop_all_sounds()
     music <- create_sound(GRASS_THEME)
-    music |> play_sound_loop(0.25f)
+    //music |> play_sound_loop(0.25f)

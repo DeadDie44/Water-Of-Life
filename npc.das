@@ -3,6 +3,7 @@ require daslib/media
 require gameObject
 require objectFactory
 require helpers/objectHelper
+require myFont
 
 class NPC: GameObject
 
@@ -12,7 +13,12 @@ class NPC: GameObject
     def override init (desc: ObjectDescriptor; position: float2)
         GameObject`init(self, desc, position)
 
-    def override InteractWith(): string
+    def override InteractWith: string
         print("\n I am {objName} id {id}, i've been interacted")
 
         return objName
+
+    def override DrawObject
+        GameObject`DrawObject(self)
+        if drawable
+            DrawText("Press 'E' to interact", pos + float2(-60f, -20f), 0)
