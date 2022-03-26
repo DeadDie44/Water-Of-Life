@@ -15,7 +15,6 @@ class DoorTrigger: GameObject
 
     def override SpotPlayer(var player: GameObject?)
         if Distance(pos, player.pos) < colliderSize.x
-            LoseHealth(health)
             if player -> HasItem("Old Key")
                 LoseHealth(health)
         return

@@ -15,12 +15,14 @@ options log
 
 var
     GameOn      : bool = false
+    Death       : bool = false
     DialogOn    : bool = false
     cameraCenter: float2
 
     buttonExit : Image
     buttonStart: Image
     titleScreen: Image
+    deathScreen: Image
 
     music : PcmSound
 
@@ -33,19 +35,14 @@ def initialize
     titleScreen <- create_image(TITLE_SCREEN)
     buttonStart <- create_image(BUTTON_START)
     buttonExit  <- create_image(BUTTON_EXIT)
+    deathScreen <- create_image(DEATH_SCREEN)
 
     music <- create_sound(TITLE_THEME)
 
+    FisrstStart()
+
     cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
     setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
-
-    InitFont()
-    InitQuests()
-    InitMap()
-    InitObjectContainer()
-    InitItems()
-    InitDecorations()
-    
     music |> play_sound_loop(0.5f)
     show_mouse_cursor()
     return
@@ -54,20 +51,24 @@ def initialize
 // dt - time elapsed since the previous update (in seconds)
 [export]
 def act(dt: float)
+    if get_key(VK_ESCAPE)
+        Exit()
     if GameOn
-        if get_key(VK_ESCAPE)
-            Exit()
-        if DialogOn
-            if !showText
-                showText = true
-            if get_key_up(VK_SPACE)
-                ScrollText(DialogOn)
-                print("\nMenuOn {DialogOn}")
-                print("\nInteracting? {GetPlayer().isInteracting}")
+        if !Death
+            if DialogOn
+                if !showText
+                    showText = true
+                if get_key_up(VK_SPACE)
+                    ScrollText(DialogOn)
+                    print("\nMenuOn {DialogOn}")
+                    print("\nInteracting? {GetPlayer().isInteracting}")
+            else
+                UpdateObjects(dt)
+                UpdateNPCs(dt, DialogOn)
+            setup_2d_camera(GetPlayer().pos, float(get_screen_height() / 270 * 2))
         else
-            UpdateObjects(dt)
-            UpdateNPCs(dt, DialogOn)
-        setup_2d_camera(GetPlayer().pos, float(get_screen_width() / 270))
+            if get_key(VK_R)
+                InitGame()
     else
         HandleTitleMenu()
     return
@@ -78,14 +79,33 @@ def act(dt: float)
 def draw
     enable_alpha_blend()
     if GameOn
-        DrawGameMap(GetDrawArea())
-        DrawObjects()
-        DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
-        if DialogOn
-            DrawTextBox(GetPlayer().pos)
+        if Death
+            draw_image(deathScreen, GetPlayer().pos.x - float(deathScreen.width / 2), GetPlayer().pos.y - float(deathScreen.height / 2), 0xFFFFFFFF)
+        else
+            DrawGameMap(GetDrawArea())
+            DrawObjects()
+            DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
+            if DialogOn
+                DrawTextBox(GetPlayer().pos)
     else
         DrawTitleScreen()
     disable_alpha_blend()
+
+def GameOver
+    Death = true
+
+def InitGame
+    Death = false
+    var callback = @@ GameOver
+    InitMap()
+    InitObjectContainer(callback)
+    InitDecorations()
+
+def FisrstStart
+    InitGame()
+    InitFont()
+    InitQuests()
+    InitItems()
 
 def DrawTitleScreen
     draw_image(titleScreen, 0f,0f)

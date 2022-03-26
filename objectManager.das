@@ -67,6 +67,7 @@ var
     itemContainer: array<objectMarker>
     bossTriggers: array<BossTrigger?>
     respawnPoints: array<float2>
+    gameoverCallback: function
 
     currentRespawn: int
 
@@ -90,7 +91,15 @@ def InitDecorations
                 decorationContainer |> push(dec)
     clear(decorationArray)
 
-def InitObjectContainer
+def InitObjectContainer(callback: function)
+    var playerExists: bool = false
+    var oldPlayer: GameObject?
+
+    if objectContainer |> length > 0
+        if objectContainer[0] != null
+            playerExists = true
+            oldPlayer := objectContainer[0]
+
     clear(objectContainer)
     var objectArray: array<objectMarker> <- ReadObjects()
     for obj in objectArray
@@ -99,13 +108,23 @@ def InitObjectContainer
                 NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 200 + NPCContainer |> length))
             else
                 if objectNames[obj.index] == "player"
-                    currentRespawn = 0
-                    respawnPoints |> push(obj.pos)
-                    CreateObject(new Player(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+                    if playerExists
+                        oldPlayer -> ReplenishHealth(oldPlayer -> GetHealthCap())
+                        oldPlayer.isAlive = true
+                        oldPlayer.pos = respawnPoints[currentRespawn]
+                        CreateObject(oldPlayer)
+                    else
+                        currentRespawn = 0
+                        respawnPoints |> push(obj.pos)
+                        var player: Player? = new Player(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length)
+                        player.gameOver = callback
+                        CreateObject(player)
+
                 elif objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
                     CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 300 + objectContainer |> length))
                 elif starts_with(objectNames[obj.index], "door")
                     CreateObject(new DoorTrigger(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 500 + objectContainer |> length))
+
                 elif objectNames[obj.index] == "bossTrigger1"
                     var trigger: BossTrigger? = new BossTrigger
                     trigger.pos = obj.pos
@@ -113,6 +132,7 @@ def InitObjectContainer
                     trigger.doorPos = float2(trigger.pos.x - 64f, trigger.pos.y)
                     trigger.bossName = "verliokaFirst"
                     bossTriggers |> push(trigger)
+
                 elif objectNames[obj.index] == "bossTrigger2"
                     var trigger: BossTrigger? = new BossTrigger
                     trigger.pos = obj.pos
@@ -120,7 +140,8 @@ def InitObjectContainer
                     trigger.doorPos = float2(trigger.pos.x, trigger.pos.y + 64f)
                     trigger.bossName = "verliokaTrue"
                     bossTriggers |> push(trigger)
-                elif objectNames[obj.index] == "respawn"
+
+                elif objectNames[obj.index] == "respawn" && !playerExists
                     respawnPoints |> push(obj.pos)
                 else
                     CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
@@ -133,9 +154,6 @@ def BossKilled()
     objectContainer[GetIndexById(999)] -> LoseHealth(1)
 
 def UpdateObjects(dt: float)
-    if !GetPlayer().isAlive
-        GameOver()
-        return
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null           
@@ -183,8 +201,6 @@ def UpdateItems(dt: float)
                 break
         if toRemove
             erase(itemContainer, index)
-def GameOver()
-    var i = 0
 
 def UpdateNPCs(dt: float; var interact: bool&)
     if NPCContainer |> length > 0

@@ -30,3 +30,5 @@ let public
     TEXT_BOX: string = SRPITE_ROOT + "hud/text_box.png"
 
     TEST: string = SRPITE_ROOT + "test.png"
+
+    DEATH_SCREEN: string = SRPITE_ROOT + "death_screen.png"
