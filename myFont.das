@@ -38,13 +38,16 @@ def DrawTextBox(center: float2)
     if !showText
         return
 
-    var boxPos: float2 = float2(center.x - 156f, center.y + 20f )
+    var boxPos: float2 = float2(center.x - 156f, center.y + 13f )
     var fontPos: float2 = float2(boxPos.x + 5f, boxPos.y + 5f)
     draw_image(textBox, boxPos.x, boxPos.y)
 
     for line in range (0, lineLimit)
         if currentLine + line < textLines |> length
             DrawText(textLines[currentLine + line], fontPos, line)
+    var hintPos: float2 = float2(center.x - 160f, center.y + 80f)
+    fill_rect(hintPos.x, hintPos.y, 360f, 20f, 0xFF000000)
+    DrawText("'space' to scroll", hintPos + float2(100f, 0f), 0)
 
 def ScrollText (var DialogOn: bool&)
     if !DialogOn

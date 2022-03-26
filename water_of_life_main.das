@@ -59,7 +59,22 @@ def act(dt: float)
         Exit()
     if GameOn
         if Prologue
-            prologueScroll += float2(0f, -5f * get_delta_time())
+            var scroll: float
+            if get_key(VK_UP) || get_key(VK_W)
+                scroll = - 1f
+            if get_key(VK_DOWN) || get_key(VK_S)
+                scroll = 1f
+            if get_key(VK_SPACE)
+                Prologue = false
+                music |> play_sound_loop(0.25f)
+
+            prologueScroll += float2(0f, scroll - 5f * get_delta_time())
+            if prologueScroll.y > -10f
+                prologueScroll.y = -10f
+            if prologueScroll.y < -580f
+                Prologue = false
+                music |> play_sound_loop(0.25f)
+
             return
         if !Death
             if DialogOn
@@ -121,6 +136,10 @@ def DrawPrologue(pos: float2)
     textLines <- ProcessText(textTable["Prologue"])
     for i in range(0, textLines |> length)
         DrawText(textLines[i], pos + prologueScroll, i)
+
+    fill_rect(pos.x - 20f, pos.y, 360f, 20f, 0xFF000000)
+    DrawText("'space' to skip", pos, 0)
+    DrawText("'arrows' to scroll", pos + float2(175f, 0f), 0)
     
 
 def DrawTitleScreen
