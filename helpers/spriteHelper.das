@@ -1,5 +1,19 @@
-let public
+let
     SRPITE_ROOT: string = "assets/sprites/"
+
+    PLAYER: string = SRPITE_ROOT + "characters/player.png"
+
+    BANDIT: string = SRPITE_ROOT + "characters/bandit.png"
+
+    BANDIT_RANGER: string = SRPITE_ROOT + "characters/bandit_ranger.png"
+
+    BANDIT_LEADER: string = SRPITE_ROOT + "characters/bandit_leader.png"
+
+    VERLIOKA: string = SRPITE_ROOT + "characters/verlioka.png"
+
+    KOLOVERSHI: string = SRPITE_ROOT + "characters/kolovershi.png"
+
+    NPCS: string = SRPITE_ROOT + "characters/npcs.png"
 
     ITEMS : string = SRPITE_ROOT + "items/items.png"
 
@@ -32,3 +46,11 @@ let public
     TEST: string = SRPITE_ROOT + "test.png"
 
     DEATH_SCREEN: string = SRPITE_ROOT + "death_screen.png"
+
+    INTERATCION_MARK: string = SRPITE_ROOT + "interaction_mark.png"
+
+    STATIC_OBJECTS: string = SRPITE_ROOT + "objects/static_objects.png"
+
+    MOVABLE_OBJECTS: string = SRPITE_ROOT + "objects/movable_objects.png"
+
+    DOORS: string = SRPITE_ROOT + "objects/doors.png"

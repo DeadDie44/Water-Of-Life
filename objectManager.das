@@ -44,7 +44,7 @@ let
                     "verliokaFirst"; "verliokaTrue"; "respawn"; "player";
                     "kolovershi"; "babaYaga"; "leshy"; "secretBabaYaga"; "door"; "bossGate";
                     "bossTrigger1"; "bossTrigger2"; "banditLeader"; "blockage1"; "blockage2"]]
-    decorationNames = [[string[20] "NA"; "NA"; "NA"; "NA"; "NA";
+    decorationNames = [[string[20] "NA"; "izbushka"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "tree1"; "tree2"; "tree3";
                     "bush1"; "bush2"; "bush3"; "NA"; "NA"]]
@@ -80,7 +80,7 @@ def RespawnHere()
     refreshWorld = true
 
 def RespawnAfterFirstBoss()
-    currentRespawn = respawnPoints[3]
+    currentRespawn = respawnPoints[1]
 
 def RemoveBaricade(i: int)
     if objectContainer |> length > 0

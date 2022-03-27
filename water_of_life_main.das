@@ -101,24 +101,25 @@ def act(dt: float)
 // you can draw anything in this function
 [export]
 def draw
+    enable_alpha_blend()
     if death
         draw_image(deathScreen, GetPlayer().pos.x - float(deathScreen.width / 2), GetPlayer().pos.y - float(deathScreen.height / 2), 0xFFFFFFFF)
-        return
-
-    if gameOn
-        if !prologue
-            DrawGameMap(GetDrawArea())
-            enable_alpha_blend()
-            DrawObjects()
-            if GetPlayer() != null
-                DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
-            if DialogOn
-                DrawTextBox(GetPlayer().pos)
-            disable_alpha_blend()
-        else
-            DrawPrologue(cameraCenter - float2(150f, -80f))
     else
-        DrawTitleScreen()
+        if gameOn
+            if !prologue
+                DrawGameMap(GetDrawArea())
+                
+                DrawObjects()
+                if GetPlayer() != null
+                    DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
+                if DialogOn
+                    DrawTextBox(GetPlayer().pos)
+                
+            else
+                DrawPrologue(cameraCenter - float2(150f, -80f))
+        else
+            DrawTitleScreen()
+    disable_alpha_blend()
 
 def GameOver
     death = true
