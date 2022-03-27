@@ -21,4 +21,5 @@ class NPC: GameObject
     def override DrawObject
         GameObject`DrawObject(self)
         if drawable
-            DrawText("Press 'E' to interact", pos + float2(-60f, -20f), 0)
+            if objName == "Old Lady"
+                DrawText("Press 'E' to interact", pos + float2(-60f, -20f), 0)

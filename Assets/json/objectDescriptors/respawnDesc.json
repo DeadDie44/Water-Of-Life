@@ -10,9 +10,9 @@
 
 	"health" : 1,
 	
-	"fps"       : [1],
-	"frameCount": [1],
-	"frames"    : [0],
+	"fps"       : [12],
+	"frameCount": [8],
+	"frames"    : [1,9,17,25,33,41,49,57],
 	
-	"deathAnimation": [12,8,16,24,32,40,48,56]
+	"deathAnimation": [1,0]
 }
