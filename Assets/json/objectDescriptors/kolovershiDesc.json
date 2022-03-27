@@ -5,7 +5,7 @@
 	"sprite" : "characters/kolovershi.png",
 	
 	"attackRadius" : 0,
-	"baseSpeed"    : 45,
+	"baseSpeed"    : 95,
 	"size"         : [16,16],
 	"colliderSize" : [8,8],
 	"colliderType" : 0,
