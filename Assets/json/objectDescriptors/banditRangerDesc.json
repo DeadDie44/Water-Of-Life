@@ -1,5 +1,5 @@
 {
-	"name"   : "BanditRanger",
+	"name"   : "Bandit Ranger",
 	"movable": true,
 	"killable": true,
 	"sprite" : "characters/bandit.png",
@@ -11,6 +11,7 @@
 	"colliderSize" : [10,22],
 	"colliderType" : 0,
 
+	"damage" : 2,
 	"health" : 2,
 	
 	"fps"       : [13, 13, 33],

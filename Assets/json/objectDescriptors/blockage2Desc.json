@@ -1,4 +1,5 @@
 {
+	"id" : 2048,
 	"name"   : "Blockage2",
 	"movable": false,
 	"killable": false,
@@ -12,7 +13,7 @@
 	
 	"fps"       : [1],
 	"frameCount": [1],
-	"frames"    : [2],
+	"frames"    : [3],
 	
-	"deathAnimation": [12,8,16,24,32,40,48,56]
+	"deathAnimation": [1,3]
 }

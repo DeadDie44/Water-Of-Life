@@ -80,7 +80,17 @@ def RespawnHere()
     refreshWorld = true
 
 def RespawnAfterFirstBoss()
-    currentRespawn = respawnPoints[1]
+    currentRespawn = respawnPoints[3]
+
+def RemoveBaricade(i: int)
+    if objectContainer |> length > 0
+        for obj in objectContainer
+            if obj != null && obj.id == 1024 * i
+                obj -> LoseHealth(obj -> GetHealthCap(), "")
+
+def BossKilled()
+    objectContainer[GetIndexById(999)] -> LoseHealth(objectContainer[GetIndexById(999)] -> GetHealthCap(),"")
+
 
 def InitItems
     clear(itemContainer)
@@ -102,8 +112,7 @@ def InitDecorations
                 decorationContainer |> push(dec)
     clear(decorationArray)
 
-def InitObjectContainer(callback: function)
-    refreshWorld = false
+def InitObjectContainer(gameOver: function)
     var playerExists: bool = false
     var oldPlayer: GameObject?
 
@@ -129,7 +138,7 @@ def InitObjectContainer(callback: function)
                         currentRespawn = obj.pos
                         respawnPoints |> push(obj.pos)
                         var player: Player? = new Player(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length)
-                        player.gameOver = callback
+                        player.gameOver = gameOver
                         player.changeRespawn = @@ RespawnAfterFirstBoss
                         CreateObject(player)
 
@@ -164,18 +173,24 @@ def InitObjectContainer(callback: function)
                 else
                     CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
+    refreshWorld = false
 
 def CreateObject(var obj: GameObject?)
     objectContainer |> push(obj)
 
-def BossKilled()
-    objectContainer[GetIndexById(999)] -> LoseHealth(1,"")
+def ForceClearObjects
+    if objectContainer |> length > 0   
+        for obj in objectContainer
+            if obj.id != GetPlayer().id
+                obj.canBeRemoved = true
+        RemoveObjects()
 
 def UpdateObjects(dt: float)
-    if refreshWorld        
-        InitObjectContainer(@@ SetRespawn)
-        InitDecorations()
+    if refreshWorld
+        ForceClearObjects()
+        InitObjectContainer(@@RespawnAfterFirstBoss)
         return
+
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null           
@@ -186,6 +201,10 @@ def UpdateObjects(dt: float)
                             if target != null && obj.id != target.id && target.isAlive
                                 if obj.isAttacking && target.killable
                                     CheckAttack(obj, target)
+                                    if !target.isAlive && target.id != GetPlayer().id
+                                        var quest: Quest? = GetQuestByTrigger(target.objName)
+                                        if quest != null && quest.progress < 2
+                                            ProgressQuest(quest)
                                 if(obj.movable || target.movable)
                                     CheckCollision(obj, target)
                     if obj.id != GetPlayer().id
@@ -207,7 +226,14 @@ def UpdateTriggers()
                 var fPointer = @@ BossKilled
                 boss.fPointer = fPointer
                 CreateObject(boss)
-                CreateObject(new GameObject(objectFromDesc("bossGate"), trigger.doorPos, 999))
+
+                var twin: bool = false
+                for obj in objectContainer
+                    if obj.id == 999
+                        obj = new GameObject(objectFromDesc("bossGate"), trigger.doorPos, 999)
+                        twin = true
+                if !twin
+                    CreateObject(new GameObject(objectFromDesc("bossGate"), trigger.doorPos, 999))
 
 def UpdateItems(dt: float)
     if itemContainer |> length > 0
@@ -239,6 +265,10 @@ def UpdateNPCs(dt: float; var interact: bool&)
                     InitText(GetQuestByName(name).dialogText[GetQuestByName(name).progress])
                     if GetQuestByName(name).progress % 2 == 0
                         GetQuestByName(name).progress++
+                        if name == "Baba Yaga" && GetQuestByName("Baba Yaga").progress == 3
+                            RemoveBaricade(1)
+                        if name == "Leshy" && GetQuestByName("Leshy").progress == 3
+                            RemoveBaricade(2)
                     interact = true
 
                     return
@@ -276,7 +306,8 @@ def RemoveObjects
                         obj.spriteSheet |> delete_managed_image()
                         delete(obj)
                     needToDelete = true
-
+    else
+        return
     while (needToDelete)
         needToDelete = false
         for n in range(0, objectContainer |> length)
@@ -294,10 +325,11 @@ def GetIndexById(i: int): int
                 break
     return index
 
-def DrawObjects
+def DrawObjects()
     if refreshWorld
         DrawText("Refeshing the world...", GetPlayer().pos - float2(50f, 0f), 0)
         return
+
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null

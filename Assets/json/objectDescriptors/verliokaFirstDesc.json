@@ -10,7 +10,8 @@
 	"size"         : [96,96],
 	"colliderSize" : [32,22],
 	"colliderType" : 0,
-
+	
+	"damage" : 3,
 	"health" : 555,
 	
 	"fps"       : [12,12,12],

@@ -1,5 +1,5 @@
 {
-	"name"   : "BanditLeader",
+	"name"   : "Bandit Leader",
 	"movable": true,
 	"killable": true,
 	"sprite" : "characters/banditLeader.png",
@@ -11,6 +11,7 @@
 	"colliderSize" : [10,22],
 	"colliderType" : 0,
 
+	"damage" : 3,
 	"health" : 15,
 	
 	"fps"       : [13, 13, 33],

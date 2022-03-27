@@ -11,6 +11,7 @@
 	"colliderSize" : [10,22],
 	"colliderType" : 0,
 
+	"damage" : 1,
 	"health" : 3,
 	
 	"fps"       : [13, 13, 33],

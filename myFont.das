@@ -47,7 +47,7 @@ def DrawTextBox(center: float2)
             DrawText(textLines[currentLine + line], fontPos, line)
     var hintPos: float2 = float2(center.x - 160f, center.y + 80f)
     fill_rect(hintPos.x, hintPos.y, 360f, 20f, 0xFF000000)
-    DrawText("'space' to scroll", hintPos + float2(100f, 0f), 0)
+    DrawText("'space' to continue", hintPos + float2(100f, 0f), 0)
 
 def ScrollText (var DialogOn: bool&)
     if !DialogOn

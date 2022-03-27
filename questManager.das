@@ -21,7 +21,7 @@ def ProgressQuest(var quest: Quest?)
 def InitQuests
     MakeTable()
     questContainer |> push (MakeQuest("Old Lady", "Old Key"))
-    questContainer |> push (MakeQuest("Baba Yaga", ""))
+    questContainer |> push (MakeQuest("Baba Yaga", "Bandit Leader"))
     questContainer |> push (MakeQuest("Leshy", "Verlioka"))
 
 def MakeQuest(NPCName, trigger: string): Quest?

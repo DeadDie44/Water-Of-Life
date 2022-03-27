@@ -1,4 +1,5 @@
 {
+	"id" : 1024,
 	"name"   : "Blockage2",
 	"movable": false,
 	"killable": false,
@@ -14,5 +15,5 @@
 	"frameCount": [1],
 	"frames"    : [2],
 	
-	"deathAnimation": [12,8,16,24,32,40,48,56]
+	"deathAnimation": [1,2]
 }

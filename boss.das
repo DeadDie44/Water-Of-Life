@@ -14,6 +14,7 @@ class Boss: GameObject
     destination: float2
     previousPos: float2
     fPointer: function
+    invoked: bool = false
 
     def Boss (desc: ObjectDescriptor; position: float2; i: int)
         GameObject`GameObject(self, desc, position, i)
@@ -39,10 +40,12 @@ class Boss: GameObject
             Move(move)
         return true
 
-    def override LoseHealth(damage: int; source: string)
-        GameObject`LoseHealth(self, damage, source)
-        if !isAlive
+    def override LoseHealth(dmg: int; source: string)
+        GameObject`LoseHealth(self, dmg, source)
+        if !isAlive && !invoked
+            print("\n Are we calling it twice?")
             invoke(fPointer)
+            invoked = true
 
     def override SpotPlayer(player: GameObject?)
         targetPos = player.pos

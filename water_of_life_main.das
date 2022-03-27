@@ -10,14 +10,14 @@ require myFont
 require collisionManager
 require questManager
 
-// options debugger            // uncomment for debug in VS Code
-// require daslib/debug        // uncomment for debug in VS Code
+options debugger            // uncomment for debug in VS Code
+require daslib/debug        // uncomment for debug in VS Code
 options log
 
 var
-    GameOn      : bool = false
-    Prologue    : bool = true
-    Death       : bool = false
+    gameOn      : bool = false
+    prologue    : bool = true
+    death       : bool = false
     DialogOn    : bool = false
     
     prologueScroll: float2
@@ -57,26 +57,31 @@ def initialize
 def act(dt: float)
     if get_key(VK_ESCAPE)
         Exit()
-    if GameOn
-        if Prologue
+    if gameOn
+        if prologue
             var scroll: float
             if get_key(VK_UP) || get_key(VK_W)
                 scroll = - 1f
             if get_key(VK_DOWN) || get_key(VK_S)
                 scroll = 1f
             if get_key(VK_SPACE)
-                Prologue = false
+                prologue = false
                 music |> play_sound_loop(0.25f)
 
             prologueScroll += float2(0f, scroll - 5f * get_delta_time())
             if prologueScroll.y > -10f
                 prologueScroll.y = -10f
             if prologueScroll.y < -580f
-                Prologue = false
+                prologue = false
                 music |> play_sound_loop(0.25f)
 
             return
-        if !Death
+        if death
+            if get_key_up(VK_R)
+                refreshWorld = true
+                death = false
+                return
+        else
             if DialogOn
                 if !showText
                     showText = true
@@ -87,10 +92,7 @@ def act(dt: float)
             else
                 UpdateObjects(dt)
                 UpdateNPCs(dt, DialogOn)
-            setup_2d_camera(GetPlayer().pos, float(get_screen_height() / 270 * 2))
-        else
-            if get_key(VK_R)
-                InitGame()
+                setup_2d_camera(GetPlayer().pos, float(get_screen_height() / 270 * 2))
     else
         HandleTitleMenu()
     return
@@ -99,31 +101,32 @@ def act(dt: float)
 // you can draw anything in this function
 [export]
 def draw
-    enable_alpha_blend()
-    if GameOn
-        if !Prologue
-            if Death
-                draw_image(deathScreen, GetPlayer().pos.x - float(deathScreen.width / 2), GetPlayer().pos.y - float(deathScreen.height / 2), 0xFFFFFFFF)
-            else
-                DrawGameMap(GetDrawArea())
-                DrawObjects()
+    if death
+        draw_image(deathScreen, GetPlayer().pos.x - float(deathScreen.width / 2), GetPlayer().pos.y - float(deathScreen.height / 2), 0xFFFFFFFF)
+        return
+
+    if gameOn
+        if !prologue
+            DrawGameMap(GetDrawArea())
+            enable_alpha_blend()
+            DrawObjects()
+            if GetPlayer() != null
                 DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
-                if DialogOn
-                    DrawTextBox(GetPlayer().pos)
+            if DialogOn
+                DrawTextBox(GetPlayer().pos)
+            disable_alpha_blend()
         else
             DrawPrologue(cameraCenter - float2(150f, -80f))
     else
         DrawTitleScreen()
-    disable_alpha_blend()
 
 def GameOver
-    Death = true
+    death = true
 
 def InitGame
-    Death = false
+    death = false
     var callback = @@ GameOver
     InitObjectContainer(callback)
-    InitDecorations()
 
 def FisrstStart
     InitMap()
@@ -131,6 +134,7 @@ def FisrstStart
     InitFont()
     InitQuests()
     InitItems()
+    InitDecorations()
 
 def DrawPrologue(pos: float2)
     textLines <- ProcessText(textTable["Prologue"])
@@ -167,7 +171,7 @@ def Exit
 def Start
     print("\nStart!")
     InitHUD()
-    GameOn = true
+    gameOn = true
     stop_all_sounds()
     music <- create_sound(GRASS_THEME)
     //music |> play_sound_loop(0.25f)

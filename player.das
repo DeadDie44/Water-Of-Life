@@ -31,18 +31,18 @@ class Player: GameObject
     def UpdateWeapon()
         weaponSheet <- create_managed_image(weaponsList[weaponIndex])
 
-    def override LoseHealth(damage: int; source: string)
-        GameObject`LoseHealth(self, damage, source)
-        if!isAlive
-            invoke(gameOver)
-            print("\nYo game over yo he killed yo: {source}")
-            if source == "VerliokaFirst"
-                invoke(changeRespawn)
+    def override LoseHealth(dmg: int; source: string)
+        GameObject`LoseHealth(self, dmg, source)
+        if source == "VerliokaFirst"
+            invoke(changeRespawn)
 
     def override GetDamage: int
-        return 1 + 1 * weaponIndex
+        return damage + 1 * weaponIndex
 
     def override UpdateObject(dt: float): bool
+        if!isAlive && animator.currentFrame == animator.deathAnimation |> length - 2
+            invoke(gameOver)
+
         if GameObject`UpdateObject(self, dt)
             isInteracting = false
 
@@ -105,6 +105,9 @@ class Player: GameObject
                 else
                     print("\nThere is no items")
                 
+            if get_key_up(VK_K)
+                LoseHealth (100,"")
+
             Move(move)
         return true
 

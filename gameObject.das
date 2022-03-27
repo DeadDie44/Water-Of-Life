@@ -28,6 +28,7 @@ class GameObject
     drawable     : bool
 
     colliderType : int
+    damage       : int
     id           : int
     faction      : int
 
@@ -68,8 +69,12 @@ class GameObject
         cooldown     = universalCD
         hitInvulCD   = universalCD
 
+        if (desc.id != 0)
+            id = desc.id
+
         attackPos    = desc.attackPos
         attackRadius = desc.attackRadius
+        damage       = desc.damage
         movable      = desc.movable
         killable     = desc.killable
         objName      = desc.objName 
@@ -77,7 +82,7 @@ class GameObject
         colliderType = desc.colliderType
         spriteSize   = desc.size
         baseSpeed    = desc.baseSpeed
-        healthCap    = desc.health
+        healthCap    = desc.hp
         staminaCap   = desc.stamina
 
         health = healthCap
@@ -89,18 +94,21 @@ class GameObject
         animator = new Animator(desc.frames, desc.frameCount, desc.deathAnimation, desc.fps)
         animator -> SetAnimationState(AnimState IDLE)
 
-    def RecieveAttack(attackerId, damage: int; attackerName: string)
-        if !killable || hitInvulCD < universalCD || isRolling
+    def RecieveAttack(attackerId, dmg: int; attackerName: string)
+        if !isAlive || !killable || hitInvulCD < universalCD || isRolling
             return
-        LoseHealth(damage, attackerName)
+        LoseHealth(dmg, attackerName)
 
-    def LoseHealth(damage: int; source: string)
-        health -= damage
+    def LoseHealth(dmg: int; source: string)
+        
+        health -= dmg
         hitInvulCD = 0f
+        print("\nI am id {id} {objName} losing health {health}")
         if health <= 0
             health = 0
             isAlive = false
             animator -> SetAnimationState(AnimState DEATH)
+            print("\nI am id {id} {objName} dead")
 
     def LoseStamina(cost: int)
         stamina -= cost
@@ -251,7 +259,7 @@ class GameObject
         return false
 
     def GetDamage: int
-        return 1
+        return damage
 
     def GetCurrentHealth: int
         return health
