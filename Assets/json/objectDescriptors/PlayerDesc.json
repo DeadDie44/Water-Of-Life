@@ -2,7 +2,7 @@
 	"name"   : "Player",
 	"movable": true,
 	"killable": true,
-	"sprite" : "characters/player.png",
+	"sprite" : "player",
 	
 	"attackPos"    : [11,11],
 	"attackRadius" : 12, 

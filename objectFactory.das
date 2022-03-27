@@ -30,7 +30,7 @@ def objectFromDesc(objName: string): ObjectDescriptor
         for k,v in keys(jsonTable), values(jsonTable)
             i++
             if k == "sprite"
-                desc.sprite = "assets/sprites/" + v as _string
+                desc.sprite = v as _string
             elif k == "name"
                 desc.objName = v as _string
             elif k == "movable"

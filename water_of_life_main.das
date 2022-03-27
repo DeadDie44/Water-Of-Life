@@ -1,6 +1,6 @@
 require daslib/media
 
-require helpers/spriteHelper
+require helpers/spriteAtlas
 require helpers/soundHelper
 require helpers/textHelper
 require hud
@@ -23,10 +23,10 @@ var
     prologueScroll: float2
     cameraCenter: float2
 
-    buttonExit : Image
-    buttonStart: Image
-    titleScreen: Image
-    deathScreen: Image
+    //buttonExit : Image
+    //buttonStart: Image
+    //titleScreen: Image
+    //deathScreen: Image
 
     music : PcmSound
 
@@ -36,16 +36,16 @@ def initialize
     set_window_title("Water of Life")
     //set_resolution(get_desktop_width(), get_desktop_height())
 
-    titleScreen <- create_image(TITLE_SCREEN)
-    buttonStart <- create_image(BUTTON_START)
-    buttonExit  <- create_image(BUTTON_EXIT)
-    deathScreen <- create_image(DEATH_SCREEN)
+    //titleScreen <- create_image(TITLE_SCREEN)
+    //buttonStart <- create_image(BUTTON_START)
+    //buttonExit  <- create_image(BUTTON_EXIT)
+    //deathScreen <- create_image(DEATH_SCREEN)
 
     music <- create_sound(TITLE_THEME)
 
     FisrstStart()
 
-    cameraCenter = float2(float(titleScreen.width / 2), float(titleScreen.height / 2) - float(get_screen_height() / 16 - titleScreen.height / 16))
+    cameraCenter = float2(float(TITLE_SCREEN_SPRITE.width / 2), float(TITLE_SCREEN_SPRITE.height / 2) - float(get_screen_height() / 16 - TITLE_SCREEN_SPRITE.height / 16))
     setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
     music |> play_sound_loop(0.5f)
     show_mouse_cursor()
@@ -103,7 +103,7 @@ def act(dt: float)
 def draw
     enable_alpha_blend()
     if death
-        draw_image(deathScreen, GetPlayer().pos.x - float(deathScreen.width / 2), GetPlayer().pos.y - float(deathScreen.height / 2), 0xFFFFFFFF)
+        draw_image(DEATH_SCREEN_SPRITE, GetPlayer().pos.x - float(DEATH_SCREEN_SPRITE.width / 2), GetPlayer().pos.y - float(DEATH_SCREEN_SPRITE.height / 2), 0xFFFFFFFF)
     else
         if gameOn
             if !prologue
@@ -130,6 +130,7 @@ def InitGame
     InitObjectContainer(callback)
 
 def FisrstStart
+    InitSpriteTable()
     InitMap()
     InitGame()
     InitFont()
@@ -148,9 +149,9 @@ def DrawPrologue(pos: float2)
     
 
 def DrawTitleScreen
-    draw_image(titleScreen, 0f,0f)
-    draw_image(buttonStart, 290f, 75f)
-    draw_image(buttonExit, 290f, 155f)
+    draw_image(TITLE_SCREEN_SPRITE, 0f,0f)
+    draw_image(BUTTON_START_SPRITE, 290f, 75f)
+    draw_image(BUTTON_EXIT_SPRITE, 290f, 155f)
 
 def HandleTitleMenu
     if get_key(VK_S) || get_key(VK_RETURN)

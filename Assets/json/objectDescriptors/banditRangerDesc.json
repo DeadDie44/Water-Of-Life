@@ -2,7 +2,7 @@
 	"name"   : "Bandit Ranger",
 	"movable": true,
 	"killable": true,
-	"sprite" : "characters/bandit.png",
+	"sprite" : "bandit_ranger",
 	
 	"attackPos"    : [11,11],
 	"attackRadius" : 12, 

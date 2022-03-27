@@ -2,7 +2,7 @@
 	"name"   : "Door",
 	"movable": false,
 	"killable": false,
-	"sprite" : "objects/doors.png",
+	"sprite" : "doors",
 	
 	"size"         : [32,32],
 	"colliderSize" : [32,32],

@@ -1,7 +1,7 @@
 require daslib/media
 require strings
 
-require helpers/spriteHelper
+require helpers/spriteAtlas
 
 let
     lowerCases = [[string[26] "a";"b";"c";"d";"e";"f";"g";"h";"i";"j";"k";"l";
@@ -20,15 +20,15 @@ let
     symbolLimit: int2 = int2(50, 5)
 
 var
-    fontImage: ImageHandle
-    textBox: Image
+
     textLines: array<string>
     currentLine: int = 0
     showText: bool
 
 def InitFont()
-    fontImage <- create_managed_image(FONT)
-    textBox <- create_image(TEXT_BOX)
+    return
+    //fontImage <- create_managed_image(FONT)
+    //textBox <- create_image(TEXT_BOX)
     
 def InitText(text: string)
     textLines <- ProcessText(text)
@@ -40,7 +40,7 @@ def DrawTextBox(center: float2)
 
     var boxPos: float2 = float2(center.x - 156f, center.y + 13f )
     var fontPos: float2 = float2(boxPos.x + 5f, boxPos.y + 5f)
-    draw_image(textBox, boxPos.x, boxPos.y)
+    draw_image(TEXT_BOX_SPRITE, boxPos.x, boxPos.y)
 
     for line in range (0, lineLimit)
         if currentLine + line < textLines |> length
@@ -98,16 +98,16 @@ def DrawText(text: string; pos: float2; line: int)
         for char in text
             for i in range(0, lowerCases |> length)
                 if lowerCases[i] == to_char(char)
-                    draw_image_region(fontImage, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetLowerCase(i))
+                    draw_image_region(FONT_SPRITE, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetLowerCase(i))
             for i in range(0, upperCases |> length)
                 if upperCases[i] == to_char(char)
-                    draw_image_region(fontImage, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetUpperCase(i))
+                    draw_image_region(FONT_SPRITE, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetUpperCase(i))
             for i in range(0, numbers |> length)
                 if numbers[i] == to_char(char)
-                    draw_image_region(fontImage, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetNumber(i))
+                    draw_image_region(FONT_SPRITE, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetNumber(i))
             for i in range(0, punctuationsMarks |> length)
                 if punctuationsMarks[i] == to_char(char)
-                    draw_image_region(fontImage, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetPunctuation(i))
+                    draw_image_region(FONT_SPRITE, GetPos(pos, x, line).x, GetPos(pos, x, line).y, GetPunctuation(i))
             x++
 
 def GetPos(pos: float2; x, y: int): float2

@@ -2,7 +2,7 @@
 	"name"   : "EmptyBarrel",
 	"movable": true,
 	"killable": true,
-	"sprite" : "objects/movable_objects.png",
+	"sprite" : "movable_objects",
 	
 	"size"         : [32,32],
 	"colliderSize" : [12,24],

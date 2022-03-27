@@ -2,7 +2,7 @@
 	"name"   : "Kolovershi",
 	"movable": true,
 	"killable": true,
-	"sprite" : "characters/kolovershi.png",
+	"sprite" : "kolovershi",
 	
 	"attackRadius" : 0,
 	"baseSpeed"    : 95,

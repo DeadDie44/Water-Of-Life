@@ -2,7 +2,7 @@
 	"name"   : "Bandit",
 	"movable": true,
 	"killable": true,
-	"sprite" : "characters/bandit.png",
+	"sprite" : "bandit",
 	
 	"attackPos"    : [11,11],
 	"attackRadius" : 12, 

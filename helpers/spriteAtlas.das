@@ -38,8 +38,16 @@ var
                     "kolovershi"; "npcs"; "verlioka"; "static_objects"; "movable_objects";
                     "doors" ]]
 
-def GetObjectSprite(fileName: string): ImageHandle
-    for i in range(0, OBJECT_NAMES|> length)
-        if OBJECT_NAMES[i] == fileName
-            return OBJECT_SPRITES[i]
-    return INTERATCION_MARK_SPRITE
+    SPRITE_TABLE: table<string; ImageHandle>
+
+def InitSpriteTable
+    SPRITE_TABLE["player"] = PLAYER_SPRITE
+    SPRITE_TABLE["bandit"] = BANDIT_SPRITE
+    SPRITE_TABLE["bandit_ranger"] = BANDIT_RANGER_SPRITE
+    SPRITE_TABLE["bandit_leader"] = BANDIT_LEADER_SPRITE
+    SPRITE_TABLE["kolovershi"] = KOLOVERSHI_SPRITE
+    SPRITE_TABLE["npcs"] = NPCS_SPRITE
+    SPRITE_TABLE["verlioka"] = VERLIOKA_SPRITE
+    SPRITE_TABLE["static_objects"] = STATIC_OBJECTS_SPRITE
+    SPRITE_TABLE["movable_objects"] = MOVABLE_OBJECTS_SPRITE
+    SPRITE_TABLE["doors"] = DOORS_SPRITE

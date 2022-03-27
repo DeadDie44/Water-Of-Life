@@ -2,7 +2,7 @@
 	"name"   : "Bandit Leader",
 	"movable": true,
 	"killable": true,
-	"sprite" : "characters/banditLeader.png",
+	"sprite" : "banditLeader",
 	
 	"attackPos"    : [11,11],
 	"attackRadius" : 12, 

@@ -5,11 +5,11 @@ require gameObject
 require myFont
 require objectFactory
 require helpers/objectHelper
-require helpers/spriteHelper
+require helpers/spriteAtlas
 require util/util  
 
 let
-    weaponsList = [[string[4] WEAPON_CLUB; WEAPON_MACE; WEAPON_AXE; WEAPON_SWORD]]
+    weaponsList = [[ImageHandle[4] WEAPON_CLUB_SPRITE; WEAPON_MACE_SPRITE; WEAPON_AXE_SPRITE; WEAPON_SWORD_SPRITE]]
 
 var
     weaponSheet: ImageHandle
@@ -29,7 +29,7 @@ class Player: GameObject
         UpdateWeapon()
 
     def UpdateWeapon()
-        weaponSheet <- create_managed_image(weaponsList[weaponIndex])
+        weaponSheet := weaponsList[weaponIndex]
 
     def override LoseHealth(dmg: int; source: string)
         GameObject`LoseHealth(self, dmg, source)

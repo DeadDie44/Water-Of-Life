@@ -5,6 +5,7 @@ require animator
 require objectFactory
 require util/util
 require item
+require helpers/spriteAtlas
 
 let
     attackCost: int = 2
@@ -47,8 +48,7 @@ class GameObject
     vel          : float2
 
     objName      : string
-
-    spriteSheet : ImageHandle
+    spriteName   : string
 
     animator    : Animator?
 
@@ -87,7 +87,7 @@ class GameObject
 
         health = healthCap
         stamina = staminaCap
-        spriteSheet  <- create_managed_image(desc.sprite)
+        spriteName = desc.sprite
 
         if colliderType == COLLIDER_CIRCLE
             colliderSize.y = colliderSize.x
@@ -215,8 +215,8 @@ class GameObject
         if isRolling && direction.y > 0f
             transform.y *= -1f
 
-        draw_image_transformed(spriteSheet, displace.x + pos.x - spriteSize.x * transform.x / 2f, displace.x + pos.y - spriteSize.y * transform.y / 2f,
-        getSpriteRect(animator -> FrameIndex(), spriteSheet.width / int(spriteSize.x), spriteSheet.height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
+        draw_image_transformed(SPRITE_TABLE[spriteName], displace.x + pos.x - spriteSize.x * transform.x / 2f, displace.x + pos.y - spriteSize.y * transform.y / 2f,
+        getSpriteRect(animator -> FrameIndex(), SPRITE_TABLE[spriteName].width / int(spriteSize.x), SPRITE_TABLE[spriteName].height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
         0xFFFFFFFF, float2(spriteSize.x * transform.x, spriteSize.y * transform.y), 0f, 0f, 0f)
 
         if showCollider

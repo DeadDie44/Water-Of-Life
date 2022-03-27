@@ -2,7 +2,7 @@
 	"name"   : "Baba Yaga",
 	"movable": false,
 	"killable": false,
-	"sprite" : "characters/npcs.png",
+	"sprite" : "npcs",
 	
 	"baseSpeed"    : 60,
 	"size"         : [32,32],

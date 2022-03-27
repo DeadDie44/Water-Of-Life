@@ -303,7 +303,6 @@ def RemoveObjects
             if obj != null
                 if obj.canBeRemoved
                     unsafe
-                        obj.spriteSheet |> delete_managed_image()
                         delete(obj)
                     needToDelete = true
     else

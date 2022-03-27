@@ -2,7 +2,7 @@
 	"name"   : "VerliokaFirst",
 	"movable": true,
 	"killable": true,
-	"sprite" : "characters/verlioka.png",
+	"sprite" : "verlioka",
 	
 	"attackPos"    : [32,32],
 	"attackRadius" : 32, 
