@@ -31,13 +31,6 @@ var
     MOVABLE_OBJECTS_SPRITE  : ImageHandle <- create_managed_image(MOVABLE_OBJECTS)
     DOORS_SPRITE            : ImageHandle <- create_managed_image(DOORS)
 
-    OBJECT_SPRITES = [[ImageHandle[10] PLAYER_SPRITE; BANDIT_SPRITE; BANDIT_RANGER_SPRITE; BANDIT_LEADER_SPRITE;
-                    KOLOVERSHI_SPRITE; NPCS_SPRITE; VERLIOKA_SPRITE; STATIC_OBJECTS_SPRITE; MOVABLE_OBJECTS_SPRITE;
-                    DOORS_SPRITE ]]
-    OBJECT_NAMES = [[string[10] "player"; "bandit"; "bandit_ranger"; "bandit_leader";
-                    "kolovershi"; "npcs"; "verlioka"; "static_objects"; "movable_objects";
-                    "doors" ]]
-
     SPRITE_TABLE: table<string; ImageHandle>
 
 def InitSpriteTable
