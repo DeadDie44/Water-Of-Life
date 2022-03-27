@@ -43,7 +43,7 @@ let
     objectNames = [[string[20] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
                     "verliokaFirst"; "verliokaTrue"; "respawn"; "player";
                     "kolovershi"; "babaYaga"; "leshy"; "secretBabaYaga"; "door"; "bossGate";
-                    "bossTrigger1"; "bossTrigger2"; "NA"; "blockage1"; "blockage2"]]
+                    "bossTrigger1"; "bossTrigger2"; "banditLeader"; "blockage1"; "blockage2"]]
     decorationNames = [[string[20] "NA"; "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "tree1"; "tree2"; "tree3";
@@ -133,7 +133,7 @@ def InitObjectContainer(callback: function)
                         player.changeRespawn = @@ RespawnAfterFirstBoss
                         CreateObject(player)
 
-                elif objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
+                elif objectNames[obj.index] == "banditLeader" || objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
                     CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 300 + objectContainer |> length))
                 elif starts_with(objectNames[obj.index], "door")
                     CreateObject(new DoorTrigger(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 500 + objectContainer |> length))

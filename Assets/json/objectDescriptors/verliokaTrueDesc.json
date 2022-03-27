@@ -11,7 +11,7 @@
 	"colliderSize" : [32,22],
 	"colliderType" : 0,
 
-	"health" : 100,
+	"health" : 50,
 	
 	"fps"       : [12,12,12],
 	"frameCount": [1,1,1],
