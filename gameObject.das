@@ -224,7 +224,7 @@ class GameObject
         animator -> Animate(direction)
 
     def InteractWith(): string
-        print("\n I am {objName} id {id}, i've been interacted")
+        print("\n I am non-interactable {objName} id {id}")
         return objName
     
     def PickUpItem(index: int)

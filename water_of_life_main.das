@@ -122,11 +122,11 @@ def GameOver
 def InitGame
     Death = false
     var callback = @@ GameOver
-    InitMap()
     InitObjectContainer(callback)
     InitDecorations()
 
 def FisrstStart
+    InitMap()
     InitGame()
     InitFont()
     InitQuests()

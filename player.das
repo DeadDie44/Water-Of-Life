@@ -91,13 +91,13 @@ class Player: GameObject
                 Attack()
                 //print("\n Player pos {pos}")
 
-            if get_key(VK_E)
+            if get_key_up(VK_E)
                 isInteracting = true
 
             if get_key(VK_LSHIFT) || get_key(GP_B)
                 Roll()
 
-            if get_key(VK_I)
+            if get_key_up(VK_I)
                 print("\nInventory length {inventory |> length}")
                 if inventory |> length > 0
                     for item in inventory

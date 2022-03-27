@@ -11,6 +11,7 @@ require player
 require objectFactory
 require myFont
 require npc
+require respawnPoint
 require questManager
 require util/mapProcessor
 require util/util
@@ -60,6 +61,7 @@ struct BossTrigger
     bossName: string
 
 var
+    refreshWorld: bool
     itemSheet: ImageHandle
     NPCContainer: array<NPC?>
     objectContainer: array<GameObject?>
@@ -67,12 +69,15 @@ var
     itemContainer: array<objectMarker>
     bossTriggers: array<BossTrigger?>
     respawnPoints: array<float2>
-    gameoverCallback: function
 
     currentRespawn: float2
 
 def SetRespawn(index: int)
     currentRespawn = respawnPoints[index]
+
+def RespawnHere()
+    currentRespawn = GetPlayer().pos
+    refreshWorld = true
 
 def RespawnAfterFirstBoss()
     currentRespawn = respawnPoints[1]
@@ -98,6 +103,7 @@ def InitDecorations
     clear(decorationArray)
 
 def InitObjectContainer(callback: function)
+    refreshWorld = false
     var playerExists: bool = false
     var oldPlayer: GameObject?
 
@@ -117,7 +123,7 @@ def InitObjectContainer(callback: function)
                     if playerExists
                         oldPlayer -> ReplenishHealth(oldPlayer -> GetHealthCap())
                         oldPlayer.isAlive = true
-                        oldPlayer.pos = currentRespawn
+                        oldPlayer.pos = currentRespawn + float2(0f, 18f)
                         CreateObject(oldPlayer)
                     else
                         currentRespawn = obj.pos
@@ -148,8 +154,13 @@ def InitObjectContainer(callback: function)
                     trigger.bossName = "verliokaTrue"
                     bossTriggers |> push(trigger)
 
-                elif objectNames[obj.index] == "respawn" && !playerExists
-                    respawnPoints |> push(float2(obj.pos.x, obj.pos.y + 18f))
+                elif objectNames[obj.index] == "respawn" 
+                    if !playerExists
+                        respawnPoints |> push(float2(obj.pos.x, obj.pos.y))
+                
+                    var respawn: RespawnPoint? = new RespawnPoint(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length)
+                    respawn.respawnHere = @@ RespawnHere
+                    CreateObject(respawn)
                 else
                     CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
@@ -161,6 +172,10 @@ def BossKilled()
     objectContainer[GetIndexById(999)] -> LoseHealth(1,"")
 
 def UpdateObjects(dt: float)
+    if refreshWorld        
+        InitObjectContainer(@@ SetRespawn)
+        InitDecorations()
+        return
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null           
@@ -175,6 +190,8 @@ def UpdateObjects(dt: float)
                                     CheckCollision(obj, target)
                     if obj.id != GetPlayer().id
                         obj -> SpotPlayer(GetPlayer())
+                        if GetPlayer().isInteracting && CanInteract(GetPlayer(), obj)
+                            obj -> InteractWith()
                     TileCollision(obj, GetActiveArea(obj))
                     MapBoundaryCheck(obj)
     UpdateTriggers()
@@ -210,6 +227,8 @@ def UpdateItems(dt: float)
             erase(itemContainer, index)
 
 def UpdateNPCs(dt: float; var interact: bool&)
+    if refreshWorld
+        return
     if NPCContainer |> length > 0
         for npc in NPCContainer
             if npc != null
@@ -276,6 +295,9 @@ def GetIndexById(i: int): int
     return index
 
 def DrawObjects
+    if refreshWorld
+        DrawText("Refeshing the world...", GetPlayer().pos - float2(50f, 0f), 0)
+        return
     if objectContainer |> length > 0
         for obj in objectContainer
             if obj != null
