@@ -10,6 +10,7 @@ require gameMap
 
 class Enemy: GameObject
     agro       : bool
+    flee        : bool
     targetPos  : float2
     agroRadius : float = 70f
     area       : float2
@@ -37,6 +38,8 @@ class Enemy: GameObject
                 destination = targetPos
                 if Distance(pos, targetPos) < colliderSize.x + attackRadius
                     Attack()
+            if flee
+                destination = float2(pos.x + (pos.x - targetPos.x), pos.y + (pos.y - targetPos.y))
 
             if pos == destination   
                 if timer < universalCD * 2f
@@ -59,16 +62,18 @@ class Enemy: GameObject
         return true
 
     def override SpotPlayer(player: GameObject?)
+        targetPos = player.pos
+
         if attackRadius > 0f
-            targetPos = player.pos
- 
             if Distance(pos, player.pos) < agroRadius + colliderSize.x
                 if !agro
                     destination = pos
                 agro = true
             elif Distance(area, player.pos) > agroRadius * 2f  + colliderSize.x
                 agro = false
-
+        else 
+            if Distance(pos, player.pos) < agroRadius + colliderSize.x
+                flee = true
 
     def SetRoamArea(a: float2) 
         area = a

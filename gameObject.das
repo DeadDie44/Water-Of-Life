@@ -228,7 +228,7 @@ class GameObject
         return objName
     
     def PickUpItem(index: int)
-        print("\n Am i picked up {GetItemByIndex(index).itemName}")
+        print("\n Am i picked up item id {index} - {GetItemByIndex(index).itemName}")
         inventory |> push(GetItemByIndex(index))
         return
 

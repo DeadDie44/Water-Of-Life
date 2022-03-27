@@ -318,7 +318,7 @@ def DrawItems
     if itemContainer |> length > 0
         for item in itemContainer
             if PointRect(item.pos, GetDrawArea())  
-                draw_image_region(itemSheet, item.pos.x - 16f, item.pos.y - 16f, getSpriteRect(items[item.index - 1].sprite, 8, 8, 32f, 32f))
+                draw_image_region(itemSheet, item.pos.x - 16f, item.pos.y - 16f, getSpriteRect(items[item.index].sprite, 8, 8, 32f, 32f))
 
 def DrawDecorations
     if decorationContainer |> length > 0

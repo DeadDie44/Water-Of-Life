@@ -150,3 +150,21 @@ class Player: GameObject
 
     def SetWeapon(index:int)
         weaponIndex = index
+        UpdateWeapon()
+
+    def CheckForWeapon(index: int): bool
+        if index >= 5 && index <= 7 && weaponIndex < index - 4
+            SetWeapon(index - 4)
+            return true
+        return false
+
+    def override PickUpItem(index: int)
+        if CheckForWeapon(index)
+            return
+        elif index == 3
+            healthCap += 1
+            health = healthCap
+        elif index == 4
+            staminaCap += 1
+        else
+            GameObject`PickUpItem(self, index)
