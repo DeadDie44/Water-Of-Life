@@ -17,6 +17,7 @@ options log
 var
     gameOn      : bool = false
     prologue    : bool = true
+    epilogue    : bool = false
     death       : bool = false
     DialogOn    : bool = false
     
@@ -57,6 +58,8 @@ def initialize
 def act(dt: float)
     if get_key(VK_ESCAPE)
         Exit()
+    if epilogue 
+        return
     if gameOn
         if prologue
             var scroll: float
@@ -90,7 +93,7 @@ def act(dt: float)
                     print("\nMenuOn {DialogOn}")
                     print("\nInteracting? {GetPlayer().isInteracting}")
             else
-                UpdateObjects(dt)
+                UpdateObjects(dt, epilogue)
                 UpdateNPCs(dt, DialogOn)
                 setup_2d_camera(GetPlayer().pos, float(get_screen_height() / 270 * 2))
     else
@@ -102,6 +105,9 @@ def act(dt: float)
 [export]
 def draw
     enable_alpha_blend()
+    if epilogue
+        DrawText("Thank you for playing!", GetPlayer().pos - float2(50f,0f), 0)
+        return
     if death
         draw_image(DEATH_SCREEN_SPRITE, GetPlayer().pos.x - float(DEATH_SCREEN_SPRITE.width / 2), GetPlayer().pos.y - float(DEATH_SCREEN_SPRITE.height / 2), 0xFFFFFFFF)
     else

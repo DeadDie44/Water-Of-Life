@@ -125,7 +125,7 @@ def InitObjectContainer(gameOver: function)
     var objectArray: array<objectMarker> <- ReadObjects()
     for obj in objectArray
         if obj.index > 0
-            if objectNames[obj.index] == "babaYaga" || objectNames[obj.index] == "leshy" || objectNames[obj.index] == "secretBabaYaga"
+            if !!playerExists && (objectNames[obj.index] == "babaYaga" || objectNames[obj.index] == "leshy" || objectNames[obj.index] == "secretBabaYaga")
                 NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 200 + NPCContainer |> length))
             else
                 if objectNames[obj.index] == "player"
@@ -185,7 +185,10 @@ def ForceClearObjects
                 obj.canBeRemoved = true
         RemoveObjects()
 
-def UpdateObjects(dt: float)
+def UpdateObjects(dt: float; var epilogue: bool&)
+    if PointRect(GetPlayer().pos, float4(3050f, 2350f, 240f,240f))
+        epilogue = true
+        return
     if refreshWorld
         ForceClearObjects()
         InitObjectContainer(@@RespawnAfterFirstBoss)
@@ -337,6 +340,9 @@ def DrawObjects()
     DrawNPCs()
     DrawItems()
     DrawDecorations()
+
+    //var winRect: float4 = float4(3050f, 2350f, 240f,240f)
+    //fill_rect(winRect.x, winRect.y, winRect.z, winRect.w, 0xFFFFFFFF)
 
 def DrawNPCs
     if NPCContainer |> length > 0

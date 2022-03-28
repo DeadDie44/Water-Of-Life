@@ -89,7 +89,7 @@ class Player: GameObject
 
             if get_key(VK_SPACE) || get_key(GP_A)
                 Attack()
-                //print("\n Player pos {pos}")
+                print("\n Player pos {pos}")
 
             if get_key_up(VK_E)
                 isInteracting = true
