@@ -6,7 +6,7 @@ require enemy
 require doorTrigger
 require gameObject
 require item
-require helpers/SpriteHelper
+require helpers/SpriteAtlas
 require player
 require objectFactory
 require myFont
@@ -15,29 +15,6 @@ require respawnPoint
 require questManager
 require util/mapProcessor
 require util/util
-
-/*
-0xff000000; 
-0xff00ff00; 
-0xff0000ff; 
-0xffff0000;
-0xff7f7f00; 
-0xff545454; 
-0xfffffe33;
-0xff7f007f; 
-0xff007f7f;
-0xffffffff;
-0xff9900ff; 
-0xffccf867; 
-0xff494036; 
-0xff3d2c19; 
-0xff3f330e;
-0xff4c5744;           
-0xff4d6e38; 
-0xff35601b;
-0xff67dbf8; 
-0xffea2cba
-*/
 
 let
     objectNames = [[string[20] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
@@ -51,7 +28,7 @@ let
 
 struct Decoration
     pos: float2
-    img: Image
+    sprite: string
 
 struct BossTrigger
     activated: bool
@@ -62,7 +39,6 @@ struct BossTrigger
 
 var
     refreshWorld: bool
-    itemSheet: ImageHandle
     NPCContainer: array<NPC?>
     objectContainer: array<GameObject?>
     decorationContainer: array<Decoration?>
@@ -95,7 +71,6 @@ def BossKilled()
 def InitItems
     clear(itemContainer)
     MakeItems()
-    itemSheet <- create_managed_image(ITEMS)
     itemContainer <- ReadLayout(MAP_ITEMS_LAYOUT)
 
 def InitDecorations
@@ -106,10 +81,9 @@ def InitDecorations
             if decorationNames[deco.index] != "NA"
                 var dec: Decoration? = new Decoration
                 dec.pos = deco.pos
-                dec.img <- create_image("assets/sprites/decorations/{decorationNames[deco.index]}.png")
-                if random_float(0f,1f) > 0.5f
-                    dec.img |> flip_image_x()
+                dec.sprite = decorationNames[deco.index]
                 decorationContainer |> push(dec)
+    print ("\n Decorations  {decorationContainer |> length}")
     clear(decorationArray)
 
 def InitObjectContainer(gameOver: function)
@@ -125,7 +99,7 @@ def InitObjectContainer(gameOver: function)
     var objectArray: array<objectMarker> <- ReadObjects()
     for obj in objectArray
         if obj.index > 0
-            if !!playerExists && (objectNames[obj.index] == "babaYaga" || objectNames[obj.index] == "leshy" || objectNames[obj.index] == "secretBabaYaga")
+            if !playerExists && (objectNames[obj.index] == "babaYaga" || objectNames[obj.index] == "leshy" || objectNames[obj.index] == "secretBabaYaga")
                 NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 200 + NPCContainer |> length))
             else
                 if objectNames[obj.index] == "player"
@@ -290,6 +264,8 @@ def GetActiveArea(obj: GameObject?): float4
     return area
 
 def GetDrawArea: float4
+    if GetPlayer() == null
+        return float4(1f,1f,1f,1f)
     var area: float4
     var areaWidth: float = 500f
     var areaHeight: float = 450f
@@ -355,10 +331,10 @@ def DrawItems
     if itemContainer |> length > 0
         for item in itemContainer
             if PointRect(item.pos, GetDrawArea())  
-                draw_image_region(itemSheet, item.pos.x - 16f, item.pos.y - 16f, getSpriteRect(items[item.index].sprite, 8, 8, 32f, 32f))
+                draw_image_region(ITEMS_SPRITE, item.pos.x - 16f, item.pos.y - 16f, getSpriteRect(items[item.index].sprite, 8, 8, 32f, 32f))
 
 def DrawDecorations
     if decorationContainer |> length > 0
         for deco in decorationContainer
-            if PointRect(deco.pos, GetDrawArea())  
-                draw_image(deco.img, deco.pos.x - float(deco.img.width) / 2f, deco.pos.y - float(deco.img.height) / 2f -  float(deco.img.height) / 3f)
+            if PointRect(deco.pos, GetDrawArea())
+                draw_image(DECORATION_TABLE[deco.sprite], deco.pos.x - float(DECORATION_TABLE[deco.sprite].width) / 2f, deco.pos.y - float(DECORATION_TABLE[deco.sprite].height) / 2f -  float(DECORATION_TABLE[deco.sprite].height) / 3f)

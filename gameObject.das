@@ -16,7 +16,7 @@ class GameObject
     private health, healthCap: int
     private stamina, staminaCap: int
     //***
-    showCollider : bool = false //  для тестов
+    showCollider : bool = true //  для тестов
     //***
     isAlive      : bool
     isAttacking  : bool
@@ -215,8 +215,8 @@ class GameObject
         if isRolling && direction.y > 0f
             transform.y *= -1f
 
-        draw_image_transformed(SPRITE_TABLE[spriteName], displace.x + pos.x - spriteSize.x * transform.x / 2f, displace.x + pos.y - spriteSize.y * transform.y / 2f,
-        getSpriteRect(animator -> FrameIndex(), SPRITE_TABLE[spriteName].width / int(spriteSize.x), SPRITE_TABLE[spriteName].height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
+        draw_image_transformed(OBJECT_TABLE[spriteName], displace.x + pos.x - spriteSize.x * transform.x / 2f, displace.x + pos.y - spriteSize.y * transform.y / 2f,
+        getSpriteRect(animator -> FrameIndex(), OBJECT_TABLE[spriteName].width / int(spriteSize.x), OBJECT_TABLE[spriteName].height / int(spriteSize.y), spriteSize.x, spriteSize.y), 
         0xFFFFFFFF, float2(spriteSize.x * transform.x, spriteSize.y * transform.y), 0f, 0f, 0f)
 
         if showCollider

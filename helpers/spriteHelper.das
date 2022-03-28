@@ -47,6 +47,8 @@ let
 
     DEATH_SCREEN: string = SRPITE_ROOT + "death_screen.png"
 
+    PROLOGUE: string = SRPITE_ROOT + "prologue.png"
+
     INTERATCION_MARK: string = SRPITE_ROOT + "interaction_mark.png"
 
     STATIC_OBJECTS: string = SRPITE_ROOT + "objects/static_objects.png"
@@ -54,3 +56,17 @@ let
     MOVABLE_OBJECTS: string = SRPITE_ROOT + "objects/movable_objects.png"
 
     DOORS: string = SRPITE_ROOT + "objects/doors.png"
+
+    BUSH1: string = SRPITE_ROOT + "decorations/bush1.png"
+
+    BUSH2: string = SRPITE_ROOT + "decorations/bush2.png"
+
+    BUSH3: string = SRPITE_ROOT + "decorations/bush3.png"
+
+    TREE1: string = SRPITE_ROOT + "decorations/tree1.png"
+
+    TREE2: string = SRPITE_ROOT + "decorations/tree2.png"
+
+    TREE3: string = SRPITE_ROOT + "decorations/tree3.png"
+
+    IZBUSHKA: string = SRPITE_ROOT + "decorations/izbushka.png"
