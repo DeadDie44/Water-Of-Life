@@ -5,8 +5,7 @@ require daslib/json_boost
 
 def GetJson (fileName:string): JsonValue?
     var json: JsonValue?
-    var root:string = get_das_root()
-    let fname = root + "/bin/projects/Water-Of-Life/assets/json/{fileName}.json"
+    let fname = "assets/json/{fileName}.json"
     fopen(fname, "rb") <| $ ( f )
         fread(f) <| $ ( data )
             //print ( "\n{fname}\n" )
@@ -25,7 +24,7 @@ def objectFromDesc(objName: string): ObjectDescriptor
     var jsonTable: table<string; JsonValue?>
 
     if json is _object
-        jsonTable <- json as _object
+        jsonTable <- json as _object    
         var i:int = 0
         for k,v in keys(jsonTable), values(jsonTable)
             i++
