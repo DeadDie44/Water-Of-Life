@@ -26,8 +26,8 @@ def ReadMap(): array<int>
     mapSize.x = img.width
     mapSize.y = img.height
 
-    for y in range(0, img.width)
-        for x in range(0, img.height)
+    for y in range(0, img.height)
+        for x in range(0, img.width)
             var index = GetColorIndex(img |> get_pixel(x, y))
             if img |> get_pixel(x, y) != 0xff000000
                 index += 8 * random_int(8)
@@ -37,14 +37,14 @@ def ReadMap(): array<int>
     return <- map
 
 def ReadLayout(layout: string): array<objectMarker>
-    print("\nTrying to read {layout}}")
+    print("\nTrying to read {layout}")
     var objectArray: array<objectMarker>
 
     var img: Image
     img <- create_image(layout)
 
-    for y in range(0, img.width)
-        for x in range(0, img.height)
+    for y in range(0, img.height)
+        for x in range(0, img.width)
             if img |> get_pixel(x, y) != 0xff000000
                 var myMarker: objectMarker
                 myMarker.pos = float2(x * 32 + 16, y * 32 + 16)
@@ -61,8 +61,8 @@ def ReadObjects(): array<objectMarker>
     var img: Image
     img <- create_image(MAP_OBJECTS_LAYOUT)
 
-    for y in range(0, img.width)
-        for x in range(0, img.height)
+    for y in range(0, img.height)
+        for x in range(0, img.width)
             if img |> get_pixel(x, y) == 0xff007f7f
                 var myMarker: objectMarker
                 myMarker.pos = float2(x * 32 + 16, y * 32 + 16)
@@ -70,8 +70,8 @@ def ReadObjects(): array<objectMarker>
                 objectArray |> push(myMarker)
                 break;
 
-    for y in range(0, img.width)
-        for x in range(0, img.height)
+    for y in range(0, img.height)
+        for x in range(0, img.width)
             if img |> get_pixel(x, y) != 0xff000000 && img |> get_pixel(x, y) != 0xff007f7f
                 var myMarker: objectMarker
                 myMarker.pos = float2(x * 32 + 16, y * 32 + 16)
