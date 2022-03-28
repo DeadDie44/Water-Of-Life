@@ -11,9 +11,9 @@
 	"colliderSize" : [10,22],
 	"colliderType" : 0,
 
-	"damage" : 1,
+	"damage" : 1000,
 	"health" : 5,
-	"stamina" : 6,
+	"stamina" : 60,
 	
 	"fps"       : [18,18,32,17],
 	"frameCount": [1,8,7,5],
