@@ -11,6 +11,9 @@
 	"colliderSize" : [10,22],
 	"colliderType" : 0,
 
+	"ranged" : true,
+	"projectile" : 0,
+	"attackRange" : 100,
 	"damage" : 2,
 	"health" : 2,
 	

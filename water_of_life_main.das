@@ -170,7 +170,7 @@ def Start
     print("\nStart!")
     InitHUD()
     gameOn = true
-    PlayMusic(PROLOGUE_THEME, 0.6f)
+    PlayMusic(PROLOGUE_THEME, 0.4f)
 
 def PlayMusic(file: string; volume: float)
     stop_all_sounds()

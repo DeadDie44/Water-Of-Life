@@ -22,6 +22,7 @@ var
     WEAPON_SWORD_SPRITE     : ImageHandle <- create_managed_image(WEAPON_SWORD)
     DOORS_SPRITE            : ImageHandle <- create_managed_image(DOORS)
     PROLOGUE_SPRITE         : ImageHandle <- create_managed_image(PROLOGUE)
+    PROJECTILES_SPRITE      : ImageHandle <- create_managed_image(PROJECTILES)
 
 
     OBJECT_TABLE <- {{ "player" => create_managed_image(PLAYER); "bandit" => create_managed_image(BANDIT); "bandit_ranger" => create_managed_image(BANDIT_RANGER);

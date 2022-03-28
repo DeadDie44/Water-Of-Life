@@ -36,7 +36,10 @@ class Enemy: GameObject
             var move: float2 = float2(0f, 0f)
             if agro
                 destination = targetPos
-                if Distance(pos, targetPos) < colliderSize.x + attackRadius
+                if ranged
+                    if Distance(pos, targetPos) < attackRange
+                        Attack()
+                elif Distance(pos, targetPos) < colliderSize.x + attackRadius
                     Attack()
             if flee
                 destination = float2(pos.x + (pos.x - targetPos.x), pos.y + (pos.y - targetPos.y))

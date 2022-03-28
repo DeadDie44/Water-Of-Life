@@ -37,6 +37,12 @@ struct BossTrigger
     doorPos: float2
     bossName: string
 
+struct Projectile
+    pos: float2
+    velocity: float2
+    sprite: int
+    faction: int
+
 var
     refreshWorld: bool
     NPCContainer: array<NPC?>
@@ -45,6 +51,7 @@ var
     itemContainer: array<objectMarker>
     bossTriggers: array<BossTrigger?>
     respawnPoints: array<float2>
+    projectiles: array<Projectile>
 
     currentRespawn: float2
 
@@ -67,7 +74,14 @@ def RemoveBaricade(i: int)
 def BossKilled()
     objectContainer[GetIndexById(999)] -> LoseHealth(objectContainer[GetIndexById(999)] -> GetHealthCap(),"")
 
-
+def SpawnProjectile(origin, target: float2&; faction, projectile: int)
+    var p: Projectile
+    p.pos = origin
+    p.velocity = (target - origin) / Distance(target, origin) * 150f
+    p.faction = faction
+    p.sprite = projectile
+    projectiles |> push(p)
+    
 def InitItems
     clear(itemContainer)
     MakeItems()
@@ -176,8 +190,11 @@ def UpdateObjects(dt: float; var epilogue: bool&)
                     for target in objectContainer
                         if PointRect(target.pos, GetActiveArea(obj))
                             if target != null && obj.id != target.id && target.isAlive
-                                if obj.isAttacking && target.killable
-                                    CheckAttack(obj, target)
+                                if obj.isAttacking && target.killable && obj.faction != target.faction
+                                    if obj.ranged && obj.readyToShoot
+                                        SpawnProjectile(obj.pos, target.pos, obj.faction, obj.projectile)
+                                    else
+                                        CheckAttack(obj, target)
                                     if !target.isAlive && target.id != GetPlayer().id
                                         var quest: Quest? = GetQuestByTrigger(target.objName)
                                         if quest != null && quest.progress < 2
@@ -190,6 +207,7 @@ def UpdateObjects(dt: float; var epilogue: bool&)
                             obj -> InteractWith()
                     TileCollision(obj, GetActiveArea(obj))
                     MapBoundaryCheck(obj)
+    UpdateProjectiles(dt)
     UpdateTriggers()
     UpdateItems(dt)
     RemoveObjects()
@@ -249,6 +267,17 @@ def UpdateNPCs(dt: float; var interact: bool&)
                     interact = true
 
                     return
+
+def UpdateProjectiles(dt: float)
+    if projectiles |> length > 0
+        for p in projectiles
+            p.pos += p.velocity * dt
+            if objectContainer |> length > 0
+                for obj in objectContainer
+                    if  obj.killable && obj.isAlive && p.faction != obj.faction
+                        if PointCircle(p.pos, obj.pos, obj.colliderSize.x) 
+                            obj -> RecieveAttack(obj.id, obj.damage, obj.objName)
+                            delete p
 
 def GetPlayer: GameObject?
     return objectContainer[0]
@@ -315,7 +344,9 @@ def DrawObjects()
                     obj -> DrawObject()
     DrawNPCs()
     DrawItems()
+    DrawProjectiles()
     DrawDecorations()
+    DrawHints()
 
     //var winRect: float4 = float4(3050f, 2350f, 240f,240f)
     //fill_rect(winRect.x, winRect.y, winRect.z, winRect.w, 0xFFFFFFFF)
@@ -338,3 +369,14 @@ def DrawDecorations
         for deco in decorationContainer
             if PointRect(deco.pos, GetDrawArea())
                 draw_image(DECORATION_TABLE[deco.sprite], deco.pos.x - float(DECORATION_TABLE[deco.sprite].width) / 2f, deco.pos.y - float(DECORATION_TABLE[deco.sprite].height) / 2f -  float(DECORATION_TABLE[deco.sprite].height) / 3f)
+
+def DrawProjectiles
+    if projectiles |> length > 0
+        for p in projectiles
+            if PointRect(p.pos, GetDrawArea())
+                draw_image_region(PROJECTILES_SPRITE, p.pos.x - 8f, p.pos.y - 8f, getSpriteRect(p.sprite, 4, 4, 16f, 16f))
+
+def DrawHints
+    DrawText("WASD or ARROW keys to move", float2(204f, 197f), 0)
+    DrawText("SPACE to attack", float2(750f, 750f), 0)
+    DrawText("LEFT SHIFT to roll",  float2(950f, 700f), 0)

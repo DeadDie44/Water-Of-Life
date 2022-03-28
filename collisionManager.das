@@ -135,6 +135,9 @@ def CircRect(pos: float2&; radius: float&; rect: float4; v :float2&; var rayToNe
 def CircleCircle(pos1, pos2: float2&; r1, r2: float&): bool
     return (DistanceSquared(pos1, pos2) < (r1 + r2) * (r1 + r2))
 
+def PointCircle(pos1, pos2: float2&; radius: float&): bool
+    return (DistanceSquared(pos1, pos2) < radius * radius )
+
 def PointRect(point: float2&; rect: float4): bool
     return (point.x > rect.x) && (point.x < rect.x + rect.z) && (point.y > rect.y) && (point.y < rect.y + rect.w)
 

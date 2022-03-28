@@ -70,3 +70,5 @@ let
     TREE3: string = SRPITE_ROOT + "decorations/tree3.png"
 
     IZBUSHKA: string = SRPITE_ROOT + "decorations/izbushka.png"
+
+    PROJECTILES: string = SRPITE_ROOT + "characters/projectiles.png"

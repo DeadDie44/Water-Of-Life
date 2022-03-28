@@ -124,7 +124,7 @@ class Player: GameObject
             return
         var m = normalize(move)
         if isRolling
-            vel = normalize(direction * (Speed()) * get_delta_time()) * 2f
+            vel = normalize(direction * Speed() * get_delta_time()) * 2f
         else
             if m == float2(0f, 0f)
                 animator -> SetAnimationState(AnimState IDLE)

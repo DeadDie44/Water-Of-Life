@@ -27,13 +27,17 @@ class GameObject
     movable      : bool
     killable     : bool
     drawable     : bool
+    ranged       : bool
+    readyToShoot : bool
 
     colliderType : int
     damage       : int
     id           : int
-    faction      : int
+    faction      : int  
+    projectile   : int   
 
     attackRadius : float
+    attackRange  : float 
     baseSpeed    : float
     cooldown     : float
     hitInvulCD   : float
@@ -74,9 +78,11 @@ class GameObject
 
         attackPos    = desc.attackPos
         attackRadius = desc.attackRadius
+        attackRange  = desc.attackRange
         damage       = desc.damage
         movable      = desc.movable
         killable     = desc.killable
+        ranged       = desc.ranged
         objName      = desc.objName 
         colliderSize = desc.colliderSize
         colliderType = desc.colliderType
@@ -84,6 +90,7 @@ class GameObject
         baseSpeed    = desc.baseSpeed
         healthCap    = desc.hp
         staminaCap   = desc.stamina
+        projectile   = desc.projectile
 
         health = healthCap
         stamina = staminaCap
@@ -131,18 +138,18 @@ class GameObject
         if !isAlive
             isAttacking = false
             isTelegraph = false
+            readyToShoot = false
             if id != 0 && animator.currentFrame >= animator.deathAnimation |> length - 2
                 canBeRemoved = true
             return false
+        if isAttacking
+            readyToShoot = false
         if isRolling && animator.animationState == AnimState IDLE
-            print("\nRoll finished")
             isRolling = false
         elif isAttacking && animator.animationState == AnimState IDLE
-            print("\nAttack finished")
             isAttacking = false
             cooldown = 0f
         elif isTelegraph && animator.animationState == AnimState ATTACK
-            print("\nTelegraph finished")
             isTelegraph = false
             isAttacking = true
             cooldown = 0f
@@ -162,6 +169,8 @@ class GameObject
             staminaCD = 0f
         if cooldown < universalCD
             cooldown += dt
+        else
+            readyToShoot = true
         if hitInvulCD < universalCD
             drawable = !drawable
             hitInvulCD += dt
