@@ -29,6 +29,7 @@ var
 // 'initialize' runs once when game starts and every hot-reload
 [export]
 def initialize
+    print("{get_das_root()}")
     set_window_title("Water of Life")
 
     FisrstStart()
