@@ -19,6 +19,7 @@ enum Direction
     // Idle Up, Idle Side, Idle Down,
     // Running Up, Running Side, Running Down,
     // Attack Up, Attack Side, Attack Down
+    // Roll Up, Roll Side, Roll Down
 
 class Animator
     animationState: AnimState
@@ -53,7 +54,7 @@ class Animator
 
     def FrameIndex: int
         if animationState == AnimState TELE
-            return GetFirstFrame(int(AnimState ATTACK)) - frameCount[int(AnimState ATTACK)] + 1
+            return frames[GetFirstFrame(int(AnimState ATTACK))]
         if animationState == AnimState DEATH
             return deathAnimation[1 + currentFrame]
         return frames[GetFirstFrame(GetAnimationState()) + currentFrame]
@@ -72,15 +73,15 @@ class Animator
         return int(animationState)
 
     def GetDirection(): int
-        if int(direction) >= fps |> length
-            return fps |> length - 1
+        if fps |> length == 1
+            return 0
         return int(direction)
 
     def GetFirstFrame(state: int): int
         return FindState(state) + GetDirection() * frameCount[state]
 
-    def GetLastFrame: int
-        return GetFirstFrame(GetAnimationState()) + frameCount[GetAnimationState()]
+    //def GetLastFrame: int
+        //return GetFirstFrame(GetAnimationState()) + frameCount[GetAnimationState()]
 
     def SetAnimationState(state: AnimState)
         if(animationState != state)
@@ -109,12 +110,13 @@ class Animator
                 animationState = AnimState ATTACK
             return
 
-        if abs(directionVector.x) > abs(directionVector.y)
-            direction = Direction SIDE
-        elif directionVector.y < 0f
-            direction = Direction UP
-        elif directionVector.y > 0f
-            direction = Direction DOWN
+        if directionVector.x != 0f || directionVector.y != 0f
+            if abs(directionVector.x) > abs(directionVector.y)
+                direction = Direction SIDE
+            elif directionVector.y < 0f
+                direction = Direction UP
+            elif directionVector.y > 0f
+                direction = Direction DOWN
 
         if frameTime >= 1f/fps[GetAnimationState()]
             currentFrame++
