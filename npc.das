@@ -3,6 +3,7 @@ require daslib/media
 require gameObject
 require objectFactory
 require helpers/objectHelper
+require helpers/spriteAtlas
 require myFont
 
 class NPC: GameObject
@@ -23,3 +24,4 @@ class NPC: GameObject
         if drawable
             if objName == "Old Lady"
                 DrawText("Press 'E' to interact", pos + float2(-60f, -20f), 0)
+            draw_image(INTERATCION_MARK_SPRITE, pos.x - 4f, pos.y - 24f)

@@ -3,6 +3,7 @@ require daslib/media
 require gameObject
 require objectFactory
 require helpers/objectHelper
+require helpers/spriteAtlas
 require myFont
 
 class RespawnPoint: GameObject
@@ -18,3 +19,7 @@ class RespawnPoint: GameObject
         print("\n I am {objName} id {id}, i've been interacted")
         invoke(respawnHere)
         return objName
+
+    def override DrawObject
+        GameObject`DrawObject(self)
+        draw_image(INTERATCION_MARK_SPRITE, pos.x - 4f, pos.y - 24f)
