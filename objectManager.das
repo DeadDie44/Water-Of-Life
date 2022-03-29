@@ -56,6 +56,10 @@ var
     bossTriggers: array<BossTrigger?>
     respawnPoints: array<float2>
     projectiles: array<Projectile>
+    projectileTime: float
+    showIntermission: bool
+    intermissionTimer: float
+    intermissionMessage: string 
 
     currentRespawn: float2
 
@@ -179,6 +183,12 @@ def ForceClearObjects
         RemoveObjects()
 
 def UpdateObjects(dt: float; var epilogue: bool&)
+    if showIntermission
+        intermissionTimer += get_delta_time()
+        if intermissionTimer > 1.5f
+            intermissionTimer = 0f
+            showIntermission = false
+        return
     if PointRect(GetPlayer().pos, float4(3050f, 2350f, 240f,240f))
         epilogue = true
         return
@@ -243,6 +253,8 @@ def UpdateItems(dt: float)
             var itemSize: float = 16f
             if CircleCircle(itemContainer[i].pos, GetPlayer().pos, itemSize, GetPlayer().colliderSize.x)
                 GetPlayer() -> PickUpItem(itemContainer[i].index)
+                showIntermission = true
+                intermissionMessage = "New item: {GetItemByIndex(itemContainer[i].index).itemName}"
                 var quest: Quest? = GetQuestByTrigger(GetItemByIndex(itemContainer[i].index).itemName)
                 if quest != null
                     ProgressQuest(quest)
@@ -370,6 +382,8 @@ def DrawObjects()
     DrawProjectiles()
     DrawDecorations()
     DrawHints()
+    if showIntermission
+        DrawIntermission()
 
     //var winRect: float4 = float4(3050f, 2350f, 240f,240f)
     //fill_rect(winRect.x, winRect.y, winRect.z, winRect.w, 0xFFFFFFFF)
@@ -393,8 +407,6 @@ def DrawDecorations
             if PointRect(deco.pos, GetDrawArea())
                 draw_image(DECORATION_TABLE[deco.sprite], deco.pos.x - float(DECORATION_TABLE[deco.sprite].width) / 2f, deco.pos.y - float(DECORATION_TABLE[deco.sprite].height) / 2f -  float(DECORATION_TABLE[deco.sprite].height) / 3f)
 
-var projectileTime: float
-
 def DrawProjectiles
     if projectiles |> length > 0
         for p in projectiles
@@ -404,7 +416,13 @@ def DrawProjectiles
                     p.frame = p.frame == 3 ? 0: p.frame + 1
                     projectileTime = 0f
                 draw_image_region(PROJECTILES_SPRITE, p.pos.x - 8f, p.pos.y - 8f, getSpriteRect(p.sprite + p.frame, 4, 4, 16f, 16f))
-                
+
+def DrawIntermission()
+    var width: float = 150f
+    var height: float = 20f
+    fill_rect(GetPlayer().pos.x - width / 2f , GetPlayer().pos.y - height / 2f, width, height, 0xFF000000)
+    DrawText(intermissionMessage, float2(GetPlayer().pos.x - width / 2f + 5f, GetPlayer().pos.y - height / 2f + 5f), 0)
+
 def DrawHints
     DrawText("WASD or ARROW keys to move", float2(204f, 197f), 0)
     DrawText("SPACE to attack", float2(750f, 750f), 0)
