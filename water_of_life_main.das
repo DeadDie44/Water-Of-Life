@@ -9,6 +9,7 @@ require objectManager
 require myFont
 require collisionManager
 require questManager
+require util/util
 
 //options debugger            // uncomment for debug in VS Code
 //require daslib/debug        // uncomment for debug in VS Code
@@ -21,6 +22,8 @@ var
     death       : bool = false
     DialogOn    : bool = false
     
+    hint : int
+
     prologueScroll: float2
     cameraCenter: float2
 
@@ -86,6 +89,7 @@ def draw
         return
     if death
         draw_image(DEATH_SCREEN_SPRITE, GetPlayer().pos.x - float(DEATH_SCREEN_SPRITE.width / 2), GetPlayer().pos.y - float(DEATH_SCREEN_SPRITE.height / 2), 0xFFFFFFFF)
+        DrawHint(GetPlayer().pos)
     else
         if gameOn
             if !prologue
@@ -105,6 +109,7 @@ def draw
 
 def GameOver
     death = true
+    hint = random_int(hints |> length)
 
 def InitGame
     death = false
@@ -176,3 +181,12 @@ def PlayMusic(file: string; volume: float)
     stop_all_sounds()
     music <- create_sound(file)
     music |> play_sound_loop(volume)
+
+var hints = [[string[5] "Getting hit gives you brief invincibility.";
+                        "Cauldron heals you and sets new respawn point.";
+                        "Boxes, barrels or enemies may drop an item.";
+                        "Enemies telegraph attacks by shaking.";
+                        "Cauldron will also ressurect all enemies."]]
+
+def DrawHint(center: float2)
+    DrawText("Hint: {hints[hint]}", center + float2(-155f,75f), 0)

@@ -39,7 +39,7 @@ def CheckAttack (var obj, target: GameObject?)
     
     if CanInteract(obj, target)
         target -> RecieveAttack(obj.id, obj -> GetDamage(), obj.objName)
-        if target.movable
+        if target.movable && !target.isRolling
             target.vel = dirVec * 2f
 
 def CanInteract(var obj, target: GameObject?): bool

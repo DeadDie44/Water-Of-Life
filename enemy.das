@@ -67,12 +67,13 @@ class Enemy: GameObject
     def override SpotPlayer(player: GameObject?)
         targetPos = player.pos
         var distance = Distance(pos, player.pos)
-        if attackRadius > 0f
-            
+        if attackRadius > 0f   
             if ranged
                 if distance < attackRange
-                    if distance < colliderSize.x * 2f
+                    if distance < colliderSize.x * 4f
                         flee = true
+                    else
+                        flee = false
                     agro = true
                 else
                     agro = false
