@@ -36,7 +36,7 @@ def initialize
 
     cameraCenter = float2(float(TITLE_SCREEN_SPRITE.width / 2), float(TITLE_SCREEN_SPRITE.height / 2) - float(get_screen_height() / 16 - TITLE_SCREEN_SPRITE.height / 16))
     setup_2d_camera(cameraCenter, float(get_screen_height() / 270 * 2))
-    PlayMusic(TITLE_THEME, 0.5f)
+    PlayMusic(TITLE_THEME, 0.40f)
     show_mouse_cursor()
     return
 
@@ -112,10 +112,10 @@ def InitGame
     InitObjectContainer(callback)
 
 def FisrstStart
+    InitQuests()
     InitMap()
     InitGame()
     InitFont()
-    InitQuests()
     InitItems()
     InitDecorations()
 

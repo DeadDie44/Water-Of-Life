@@ -11,7 +11,6 @@ require gameMap
 class Enemy: GameObject
     agro       : bool
     flee        : bool
-    targetPos  : float2
     agroRadius : float = 70f
     area       : float2
     areaSize   : float = 100f

@@ -10,7 +10,6 @@ require gameMap
 
 class Boss: GameObject
     agro       : bool
-    targetPos  : float2
     destination: float2
     previousPos: float2
     fPointer: function

@@ -49,6 +49,7 @@ class GameObject
     displace     : float2
     spriteSize   : float2
     pos          : float2
+    targetPos    : float2
     vel          : float2
 
     objName      : string

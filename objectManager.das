@@ -5,6 +5,7 @@ require boss
 require enemy
 require doorTrigger
 require gameObject
+require gameMap
 require item
 require helpers/SpriteAtlas
 require player
@@ -38,10 +39,13 @@ struct BossTrigger
     bossName: string
 
 struct Projectile
+    toRemove: bool
     pos: float2
     velocity: float2
     sprite: int
+    frame: int
     faction: int
+    size: float
 
 var
     refreshWorld: bool
@@ -79,6 +83,7 @@ def SpawnProjectile(origin, target: float2&; faction, projectile: int)
     p.pos = origin
     p.velocity = (target - origin) / Distance(target, origin) * 150f
     p.faction = faction
+    p.size = 6f
     p.sprite = projectile
     projectiles |> push(p)
     
@@ -150,7 +155,6 @@ def InitObjectContainer(gameOver: function)
                     trigger.doorPos = float2(trigger.pos.x, trigger.pos.y + 64f)
                     trigger.bossName = "verliokaTrue"
                     bossTriggers |> push(trigger)
-
                 elif objectNames[obj.index] == "respawn" 
                     if !playerExists
                         respawnPoints |> push(float2(obj.pos.x, obj.pos.y))
@@ -159,7 +163,8 @@ def InitObjectContainer(gameOver: function)
                     respawn.respawnHere = @@ RespawnHere
                     CreateObject(respawn)
                 else
-                    CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+                    if !((objectNames[obj.index] == "blockage1" && GetQuestByName("Baba Yaga").progress >= 3) || (objectNames[obj.index] == "blockage2" && GetQuestByName("Leshy").progress >= 3))
+                        CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     clear(objectArray)
     refreshWorld = false
 
@@ -191,8 +196,8 @@ def UpdateObjects(dt: float; var epilogue: bool&)
                         if PointRect(target.pos, GetActiveArea(obj))
                             if target != null && obj.id != target.id && target.isAlive
                                 if obj.isAttacking && target.killable && obj.faction != target.faction
-                                    if obj.ranged && obj.readyToShoot
-                                        SpawnProjectile(obj.pos, target.pos, obj.faction, obj.projectile)
+                                    if obj.ranged && obj.readyToShoot && target.id == GetPlayer().id
+                                        SpawnProjectile(obj.pos, obj.targetPos, obj.faction, obj.projectile)
                                     else
                                         CheckAttack(obj, target)
                                     if !target.isAlive && target.id != GetPlayer().id
@@ -275,9 +280,27 @@ def UpdateProjectiles(dt: float)
             if objectContainer |> length > 0
                 for obj in objectContainer
                     if  obj.killable && obj.isAlive && p.faction != obj.faction
-                        if PointCircle(p.pos, obj.pos, obj.colliderSize.x) 
+                        if CircleCircle(p.pos, obj.pos, p.size, obj.colliderSize.x) 
                             obj -> RecieveAttack(obj.id, obj.damage, obj.objName)
-                            delete p
+                            p.toRemove = true            
+            if p.pos.x < 0f || p.pos.y < 0f || p.pos.x > float(mapWidth) * TILE_SIZE || p.pos.y > float(mapHeight) * TILE_SIZE || !Walkable(int(p.pos.y / TILE_SIZE) * mapWidth + int(p.pos.x / TILE_SIZE))
+                p.toRemove = true
+        RemoveProjectiles()
+
+def RemoveProjectiles
+    var needToDelete: bool = true
+    var i = 0
+    while (needToDelete)
+        print("\n Are we even removing {i}")
+        needToDelete = false
+        for p in range(0, projectiles |> length)
+            if projectiles[p].toRemove
+                delete projectiles[p]
+                erase(projectiles, p)
+                needToDelete = true
+                break
+        i++
+    
 
 def GetPlayer: GameObject?
     return objectContainer[0]
@@ -370,12 +393,18 @@ def DrawDecorations
             if PointRect(deco.pos, GetDrawArea())
                 draw_image(DECORATION_TABLE[deco.sprite], deco.pos.x - float(DECORATION_TABLE[deco.sprite].width) / 2f, deco.pos.y - float(DECORATION_TABLE[deco.sprite].height) / 2f -  float(DECORATION_TABLE[deco.sprite].height) / 3f)
 
+var projectileTime: float
+
 def DrawProjectiles
     if projectiles |> length > 0
         for p in projectiles
             if PointRect(p.pos, GetDrawArea())
-                draw_image_region(PROJECTILES_SPRITE, p.pos.x - 8f, p.pos.y - 8f, getSpriteRect(p.sprite, 4, 4, 16f, 16f))
-
+                projectileTime += get_delta_time()
+                if projectileTime > 0.08f
+                    p.frame = p.frame == 3 ? 0: p.frame + 1
+                    projectileTime = 0f
+                draw_image_region(PROJECTILES_SPRITE, p.pos.x - 8f, p.pos.y - 8f, getSpriteRect(p.sprite + p.frame, 4, 4, 16f, 16f))
+                
 def DrawHints
     DrawText("WASD or ARROW keys to move", float2(204f, 197f), 0)
     DrawText("SPACE to attack", float2(750f, 750f), 0)
