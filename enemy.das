@@ -11,7 +11,7 @@ require gameMap
 class Enemy: GameObject
     agro       : bool
     flee        : bool
-    agroRadius : float = 70f
+    agroRadius : float = 100f
     area       : float2
     areaSize   : float = 100f
     destination: float2
@@ -36,10 +36,11 @@ class Enemy: GameObject
             if agro
                 destination = targetPos
                 if ranged
-                    if Distance(pos, targetPos) < attackRange
-                        Attack()
+                    Attack()
                 elif Distance(pos, targetPos) < colliderSize.x + attackRadius
                     Attack()
+            if !movable
+                return true
             if flee
                 destination = float2(pos.x + (pos.x - targetPos.x), pos.y + (pos.y - targetPos.y))
 
@@ -54,7 +55,7 @@ class Enemy: GameObject
                     pos.x = destination.x
                     pos.y = destination.y
                 else
-                    move = (destination - pos) / Distance(destination, pos) * Speed() * dt
+                    move = (destination - pos) / Distance(destination, pos)
 
             if abs(pos.x - previousPos.x) < 0.1f && abs(pos.y - previousPos.y) < 0.1f
                 destination = NewDestination()
@@ -65,16 +66,25 @@ class Enemy: GameObject
 
     def override SpotPlayer(player: GameObject?)
         targetPos = player.pos
-
+        var distance = Distance(pos, player.pos)
         if attackRadius > 0f
-            if Distance(pos, player.pos) < agroRadius + colliderSize.x
-                if !agro
-                    destination = pos
-                agro = true
-            elif Distance(area, player.pos) > agroRadius * 2f  + colliderSize.x
-                agro = false
+            
+            if ranged
+                if distance < attackRange
+                    if distance < colliderSize.x * 2f
+                        flee = true
+                    agro = true
+                else
+                    agro = false
+            else
+                if distance < agroRadius + colliderSize.x
+                    if !agro
+                        destination = pos
+                    agro = true
+                elif distance > agroRadius * 2f  + colliderSize.x
+                    agro = false
         else 
-            if Distance(pos, player.pos) < agroRadius + colliderSize.x
+            if distance < agroRadius + colliderSize.x
                 flee = true
 
     def SetRoamArea(a: float2) 

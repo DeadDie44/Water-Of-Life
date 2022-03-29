@@ -1,0 +1,25 @@
+{
+	"name"   : "Dark Totem",
+	"movable": false,
+	"killable": true,
+	"sprite" : "turret",
+	
+	"attackPos"    : [11,11],
+	"attackRadius" : 12, 
+	"baseSpeed"    : 65,
+	"size"         : [32,32],
+	"colliderSize" : [16,23],
+	"colliderType" : 1,
+
+	"ranged" : true,
+	"projectile" : 1,
+	"attackRange" : 120,
+	"damage" : 3,
+	"health" : 1,
+	
+	"fps"       : [12, 12, 12],
+	"frameCount": [8,8,8],
+	"frames"    : [0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7],
+	
+	"deathAnimation": [12,8,9,10,11,12,13,14,15]
+}

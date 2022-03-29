@@ -143,8 +143,6 @@ class GameObject
             if id != 0 && animator.currentFrame >= animator.deathAnimation |> length - 2
                 canBeRemoved = true
             return false
-        if isAttacking
-            readyToShoot = false
         if isRolling && animator.animationState == AnimState IDLE
             isRolling = false
         elif isAttacking && animator.animationState == AnimState IDLE
@@ -170,8 +168,6 @@ class GameObject
             staminaCD = 0f
         if cooldown < universalCD
             cooldown += dt
-        else
-            readyToShoot = true
         if hitInvulCD < universalCD
             drawable = !drawable
             hitInvulCD += dt
@@ -203,6 +199,7 @@ class GameObject
         if isAttacking || isTelegraph || isRolling
             return
         if (stamina >= attackCost && cooldown >= universalCD)
+            readyToShoot = true
             LoseStamina(attackCost)
             isTelegraph = true
             //isAttacking = true

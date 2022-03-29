@@ -18,10 +18,11 @@ require util/mapProcessor
 require util/util
 
 let
-    objectNames = [[string[20] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
+    objectNames = [[string[21] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
                     "verliokaFirst"; "verliokaTrue"; "respawn"; "player";
                     "kolovershi"; "babaYaga"; "leshy"; "secretBabaYaga"; "door"; "bossGate";
-                    "bossTrigger1"; "bossTrigger2"; "banditLeader"; "blockage1"; "blockage2"]]
+                    "bossTrigger1"; "bossTrigger2"; "banditLeader"; "blockage1"; "blockage2";
+                    "turret"]]
     decorationNames = [[string[20] "NA"; "izbushka"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "tree1"; "tree2"; "tree3";
@@ -139,7 +140,7 @@ def InitObjectContainer(gameOver: function)
                         player.changeRespawn = @@ RespawnAfterFirstBoss
                         CreateObject(player)
 
-                elif objectNames[obj.index] == "banditLeader" || objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
+                elif objectNames[obj.index] == "turret" || objectNames[obj.index] == "banditLeader" || objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
                     CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 300 + objectContainer |> length))
                 elif starts_with(objectNames[obj.index], "door")
                     CreateObject(new DoorTrigger(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 500 + objectContainer |> length))
@@ -208,6 +209,7 @@ def UpdateObjects(dt: float; var epilogue: bool&)
                                 if obj.isAttacking && target.killable && obj.faction != target.faction
                                     if obj.ranged && obj.readyToShoot && target.id == GetPlayer().id
                                         SpawnProjectile(obj.pos, obj.targetPos, obj.faction, obj.projectile)
+                                        obj.readyToShoot = false
                                     else
                                         CheckAttack(obj, target)
                                     if !target.isAlive && target.id != GetPlayer().id
@@ -303,7 +305,6 @@ def RemoveProjectiles
     var needToDelete: bool = true
     var i = 0
     while (needToDelete)
-        print("\n Are we even removing {i}")
         needToDelete = false
         for p in range(0, projectiles |> length)
             if projectiles[p].toRemove
@@ -319,8 +320,8 @@ def GetPlayer: GameObject?
 
 def GetActiveArea(obj: GameObject?): float4
     var area: float4
-    var areaWidth: float = 130f + obj.colliderSize.x
-    var areaHeight: float = 130f + obj.colliderSize.y
+    var areaWidth: float = 360f + obj.colliderSize.x
+    var areaHeight: float = 360f + obj.colliderSize.y
     area.x = obj.pos.x - areaWidth / 2f
     area.y = obj.pos.y - areaHeight / 2f
     area.z = areaWidth
@@ -412,7 +413,7 @@ def DrawProjectiles
                 if projectileTime > 0.08f
                     p.frame = p.frame == 3 ? 0: p.frame + 1
                     projectileTime = 0f
-                draw_image_region(PROJECTILES_SPRITE, p.pos.x - 8f, p.pos.y - 8f, getSpriteRect(p.sprite + p.frame, 4, 4, 16f, 16f))
+                draw_image_region(PROJECTILES_SPRITE, p.pos.x - 8f, p.pos.y - 8f, getSpriteRect(p.sprite * 4 + p.frame, 4, 4, 16f, 16f))
 
 def DrawIntermission()
     var width: float = 150f

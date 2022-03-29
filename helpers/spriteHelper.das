@@ -72,3 +72,5 @@ let
     IZBUSHKA: string = SRPITE_ROOT + "decorations/izbushka.png"
 
     PROJECTILES: string = SRPITE_ROOT + "characters/projectiles.png"
+
+    TURRET: string = SRPITE_ROOT + "characters/turret.png"

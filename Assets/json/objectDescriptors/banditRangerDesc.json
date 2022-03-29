@@ -13,7 +13,7 @@
 
 	"ranged" : true,
 	"projectile" : 0,
-	"attackRange" : 100,
+	"attackRange" : 90,
 	"damage" : 2,
 	"health" : 2,
 	

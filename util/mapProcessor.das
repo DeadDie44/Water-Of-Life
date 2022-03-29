@@ -2,10 +2,10 @@ require daslib/media
 require util
 
 let
-    colorList = [[uint[20] 0xff000000; 0xff00ff00; 0xff0000ff; 0xffff0000;
+    colorList = [[uint[21] 0xff000000; 0xff00ff00; 0xff0000ff; 0xffff0000;
                 0xff7f7f00; 0xff545454; 0xfffffe33; 0xff7f007f; 0xff007f7f;0xffffffff;
                 0xff9900ff; 0xffccf867; 0xff494036; 0xff3d2c19; 0xff3f330e;0xff4c5744;
-                0xff4d6e38; 0xff35601b; 0xff67dbf8; 0xffea2cba]]
+                0xff4d6e38; 0xff35601b; 0xff67dbf8; 0xffea2cba; 0xffd976ff]]
 
     MAP_TILES_LAYOUT   = "assets/mapLayout.png"
     MAP_OBJECTS_LAYOUT = "assets/objectsLayout.png"

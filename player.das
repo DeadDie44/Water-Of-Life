@@ -59,37 +59,9 @@ class Player: GameObject
                 //direction.x = -1f
             if get_key(VK_D) || get_key(VK_RIGHT) || get_axis(AXIS_PRIMARY_X) > 0f
                 move.x = 1f
-                //direction.x = 1f
-
-            /*
-            if get_key(VK_1)
-                SetWeapon(0)
-                if weaponIndex > weaponsList |> length - 1
-                    SetWeapon (0)
-                UpdateWeapon()
-
-            if get_key(VK_2)
-                SetWeapon(1)
-                if weaponIndex > weaponsList |> length - 1
-                    SetWeapon (0)
-                UpdateWeapon()
-
-            if get_key(VK_3)
-                SetWeapon(2)
-                if weaponIndex > weaponsList |> length - 1
-                    SetWeapon (0)
-                UpdateWeapon()
-
-            if get_key(VK_4)
-                SetWeapon(3)
-                if weaponIndex > weaponsList |> length - 1
-                    SetWeapon (0)
-                UpdateWeapon()
-            */
 
             if get_key(VK_SPACE) || get_key(GP_A)
                 Attack()
-                print("\n Player pos {pos}")
 
             if get_key_up(VK_E)
                 isInteracting = true
@@ -104,9 +76,6 @@ class Player: GameObject
                         print("\nI got: {item.itemName}")
                 else
                     print("\nThere is no items")
-                
-            if get_key_up(VK_K)
-                LoseHealth (100,"")
 
             Move(move)
         return true
@@ -124,7 +93,7 @@ class Player: GameObject
             return
         var m = normalize(move)
         if isRolling
-            vel = normalize(direction * Speed() * get_delta_time()) * 2f
+            vel = normalize(direction) * Speed() * 2.2f * get_delta_time()
         else
             if m == float2(0f, 0f)
                 animator -> SetAnimationState(AnimState IDLE)
