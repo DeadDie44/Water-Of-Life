@@ -188,7 +188,7 @@ def UpdateObjects(dt: float; var epilogue: bool&)
         if intermissionTimer > 1.5f
             intermissionTimer = 0f
             showIntermission = false
-        return
+
     if PointRect(GetPlayer().pos, float4(3050f, 2350f, 240f,240f))
         epilogue = true
         return
@@ -385,9 +385,6 @@ def DrawObjects()
     if showIntermission
         DrawIntermission()
 
-    //var winRect: float4 = float4(3050f, 2350f, 240f,240f)
-    //fill_rect(winRect.x, winRect.y, winRect.z, winRect.w, 0xFFFFFFFF)
-
 def DrawNPCs
     if NPCContainer |> length > 0
         for npc in NPCContainer
@@ -420,8 +417,8 @@ def DrawProjectiles
 def DrawIntermission()
     var width: float = 150f
     var height: float = 20f
-    fill_rect(GetPlayer().pos.x - width / 2f , GetPlayer().pos.y - height / 2f, width, height, 0xFF000000)
-    DrawText(intermissionMessage, float2(GetPlayer().pos.x - width / 2f + 5f, GetPlayer().pos.y - height / 2f + 5f), 0)
+    fill_rect(GetPlayer().pos.x - width / 2f , GetPlayer().pos.y - 90f, width, height, 0xFF000000)
+    DrawText(intermissionMessage, float2(GetPlayer().pos.x - width / 2f + 5f, GetPlayer().pos.y - 85f), 0)
 
 def DrawHints
     DrawText("WASD or ARROW keys to move", float2(204f, 197f), 0)
