@@ -119,9 +119,9 @@ def InitGame
 def FisrstStart
     InitQuests()
     InitMap()
+    InitItems()
     InitGame()
     InitFont()
-    InitItems()
     InitDecorations()
 
 def DrawPrologue(pos: float2)

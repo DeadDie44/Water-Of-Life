@@ -29,41 +29,41 @@ let
                     "bush1"; "bush2"; "bush3"; "NA"; "NA"]]
 
 struct Decoration
-    pos: float2
+    pos   : float2
     sprite: string
 
 struct BossTrigger
     activated: bool
-    pos: float2
-    bossPos: float2
-    doorPos: float2
-    bossName: string
+    bossPos  : float2
+    doorPos  : float2
+    pos      : float2 
+    bossName : string
 
 struct Projectile
     toRemove: bool
-    pos: float2
+    faction : int
+    frame   : int
+    sprite  : int
+    size    : float
+    pos     : float2
     velocity: float2
-    sprite: int
-    frame: int
-    faction: int
-    size: float
 
 var
-    refreshWorld: bool
-    NPCContainer: array<NPC?>
-    objectContainer: array<GameObject?>
-    decorationContainer: array<Decoration?>
-    itemContainer: array<objectMarker>
-    bossTriggers: array<BossTrigger?>
-    respawnPoints: array<float2>
-    projectiles: array<Projectile>
-    projectileTime: float
-    showIntermission: bool
-    intermissionTimer: float
+    refreshWorld       : bool
+    showIntermission   : bool
+    intermissionTimer  : float
+    projectileTime     : float
+    currentRespawn     : float2
     intermissionMessage: string 
 
-    currentRespawn: float2
-
+    bossTriggers       : array<BossTrigger?>
+    decorationContainer: array<Decoration?>
+    itemContainer      : array<ObjectMarker>
+    NPCContainer       : array<NPC?>
+    projectiles        : array<Projectile>
+    objectContainer    : array<GameObject?>
+    respawnPoints      : array<float2>
+    
 def SetRespawn(index: int)
     currentRespawn = respawnPoints[index]
 
@@ -95,11 +95,14 @@ def SpawnProjectile(origin, target: float2&; faction, projectile: int)
 def InitItems
     clear(itemContainer)
     MakeItems()
-    itemContainer <- ReadLayout(MAP_ITEMS_LAYOUT)
+    itemContainer := rawItems
+
+def RefreshItems
+    var i = 0
 
 def InitDecorations
     clear(decorationContainer)
-    var decorationArray: array<objectMarker> <- ReadLayout(MAP_DECORATIONS_LAYOUT)
+    var decorationArray: array<ObjectMarker> <- ReadLayout(MAP_DECORATIONS_LAYOUT)
     for deco in decorationArray
         if deco.index > 0
             if decorationNames[deco.index] != "NA"
@@ -120,7 +123,7 @@ def InitObjectContainer(gameOver: function)
             oldPlayer := objectContainer[0]
 
     clear(objectContainer)
-    var objectArray: array<objectMarker> <- ReadObjects()
+    var objectArray: array<ObjectMarker> := rawObjects //<- ReadObjects()
     for obj in objectArray
         if obj.index > 0
             if !playerExists && (objectNames[obj.index] == "babaYaga" || objectNames[obj.index] == "leshy" || objectNames[obj.index] == "secretBabaYaga")
@@ -142,6 +145,7 @@ def InitObjectContainer(gameOver: function)
 
                 elif objectNames[obj.index] == "turret" || objectNames[obj.index] == "banditLeader" || objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
                     CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 300 + objectContainer |> length))
+                
                 elif starts_with(objectNames[obj.index], "door")
                     CreateObject(new DoorTrigger(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 500 + objectContainer |> length))
 
@@ -170,6 +174,16 @@ def InitObjectContainer(gameOver: function)
                 else
                     if !((objectNames[obj.index] == "blockage1" && GetQuestByName("Baba Yaga").progress >= 3) || (objectNames[obj.index] == "blockage2" && GetQuestByName("Leshy").progress >= 3))
                         CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
+    
+    if itemContainer |> length > 0   
+        for obj in objectContainer
+            for i in range(0, itemContainer |> length)
+                var size: float = 16f
+                if itemContainer[i].pos == obj.pos
+                    obj -> PickUpItem(itemContainer[i].index)
+                    //erase(itemContainer, i)
+                    //Надо всё таки хранить какие итемы были собраны потому-что мы каждый раз должны генерить итемы, чтобы их в карманы положить мобам
+
     clear(objectArray)
     refreshWorld = false
 

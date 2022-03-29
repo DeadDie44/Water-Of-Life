@@ -45,6 +45,7 @@ def Walkable(index: int): bool
     return false
 
 def InitMap
+    InitLayouts()
     mapContainer <- ReadMap()
     tiles <- create_managed_image(TILES)
     var mapSize: int2 = GetMapSize()

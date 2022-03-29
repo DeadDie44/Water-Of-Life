@@ -68,7 +68,7 @@ class Player: GameObject
 
             if get_key(VK_LSHIFT) || get_key(GP_B)
                 Roll()
-
+                
             if get_key_up(VK_I)
                 print("\nInventory length {inventory |> length}")
                 if inventory |> length > 0

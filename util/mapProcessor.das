@@ -12,7 +12,13 @@ let
     MAP_ITEMS_LAYOUT   = "assets/itemsLayout.png"
     MAP_DECORATIONS_LAYOUT   = "assets/decorationsLayout.png"
 var
-    mapSize: int2
+    mapSize       : int2
+    rawObjects    : array<ObjectMarker>
+    rawItems      : array<ObjectMarker>
+
+def InitLayouts
+    rawObjects     <- ReadObjects()
+    rawItems       <- ReadLayout(MAP_ITEMS_LAYOUT)
 
 def GetMapSize(): int2
     return mapSize
@@ -36,9 +42,9 @@ def ReadMap(): array<int>
 
     return <- map
 
-def ReadLayout(layout: string): array<objectMarker>
+def ReadLayout(layout: string): array<ObjectMarker>
     print("\nTrying to read {layout}")
-    var objectArray: array<objectMarker>
+    var objectArray: array<ObjectMarker>
 
     var img: Image
     img <- create_image(layout)
@@ -46,7 +52,7 @@ def ReadLayout(layout: string): array<objectMarker>
     for y in range(0, img.height)
         for x in range(0, img.width)
             if img |> get_pixel(x, y) != 0xff000000
-                var myMarker: objectMarker
+                var myMarker: ObjectMarker
                 myMarker.pos = float2(x * 32 + 16, y * 32 + 16)
                 myMarker.index = GetColorIndex(img |> get_pixel(x, y))
                 objectArray |> push(myMarker)
@@ -54,9 +60,9 @@ def ReadLayout(layout: string): array<objectMarker>
 
     return <- objectArray
 
-def ReadObjects(): array<objectMarker>
+def ReadObjects(): array<ObjectMarker>
     print("\nTrying to read objects")
-    var objectArray: array<objectMarker>
+    var objectArray: array<ObjectMarker>
 
     var img: Image
     img <- create_image(MAP_OBJECTS_LAYOUT)
@@ -64,7 +70,7 @@ def ReadObjects(): array<objectMarker>
     for y in range(0, img.height)
         for x in range(0, img.width)
             if img |> get_pixel(x, y) == 0xff007f7f
-                var myMarker: objectMarker
+                var myMarker: ObjectMarker
                 myMarker.pos = float2(x * 32 + 16, y * 32 + 16)
                 myMarker.index = GetColorIndex(img |> get_pixel(x, y))
                 objectArray |> push(myMarker)
@@ -73,7 +79,7 @@ def ReadObjects(): array<objectMarker>
     for y in range(0, img.height)
         for x in range(0, img.width)
             if img |> get_pixel(x, y) != 0xff000000 && img |> get_pixel(x, y) != 0xff007f7f
-                var myMarker: objectMarker
+                var myMarker: ObjectMarker
                 myMarker.pos = float2(x * 32 + 16, y * 32 + 16)
                 myMarker.index = GetColorIndex(img |> get_pixel(x, y))
                 objectArray |> push(myMarker)
@@ -88,6 +94,6 @@ def GetColorIndex(color: uint): int
             return c
     return i
 
-struct objectMarker
+struct ObjectMarker
     pos: float2
     index: int
