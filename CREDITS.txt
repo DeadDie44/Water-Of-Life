@@ -32,4 +32,7 @@ Attack sound: from <a href="https://pixabay.com/?utm_source=link-attribution&amp
 Totem attack sound: from <a href="https://pixabay.com/music/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=14421">Pixabay</a>
 Boss death sound: by <a href="/users/charlie_raven-26171802/?tab=audio&amp;utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=audio&amp;utm_content=93797">Charlie_Raven</a> from <a href="https://pixabay.com/music/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=93797">Pixabay</a>
 Hit sounds and Totem death sound: <a href="https://pixabay.com/music/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=6304">Pixabay</a>
-Hitting a crate or barrel: Music from <a href="https://pixabay.com/music/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=7017">Pixabay</a>
+Hitting a crate or barrel: <a href="https://pixabay.com/music/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=7017">Pixabay</a>
+Bandit death sound: <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=7049">Pixabay</a>
+Hitting kolovershi: <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=5990">Pixabay</a>
+Boss attack effect: <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=6353">Pixabay</a>

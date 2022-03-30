@@ -15,9 +15,11 @@ var
     BOSS_PAIN_SOUND    : PcmSound <- create_sound(BOSS_PAIN)
     GRUNT1_SOUND       : PcmSound <- create_sound(GRUNT1)
     GRUNT2_SOUND       : PcmSound <- create_sound(GRUNT2)
+    GRUNT3_SOUND       : PcmSound <- create_sound(GRUNT3)
+    GRUNT4_SOUND       : PcmSound <- create_sound(GRUNT4)
+    GRUNT5_SOUND       : PcmSound <- create_sound(GRUNT5)
 
     PAIN1_SOUND       : PcmSound <- create_sound(PAIN1)
-    PAIN2_SOUND       : PcmSound <- create_sound(PAIN2)
     PAIN3_SOUND       : PcmSound <- create_sound(PAIN3)
     PAIN4_SOUND       : PcmSound <- create_sound(PAIN4)
 
@@ -28,7 +30,13 @@ var
     TOTEM_DEATH_SOUND: PcmSound <- create_sound(TOTEM_DEATH)
 
     HIT_WOOD_SOUND: PcmSound <- create_sound(HIT_WOOD)
+    BANDIT_DEATH_SOUND: PcmSound <- create_sound(BANDIT_DEATH)
 
+    KOLOVERSHI_HIT_SOUND: PcmSound <- create_sound(KOLOVERSHI_HIT)
+
+    BOSS_ATTACK_SOUND: PcmSound <- create_sound(BOSS_ATTACK)
+
+ 
 /*
     SOUND_ROOT: string = "assets/sfx/sound/"
     MUSIC_ROOT: string = "assets/sfx/music/"

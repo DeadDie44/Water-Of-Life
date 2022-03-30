@@ -34,6 +34,9 @@ class Player: GameObject
 
     def override LoseHealth(dmg: int; source: string)
         GameObject`LoseHealth(self, dmg, source)
+        PAIN3_SOUND |> play_sound(1f)
+        if !isAlive
+            PAIN4_SOUND |> play_sound(0.9f)
         if source == "VerliokaFirst"
             invoke(changeRespawn)
 

@@ -94,16 +94,18 @@ class Enemy: GameObject
 
     def override LoseHealth(dmg: int; source: string)
         GameObject`LoseHealth(self, dmg, source)
-        if starts_with(objName, "Bandit")
+        if objName == "Kolovershi"
+            KOLOVERSHI_HIT_SOUND |> play_sound(0.3f)
+        elif starts_with(objName, "Bandit")
             if !isAlive
-                BOSS_DEATH_SOUND |> play_sound(0.5f)
+                BANDIT_DEATH_SOUND |> play_sound(0.3f)
             else
-                PAIN4_SOUND |> play_sound(0.8f)
-        if starts_with(objName, "Dark Totem")
+                PAIN4_SOUND |> play_sound(0.9f)
+        elif objName == "Dark Totem"
             if !isAlive
-                TOTEM_DEATH_SOUND |> play_sound(0.5f)
+                TOTEM_DEATH_SOUND |> play_sound(0.4f)
             else
-                STONE_HIT_SOUND |> play_sound(0.5f)
+                STONE_HIT_SOUND |> play_sound(0.4f)
 
     def NewDestination : float2  
         var minX, maxX, minY, maxY: float

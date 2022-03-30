@@ -22,7 +22,6 @@ let public
     PICK_UP: string = SOUND_ROOT + "pickUp.mp3"
 
     PAIN1: string = SOUND_ROOT + "pain1.mp3"
-    PAIN2: string = SOUND_ROOT + "pain2.mp3"
     PAIN3: string = SOUND_ROOT + "pain3.mp3"
     PAIN4: string = SOUND_ROOT + "pain4.mp3"
 
@@ -31,5 +30,10 @@ let public
     TOTEM_DEATH: string = SOUND_ROOT + "totemDeath.mp3"
 
     HIT_WOOD: string = SOUND_ROOT + "hitWood.mp3"
+    BANDIT_DEATH: string = SOUND_ROOT + "banditDeath.mp3"
+
+    KOLOVERSHI_HIT: string = SOUND_ROOT + "kolovershiHit.mp3"
+
+    BOSS_ATTACK: string = SOUND_ROOT + "bossAttack.mp3"
 
 

@@ -195,7 +195,7 @@ def PlayMusic(file: string; volume: float)
 var hints = [[string[5] "Getting hit gives you brief invincibility.";
                         "Cauldron heals you and sets new respawn point.";
                         "Boxes, barrels or enemies may drop an item.";
-                        "Enemies telegraph attacks by shaking.";
+                        "Enemies telegraph attacks before hit.";
                         "Cauldron will also reset all enemies."]]
 
 def DrawHint(center: float2)

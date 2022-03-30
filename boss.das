@@ -47,9 +47,9 @@ class Boss: GameObject
             print("\n Are we calling it twice?")
             invoke(fPointer)
             invoked = true
-            BOSS_DEATH_SOUND |> play_sound(0.4f)
+            BOSS_DEATH_SOUND |> play_sound(0.35f)
         else
-            BOSS_PAIN_SOUND |> play_sound(0.6f)
+            BOSS_PAIN_SOUND |> play_sound(1f)
 
     def override SpotPlayer(player: GameObject?)
         targetPos = player.pos

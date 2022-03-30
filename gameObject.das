@@ -110,7 +110,7 @@ class GameObject
 
     def LoseHealth(dmg: int; source: string)
         if objName == "Barrel" || objName == "Crate"
-            HIT_WOOD_SOUND |> play_sound(0.3f)
+            HIT_WOOD_SOUND |> play_sound(0.1f)
 
         health -= dmg
         hitInvulCD = 0f
@@ -157,7 +157,7 @@ class GameObject
             cooldown = 0f
             if objName == "Dark Totem"
                 FIREBALL_SOUND |> play_sound(0.6f)
-            else
+            elif objName == "Player" || starts_with(objName, "Bandit")
                 ATTACK1_SOUND |> play_sound(0.2f)
         pos += vel
 
@@ -206,7 +206,12 @@ class GameObject
         if isAttacking || isTelegraph || isRolling
             return
         if (stamina >= attackCost && cooldown >= universalCD)
-            GRUNT1_SOUND |> play_sound(0.5f)
+            if starts_with(objName,"Bandit")
+                GRUNT5_SOUND |> play_sound(0.8f)
+            elif objName == "Player"
+                GRUNT1_SOUND |> play_sound(0.6f)
+            elif objName == "Verlioka"
+                BOSS_ATTACK_SOUND |> play_sound(0.3f)
             readyToShoot = true
             LoseStamina(attackCost)
             isTelegraph = true
