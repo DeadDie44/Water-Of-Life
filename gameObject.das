@@ -17,7 +17,7 @@ class GameObject
     private health, healthCap: int
     private stamina, staminaCap: int
     //***
-    showCollider : bool = true //  для тестов
+    showCollider : bool = false //  для тестов
     //***
     isAlive      : bool
     isAttacking  : bool
