@@ -7,6 +7,7 @@ require util/util
 require helpers/objectHelper
 require collisionManager
 require gameMap
+require helpers/soundAtlas
 
 class Enemy: GameObject
     agro       : bool
@@ -90,6 +91,19 @@ class Enemy: GameObject
 
     def SetRoamArea(a: float2) 
         area = a
+
+    def override LoseHealth(dmg: int; source: string)
+        GameObject`LoseHealth(self, dmg, source)
+        if starts_with(objName, "Bandit")
+            if !isAlive
+                BOSS_DEATH_SOUND |> play_sound(0.5f)
+            else
+                PAIN4_SOUND |> play_sound(0.8f)
+        if starts_with(objName, "Dark Totem")
+            if !isAlive
+                TOTEM_DEATH_SOUND |> play_sound(0.5f)
+            else
+                STONE_HIT_SOUND |> play_sound(0.5f)
 
     def NewDestination : float2  
         var minX, maxX, minY, maxY: float

@@ -6,6 +6,7 @@ require objectFactory
 require util/util
 require item
 require helpers/spriteAtlas
+require helpers/soundAtlas
 
 let
     attackCost: int = 2
@@ -108,7 +109,9 @@ class GameObject
         LoseHealth(dmg, attackerName)
 
     def LoseHealth(dmg: int; source: string)
-        
+        if objName == "Barrel" || objName == "Crate"
+            HIT_WOOD_SOUND |> play_sound(0.3f)
+
         health -= dmg
         hitInvulCD = 0f
         print("\nI am id {id} {objName} losing health {health}")
@@ -152,6 +155,10 @@ class GameObject
             isTelegraph = false
             isAttacking = true
             cooldown = 0f
+            if objName == "Dark Totem"
+                FIREBALL_SOUND |> play_sound(0.6f)
+            else
+                ATTACK1_SOUND |> play_sound(0.2f)
         pos += vel
 
         vel *= 0f
@@ -199,6 +206,7 @@ class GameObject
         if isAttacking || isTelegraph || isRolling
             return
         if (stamina >= attackCost && cooldown >= universalCD)
+            GRUNT1_SOUND |> play_sound(0.5f)
             readyToShoot = true
             LoseStamina(attackCost)
             isTelegraph = true
@@ -211,8 +219,8 @@ class GameObject
         
         // Если телеграфируем то пусть трясётся спрайт
         if isTelegraph
-            displace.x = random_float(0f, 0.5f)
-            displace.y = random_float(0f, 0.5f)
+            displace.x = random_float(0.2f, 0.6f)
+            displace.y = random_float(0.2f, 0.6f)
         
         var transform: float2
         transform.x = 1f

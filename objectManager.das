@@ -7,7 +7,8 @@ require doorTrigger
 require gameObject
 require gameMap
 require item
-require helpers/SpriteAtlas
+require helpers/spriteAtlas
+require helpers/soundAtlas
 require player
 require objectFactory
 require myFont
@@ -47,6 +48,7 @@ struct Projectile
     size    : float
     pos     : float2
     velocity: float2
+    damage: int
 
 struct ItemMarker
     pos: float2
@@ -88,13 +90,14 @@ def RemoveBaricade(i: int)
 def BossKilled()
     objectContainer[GetIndexById(999)] -> LoseHealth(objectContainer[GetIndexById(999)] -> GetHealthCap(),"")
 
-def SpawnProjectile(origin, target: float2&; faction, projectile: int)
+def SpawnProjectile(origin, target: float2&; faction, projectile, damage: int)
     var p: Projectile
     p.pos = origin
     p.velocity = (target - origin) / Distance(target, origin) * 150f
     p.faction = faction
     p.size = 6f
     p.sprite = projectile
+    p.damage = damage
     projectiles |> push(p)
     
 def InitItems
@@ -146,7 +149,7 @@ def InitObjectContainer(gameOver: function)
                     if retry
                         oldPlayer -> ReplenishHealth(oldPlayer -> GetHealthCap())
                         oldPlayer.isAlive = true
-                        oldPlayer.pos = currentRespawn + float2(0f, 18f)
+                        oldPlayer.pos = currentRespawn
                         CreateObject(oldPlayer)
                     else
                         currentRespawn = obj.pos
@@ -163,6 +166,8 @@ def InitObjectContainer(gameOver: function)
                     CreateObject(new DoorTrigger(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 500 + objectContainer |> length))
 
                 elif objectNames[obj.index] == "bossTrigger1"
+                    if retry
+                        continue
                     var trigger: BossTrigger? = new BossTrigger
                     trigger.pos = obj.pos
                     trigger.bossPos = float2(trigger.pos.x + 96f, trigger.pos.y + 96f)
@@ -171,6 +176,8 @@ def InitObjectContainer(gameOver: function)
                     bossTriggers |> push(trigger)
 
                 elif objectNames[obj.index] == "bossTrigger2"
+                    if retry
+                        continue
                     var trigger: BossTrigger? = new BossTrigger
                     trigger.pos = obj.pos
                     trigger.bossPos = float2(trigger.pos.x, trigger.pos.y - 160f)
@@ -179,7 +186,7 @@ def InitObjectContainer(gameOver: function)
                     bossTriggers |> push(trigger)
                 elif objectNames[obj.index] == "respawn" 
                     if !retry
-                        respawnPoints |> push(float2(obj.pos.x, obj.pos.y))
+                        respawnPoints |> push(float2(obj.pos.x, obj.pos.y + 18f))
                 
                     var respawn: RespawnPoint? = new RespawnPoint(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length)
                     respawn.respawnHere = @@ RespawnHere
@@ -209,15 +216,15 @@ def ForceClearObjects
                 obj.canBeRemoved = true
         RemoveObjects()
 
-def UpdateObjects(dt: float; var epilogue: bool&)
+def UpdateObjects(dt: float; happyEnd:function)
     if showIntermission
         intermissionTimer += get_delta_time()
-        if intermissionTimer > 1.5f
+        if intermissionTimer > 2f
             intermissionTimer = 0f
             showIntermission = false
 
     if PointRect(GetPlayer().pos, float4(3050f, 2350f, 240f,240f))
-        epilogue = true
+        invoke(happyEnd)
         return
     if refreshWorld
         ForceClearObjects()
@@ -233,9 +240,10 @@ def UpdateObjects(dt: float; var epilogue: bool&)
                         if PointRect(target.pos, GetActiveArea(obj))
                             if target != null && obj.id != target.id && target.isAlive
                                 if obj.isAttacking && target.killable && obj.faction != target.faction
-                                    if obj.ranged && obj.readyToShoot && target.id == GetPlayer().id
-                                        SpawnProjectile(obj.pos, obj.targetPos, obj.faction, obj.projectile)
-                                        obj.readyToShoot = false
+                                    if obj.ranged && target.id == GetPlayer().id
+                                        if obj.readyToShoot
+                                            SpawnProjectile(obj.pos, obj.targetPos, obj.faction, obj.projectile, obj.damage)
+                                            obj.readyToShoot = false
                                     else
                                         CheckAttack(obj, target)
                                     if !target.isAlive && target.id != GetPlayer().id
@@ -263,20 +271,22 @@ def UpdateObjects(dt: float; var epilogue: bool&)
 def UpdateTriggers()
     if bossTriggers |> length > 0
         for trigger in bossTriggers            
-            if !trigger.activated && PointRect(GetPlayer().pos, float4(trigger.pos.x - 16f, trigger.pos.y - 16f, 32f, 32f))
-                trigger.activated = true
-                var boss: Boss? = new Boss(objectFromDesc(trigger.bossName), trigger.bossPos, 666)
-                var fPointer = @@ BossKilled
-                boss.fPointer = fPointer
-                CreateObject(boss)
+            if !trigger.activated
+                if PointRect(GetPlayer().pos, float4(trigger.pos.x - 16f, trigger.pos.y - 16f, 32f, 32f))
+                    trigger.activated = true
+                    var boss: Boss? = new Boss(objectFromDesc(trigger.bossName), trigger.bossPos, 666)
+                    var fPointer = @@ BossKilled
+                    boss.fPointer = fPointer
+                    CreateObject(boss)
 
-                var twin: bool = false
-                for obj in objectContainer
-                    if obj.id == 999
-                        obj = new GameObject(objectFromDesc("bossGate"), trigger.doorPos, 999)
-                        twin = true
-                if !twin
-                    CreateObject(new GameObject(objectFromDesc("bossGate"), trigger.doorPos, 999))
+                    var twin: bool = false
+                    for obj in objectContainer
+                        if obj.id == 999
+                            obj = new GameObject(objectFromDesc("bossGate"), trigger.doorPos, 999)
+                            twin = true
+                    if !twin
+                        CreateObject(new GameObject(objectFromDesc("bossGate"), trigger.doorPos, 999))
+                    return
 
 def UpdateItems(dt: float)
     if itemContainer |> length > 0
@@ -286,7 +296,9 @@ def UpdateItems(dt: float)
             var itemSize: float = 6f
             if CircleCircle(itemContainer[i].pos, GetPlayer().pos, itemSize, GetPlayer().colliderSize.x)
                 GetPlayer() -> PickUpItem(itemContainer[i].index)
+                PICK_UP_SOUND |> play_sound(0.5f)
                 showIntermission = true
+                intermissionTimer = 0f
                 intermissionMessage = "New item: {GetItemByIndex(itemContainer[i].index).itemName}"
                 var quest: Quest? = GetQuestByTrigger(GetItemByIndex(itemContainer[i].index).itemName)
                 if quest != null
@@ -321,11 +333,11 @@ def UpdateProjectiles(dt: float)
             p.pos += p.velocity * dt
             if objectContainer |> length > 0
                 for obj in objectContainer
-                    if  obj.killable && obj.isAlive && p.faction != obj.faction
+                    if !obj.isRolling && obj.killable && obj.isAlive && p.faction != obj.faction
                         if CircleCircle(p.pos, obj.pos, p.size, obj.colliderSize.x) 
-                            obj -> RecieveAttack(obj.id, obj.damage, obj.objName)
+                            obj -> RecieveAttack(obj.id, p.damage, obj.objName)
                             p.toRemove = true            
-            if p.pos.x < 0f || p.pos.y < 0f || p.pos.x > float(mapWidth) * TILE_SIZE || p.pos.y > float(mapHeight) * TILE_SIZE || (mapContainer[int(p.pos.y / TILE_SIZE) * mapWidth + int(p.pos.x / TILE_SIZE)] != 0 && !Walkable(int(p.pos.y / TILE_SIZE) * mapWidth + int(p.pos.x / TILE_SIZE)))
+            if !p.toRemove && (p.pos.x < 0f || p.pos.y < 0f || p.pos.x > float(mapWidth) * TILE_SIZE || p.pos.y > float(mapHeight) * TILE_SIZE || (mapContainer[int(p.pos.y / TILE_SIZE) * mapWidth + int(p.pos.x / TILE_SIZE)] != 0 && !Walkable(int(p.pos.y / TILE_SIZE) * mapWidth + int(p.pos.x / TILE_SIZE))))
                 p.toRemove = true
         RemoveProjectiles()
 

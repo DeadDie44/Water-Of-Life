@@ -15,7 +15,7 @@ def MakeItems()
     items |> push (MakeItem("Stamina Up", 3))
     items |> push (MakeItem("Mace", 8))
     items |> push (MakeItem("Axe", 9))
-    items |> push (MakeItem("Sword", 10))
+    items |> push (MakeItem("Magic Sword", 10))
 
 def MakeItem(itemName: string; sprite: int): Item?
     var item: Item? = new Item

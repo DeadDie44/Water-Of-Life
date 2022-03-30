@@ -55,12 +55,13 @@ def act(dt: float)
         if prologue
             HandlePrologue()
             if ! prologue
-                PlayMusic(GRASS_THEME, 0.25f)
+                PlayMusic(GRASS_THEME, 0.15f)
             return
         if death
             if get_key_up(VK_R)
                 refreshWorld = true
                 death = false
+                PlayMusic(GRASS_THEME, 0.15f)
                 return
         else
             if DialogOn
@@ -71,7 +72,7 @@ def act(dt: float)
                     print("\nMenuOn {DialogOn}")
                     print("\nInteracting? {GetPlayer().isInteracting}")
             else
-                UpdateObjects(dt, epilogue)
+                UpdateObjects(dt, @@HappyEnd)
                 UpdateNPCs(dt, DialogOn)
                 setup_2d_camera(GetPlayer().pos, float(get_screen_height() / 270 * 2))
     else
@@ -84,7 +85,7 @@ def act(dt: float)
 def draw
     enable_alpha_blend()
     if epilogue
-        DrawText("To be continued..", GetPlayer().pos - float2(40f,0f), 0)
+        DrawText("To be continued... maybe?", GetPlayer().pos - float2(60f, -10f), 0)
         DrawText("Thank you for playing!", GetPlayer().pos - float2(55f,15f), 0)
         return
     if death
@@ -110,6 +111,9 @@ def draw
 def GameOver
     death = true
     hint = random_int(hints |> length)
+    stop_all_sounds()
+    music <- create_sound(DEATH_SCREEN)
+    music |> play_sound(0.4f)
 
 def InitGame
     death = false
@@ -177,6 +181,12 @@ def Start
     gameOn = true
     PlayMusic(PROLOGUE_THEME, 0.4f)
 
+def HappyEnd
+    epilogue = true
+    stop_all_sounds()
+    music <- create_sound(END_THEME)
+    music |> play_sound(0.4f)
+
 def PlayMusic(file: string; volume: float)
     stop_all_sounds()
     music <- create_sound(file)
@@ -186,7 +196,7 @@ var hints = [[string[5] "Getting hit gives you brief invincibility.";
                         "Cauldron heals you and sets new respawn point.";
                         "Boxes, barrels or enemies may drop an item.";
                         "Enemies telegraph attacks by shaking.";
-                        "Cauldron will also ressurect all enemies."]]
+                        "Cauldron will also reset all enemies."]]
 
 def DrawHint(center: float2)
     DrawText("Hint: {hints[hint]}", center + float2(-155f,75f), 0)

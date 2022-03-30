@@ -7,6 +7,7 @@ require util/util
 require helpers/objectHelper
 require collisionManager
 require gameMap
+require helpers/soundAtlas
 
 class Boss: GameObject
     agro       : bool
@@ -41,10 +42,14 @@ class Boss: GameObject
 
     def override LoseHealth(dmg: int; source: string)
         GameObject`LoseHealth(self, dmg, source)
+        
         if !isAlive && !invoked
             print("\n Are we calling it twice?")
             invoke(fPointer)
             invoked = true
+            BOSS_DEATH_SOUND |> play_sound(0.4f)
+        else
+            BOSS_PAIN_SOUND |> play_sound(0.6f)
 
     def override SpotPlayer(player: GameObject?)
         targetPos = player.pos

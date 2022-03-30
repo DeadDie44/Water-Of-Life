@@ -6,6 +6,7 @@ require myFont
 require objectFactory
 require helpers/objectHelper
 require helpers/spriteAtlas
+require helpers/soundAtlas
 require util/util  
 
 let
@@ -24,7 +25,7 @@ class Player: GameObject
 
     def override init (desc: ObjectDescriptor; position: float2)
         GameObject`init(self, desc, position)
-        animator -> SetTeleTimer(0.15f)
+        animator -> SetTeleTimer(0.12f)
         faction = int(Faction PLAYER)
         UpdateWeapon()
 
@@ -68,7 +69,7 @@ class Player: GameObject
 
             if get_key(VK_LSHIFT) || get_key(GP_B)
                 Roll()
-                
+
             if get_key_up(VK_I)
                 print("\nInventory length {inventory |> length}")
                 if inventory |> length > 0
@@ -85,6 +86,7 @@ class Player: GameObject
             LoseStamina(rollCost)
             isRolling = true
             animator -> SetAnimationState(AnimState ROLLING)
+            GRUNT2_SOUND |> play_sound(0.7f)
 
     def override Move(move:float2)
         if !isAlive   
