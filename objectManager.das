@@ -18,11 +18,11 @@ require util/mapProcessor
 require util/util
 
 let
-    objectNames = [[string[21] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
+    objectNames = [[string[22] "NA"; "barrel"; "crate"; "bandit"; "banditRanger";
                     "verliokaFirst"; "verliokaTrue"; "respawn"; "player";
                     "kolovershi"; "babaYaga"; "leshy"; "secretBabaYaga"; "door"; "bossGate";
                     "bossTrigger1"; "bossTrigger2"; "banditLeader"; "blockage1"; "blockage2";
-                    "turret"]]
+                    "turret"; "banditMace"]]
     decorationNames = [[string[20] "NA"; "izbushka"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "NA";
                     "NA"; "NA"; "NA"; "tree1"; "tree2"; "tree3";
@@ -48,6 +48,11 @@ struct Projectile
     pos     : float2
     velocity: float2
 
+struct ItemMarker
+    pos: float2
+    index: int
+    ownerID: int
+
 var
     refreshWorld       : bool
     showIntermission   : bool
@@ -58,7 +63,7 @@ var
 
     bossTriggers       : array<BossTrigger?>
     decorationContainer: array<Decoration?>
-    itemContainer      : array<ObjectMarker>
+    itemContainer      : array<ItemMarker>
     NPCContainer       : array<NPC?>
     projectiles        : array<Projectile>
     objectContainer    : array<GameObject?>
@@ -93,15 +98,23 @@ def SpawnProjectile(origin, target: float2&; faction, projectile: int)
     projectiles |> push(p)
     
 def InitItems
-    clear(itemContainer)
     MakeItems()
-    itemContainer := rawItems
+    var tempContainer:array<ObjectMarker> := rawItems
+    for t in tempContainer
+        var m: ItemMarker
+        m.pos = t.pos
+        m.index = t.index
+        m.ownerID = -1
+        itemContainer |> push(m)
+    clear(tempContainer)
+
 
 def RefreshItems
-    var i = 0
+    for item in itemContainer
+        if item.ownerID != GetPlayer().id
+            item.ownerID = -1
 
 def InitDecorations
-    clear(decorationContainer)
     var decorationArray: array<ObjectMarker> <- ReadLayout(MAP_DECORATIONS_LAYOUT)
     for deco in decorationArray
         if deco.index > 0
@@ -114,23 +127,23 @@ def InitDecorations
     clear(decorationArray)
 
 def InitObjectContainer(gameOver: function)
-    var playerExists: bool = false
+    var retry: bool = false
     var oldPlayer: GameObject?
 
     if objectContainer |> length > 0
         if objectContainer[0] != null
-            playerExists = true
+            retry = true
             oldPlayer := objectContainer[0]
 
     clear(objectContainer)
     var objectArray: array<ObjectMarker> := rawObjects //<- ReadObjects()
     for obj in objectArray
         if obj.index > 0
-            if !playerExists && (objectNames[obj.index] == "babaYaga" || objectNames[obj.index] == "leshy" || objectNames[obj.index] == "secretBabaYaga")
+            if !retry && (objectNames[obj.index] == "babaYaga" || objectNames[obj.index] == "leshy" || objectNames[obj.index] == "secretBabaYaga")
                 NPCContainer |> push(new NPC(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 200 + NPCContainer |> length))
             else
                 if objectNames[obj.index] == "player"
-                    if playerExists
+                    if retry
                         oldPlayer -> ReplenishHealth(oldPlayer -> GetHealthCap())
                         oldPlayer.isAlive = true
                         oldPlayer.pos = currentRespawn + float2(0f, 18f)
@@ -143,7 +156,7 @@ def InitObjectContainer(gameOver: function)
                         player.changeRespawn = @@ RespawnAfterFirstBoss
                         CreateObject(player)
 
-                elif objectNames[obj.index] == "turret" || objectNames[obj.index] == "banditLeader" || objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
+                elif objectNames[obj.index] == "banditMace" || objectNames[obj.index] == "turret" || objectNames[obj.index] == "banditLeader" || objectNames[obj.index] == "bandit" || objectNames[obj.index] == "banditRanger" || objectNames[obj.index] == "verliokaFirst" || objectNames[obj.index] == "verliokaTrue" || objectNames[obj.index] == "kolovershi"
                     CreateObject(new Enemy(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), 300 + objectContainer |> length))
                 
                 elif starts_with(objectNames[obj.index], "door")
@@ -165,7 +178,7 @@ def InitObjectContainer(gameOver: function)
                     trigger.bossName = "verliokaTrue"
                     bossTriggers |> push(trigger)
                 elif objectNames[obj.index] == "respawn" 
-                    if !playerExists
+                    if !retry
                         respawnPoints |> push(float2(obj.pos.x, obj.pos.y))
                 
                     var respawn: RespawnPoint? = new RespawnPoint(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length)
@@ -175,14 +188,13 @@ def InitObjectContainer(gameOver: function)
                     if !((objectNames[obj.index] == "blockage1" && GetQuestByName("Baba Yaga").progress >= 3) || (objectNames[obj.index] == "blockage2" && GetQuestByName("Leshy").progress >= 3))
                         CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     
-    if itemContainer |> length > 0   
+    if itemContainer |> length > 0
+        RefreshItems()
         for obj in objectContainer
             for i in range(0, itemContainer |> length)
                 var size: float = 16f
-                if itemContainer[i].pos == obj.pos
-                    obj -> PickUpItem(itemContainer[i].index)
-                    //erase(itemContainer, i)
-                    //Надо всё таки хранить какие итемы были собраны потому-что мы каждый раз должны генерить итемы, чтобы их в карманы положить мобам
+                if itemContainer[i].ownerID == -1 && itemContainer[i].pos == obj.pos
+                    itemContainer[i].ownerID = obj.id
 
     clear(objectArray)
     refreshWorld = false
@@ -238,6 +250,11 @@ def UpdateObjects(dt: float; var epilogue: bool&)
                             obj -> InteractWith()
                     TileCollision(obj, GetActiveArea(obj))
                     MapBoundaryCheck(obj)
+                elif obj.id != GetPlayer().id
+                    for item in itemContainer
+                        if item.ownerID == obj.id
+                            item.ownerID = -1
+                            item.pos = obj.pos
     UpdateProjectiles(dt)
     UpdateTriggers()
     UpdateItems(dt)
@@ -263,10 +280,10 @@ def UpdateTriggers()
 
 def UpdateItems(dt: float)
     if itemContainer |> length > 0
-        var toRemove: bool = false
-        var index: int
         for i in range(0, itemContainer |> length)
-            var itemSize: float = 16f
+            if itemContainer[i].ownerID != -1
+                continue
+            var itemSize: float = 6f
             if CircleCircle(itemContainer[i].pos, GetPlayer().pos, itemSize, GetPlayer().colliderSize.x)
                 GetPlayer() -> PickUpItem(itemContainer[i].index)
                 showIntermission = true
@@ -274,11 +291,8 @@ def UpdateItems(dt: float)
                 var quest: Quest? = GetQuestByTrigger(GetItemByIndex(itemContainer[i].index).itemName)
                 if quest != null
                     ProgressQuest(quest)
-                toRemove = true
-                index = i
+                itemContainer[i].ownerID = GetPlayer().id
                 break
-        if toRemove
-            erase(itemContainer, index)
 
 def UpdateNPCs(dt: float; var interact: bool&)
     if refreshWorld
@@ -311,7 +325,7 @@ def UpdateProjectiles(dt: float)
                         if CircleCircle(p.pos, obj.pos, p.size, obj.colliderSize.x) 
                             obj -> RecieveAttack(obj.id, obj.damage, obj.objName)
                             p.toRemove = true            
-            if p.pos.x < 0f || p.pos.y < 0f || p.pos.x > float(mapWidth) * TILE_SIZE || p.pos.y > float(mapHeight) * TILE_SIZE || !Walkable(int(p.pos.y / TILE_SIZE) * mapWidth + int(p.pos.x / TILE_SIZE))
+            if p.pos.x < 0f || p.pos.y < 0f || p.pos.x > float(mapWidth) * TILE_SIZE || p.pos.y > float(mapHeight) * TILE_SIZE || (mapContainer[int(p.pos.y / TILE_SIZE) * mapWidth + int(p.pos.x / TILE_SIZE)] != 0 && !Walkable(int(p.pos.y / TILE_SIZE) * mapWidth + int(p.pos.x / TILE_SIZE)))
                 p.toRemove = true
         RemoveProjectiles()
 
@@ -410,7 +424,7 @@ def DrawNPCs
 def DrawItems
     if itemContainer |> length > 0
         for item in itemContainer
-            if PointRect(item.pos, GetDrawArea())  
+            if item.ownerID == -1 && PointRect(item.pos, GetDrawArea())  
                 draw_image_region(ITEMS_SPRITE, item.pos.x - 16f, item.pos.y - 16f, getSpriteRect(items[item.index].sprite, 8, 8, 32f, 32f))
 
 def DrawDecorations

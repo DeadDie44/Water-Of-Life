@@ -5,6 +5,8 @@ let
 
     BANDIT: string = SRPITE_ROOT + "characters/bandit.png"
 
+    BANDIT_MACE: string = SRPITE_ROOT + "characters/bandit_mace.png"
+
     BANDIT_RANGER: string = SRPITE_ROOT + "characters/bandit_ranger.png"
 
     BANDIT_LEADER: string = SRPITE_ROOT + "characters/bandit_leader.png"
@@ -12,6 +14,8 @@ let
     VERLIOKA: string = SRPITE_ROOT + "characters/verlioka.png"
 
     KOLOVERSHI: string = SRPITE_ROOT + "characters/kolovershi.png"
+
+    TURRET: string = SRPITE_ROOT + "characters/turret.png"
 
     NPCS: string = SRPITE_ROOT + "characters/npcs.png"
 
@@ -72,5 +76,3 @@ let
     IZBUSHKA: string = SRPITE_ROOT + "decorations/izbushka.png"
 
     PROJECTILES: string = SRPITE_ROOT + "characters/projectiles.png"
-
-    TURRET: string = SRPITE_ROOT + "characters/turret.png"

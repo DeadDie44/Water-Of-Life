@@ -26,8 +26,9 @@ var
 
 
     OBJECT_TABLE <- {{ "player" => create_managed_image(PLAYER); "bandit" => create_managed_image(BANDIT); "bandit_ranger" => create_managed_image(BANDIT_RANGER);
-    "bandit_leader" => create_managed_image(BANDIT_LEADER); "kolovershi" => create_managed_image(KOLOVERSHI); "npcs" => create_managed_image(NPCS); "verlioka" => create_managed_image(VERLIOKA);
-    "static_objects" => create_managed_image(STATIC_OBJECTS); "movable_objects" => create_managed_image(MOVABLE_OBJECTS); "doors" => create_managed_image(DOORS); "turret" => create_managed_image(TURRET) }}
+    "bandit_leader" => create_managed_image(BANDIT_LEADER); "kolovershi" => create_managed_image(KOLOVERSHI); "npcs" => create_managed_image(NPCS); 
+    "verlioka" => create_managed_image(VERLIOKA); "static_objects" => create_managed_image(STATIC_OBJECTS); "movable_objects" => create_managed_image(MOVABLE_OBJECTS); 
+    "doors" => create_managed_image(DOORS); "turret" => create_managed_image(TURRET); "bandit_mace" => create_managed_image(BANDIT_MACE)}}
 
     DECORATION_TABLE <- {{ "bush1" => create_image(BUSH1); "bush2" => create_image(BUSH2); "bush3" => create_image(BUSH3);
     "tree1" => create_image(TREE1); "tree2" => create_image(TREE2); "tree3" => create_image(TREE3); "izbushka" => create_image(IZBUSHKA)}}
