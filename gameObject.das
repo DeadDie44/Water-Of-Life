@@ -17,7 +17,7 @@ class GameObject
     private health, healthCap: int
     private stamina, staminaCap: int
     //***
-    showCollider : bool = false //  для тестов
+    showCollider : bool = true //  для тестов
     //***
     isAlive      : bool
     isAttacking  : bool
@@ -210,7 +210,7 @@ class GameObject
                 GRUNT5_SOUND |> play_sound(0.8f)
             elif objName == "Player"
                 GRUNT1_SOUND |> play_sound(0.6f)
-            elif objName == "Verlioka"
+            elif starts_with(objName,"Verlioka")
                 BOSS_ATTACK_SOUND |> play_sound(0.3f)
             readyToShoot = true
             LoseStamina(attackCost)

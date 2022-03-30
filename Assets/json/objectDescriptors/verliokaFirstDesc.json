@@ -1,17 +1,17 @@
 {
-	"name"   : "Verlioka",
+	"name"   : "VerliokaFirst",
 	"movable": true,
 	"killable": true,
 	"sprite" : "verlioka",
 	
 	"attackPos"    : [32,32],
-	"attackRadius" : 45, 
-	"baseSpeed"    : 75,
-	"size"         : [96,96],
+	"attackRadius" : 36, 
+	"baseSpeed"    : 90,
+	"size"         : [128,128],
 	"colliderSize" : [32,22],
 	"colliderType" : 0,
 	
-	"damage" : 3,
+	"damage" : 10,
 	"health" : 5555,
 	
 	"fps"       : [12,12,12],

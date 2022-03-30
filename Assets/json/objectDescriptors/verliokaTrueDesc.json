@@ -5,9 +5,9 @@
 	"sprite" : "verlioka",
 	
 	"attackPos"    : [32,32],
-	"attackRadius" : 30, 
+	"attackRadius" : 32, 
 	"baseSpeed"    : 65,
-	"size"         : [96,96],
+	"size"         : [128,128],
 	"colliderSize" : [32,22],
 	"colliderType" : 0,
 
