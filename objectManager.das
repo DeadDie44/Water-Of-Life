@@ -195,6 +195,10 @@ def InitObjectContainer(gameOver: function)
                     if !((objectNames[obj.index] == "blockage1" && GetQuestByName("Baba Yaga").progress >= 3) || (objectNames[obj.index] == "blockage2" && GetQuestByName("Leshy").progress >= 3))
                         CreateObject(new GameObject(objectFromDesc(objectNames[obj.index]), float2(obj.pos.x, obj.pos.y), objectContainer |> length))
     
+    if bossTriggers |> length > 0
+        for trigger in bossTriggers            
+            trigger.activated = false
+
     if itemContainer |> length > 0
         RefreshItems()
         for obj in objectContainer
@@ -203,6 +207,9 @@ def InitObjectContainer(gameOver: function)
                 if itemContainer[i].ownerID == -1 && itemContainer[i].pos == obj.pos
                     itemContainer[i].ownerID = obj.id
 
+    if projectiles |> length > 0
+        for p in projectiles
+            p.toRemove = true
     clear(objectArray)
     refreshWorld = false
 

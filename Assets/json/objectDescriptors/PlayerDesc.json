@@ -6,12 +6,12 @@
 	
 	"attackPos"    : [11,11],
 	"attackRadius" : 12, 
-	"baseSpeed"    : 75,
+	"baseSpeed"    : 475,
 	"size"         : [48,48],
 	"colliderSize" : [10,22],
 	"colliderType" : 0,
 
-	"damage" : 1,
+	"damage" : 15,
 	"health" : 5,
 	"stamina" : 5,
 	
