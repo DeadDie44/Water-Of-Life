@@ -48,7 +48,9 @@ def initialize
 // dt - time elapsed since the previous update (in seconds)
 [export]
 def act(dt: float)
-    if epilogue 
+    if epilogue
+        if get_key_up(VK_ESCAPE)
+            Exit()
         return
     if gameOn
         if prologue
