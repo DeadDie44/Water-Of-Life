@@ -21,6 +21,7 @@ var
     epilogue    : bool = false
     death       : bool = false
     DialogOn    : bool = false
+    menuOn      : bool = false
     
     hint : int
 
@@ -47,8 +48,6 @@ def initialize
 // dt - time elapsed since the previous update (in seconds)
 [export]
 def act(dt: float)
-    if get_key(VK_ESCAPE)
-        Exit()
     if epilogue 
         return
     if gameOn
@@ -64,6 +63,14 @@ def act(dt: float)
                 PlayMusic(GRASS_THEME, 0.15f)
                 return
         else
+            if get_key_up(VK_ESCAPE)
+                menuOn = !menuOn
+                if !menuOn
+                    hide_mouse_cursor()
+                else
+                    show_mouse_cursor()
+            if menuOn
+                HandleInGameMenu(GetPlayer().pos)
             if DialogOn
                 if !showText
                     showText = true
@@ -101,6 +108,8 @@ def draw
                     DrawHud(GetPlayer().pos, GetPlayer() -> GetCurrentHealth(), GetPlayer() -> GetHealthCap(), GetPlayer() -> GetCurrentStamina(), GetPlayer() -> GetStaminaCap(), GetPlayer() -> GetWeapon())
                 if DialogOn
                     DrawTextBox(GetPlayer().pos)
+                if menuOn
+                    DrawInGameMenu(GetPlayer().pos)
                 
             else
                 DrawPrologue(cameraCenter - float2(150f, -80f))
@@ -114,6 +123,24 @@ def GameOver
     stop_all_sounds()
     music <- create_sound(DEATH_SCREEN)
     music |> play_sound(0.4f)
+
+def HandleInGameMenu(pos: float2)
+    if get_mouse_button_down(MB_LEFT)
+        var menuRect: float4 = float4(pos.x - 70f, pos.y - 60f, 140f, 110f)
+        var mousePos = screen_to_world(get_mouse_position())
+        if PointRect(mousePos, float4(menuRect.x + 25f, menuRect.y + 15f, 90f, 30f))
+            menuOn = false
+            hide_mouse_cursor()
+        elif PointRect(mousePos, float4(menuRect.x + 25f, menuRect.y + 60f, 90f, 30f))
+            Exit()
+
+def DrawInGameMenu(pos: float2)
+    var menuRect: float4 = float4(pos.x - 70f, pos.y - 60f, 140f, 110f)
+    fill_rect(menuRect.x, menuRect.y, menuRect.z, menuRect.w, 0xFF000000)
+    fill_rect(menuRect.x + 25f, menuRect.y + 15f, 90f, 30f, 0xFF555555)
+    fill_rect(menuRect.x + 25f, menuRect.y + 60f, 90f, 30f, 0xFF555555)
+    DrawText("Continue", float2(menuRect.x + 45f, menuRect.y + 25f), 0)
+    DrawText("Exit", float2(menuRect.x + 55f, menuRect.y + 70f), 0)
 
 def InitGame
     death = false

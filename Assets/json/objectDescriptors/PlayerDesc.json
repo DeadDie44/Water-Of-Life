@@ -11,7 +11,7 @@
 	"colliderSize" : [10,22],
 	"colliderType" : 0,
 
-	"damage" : 15,
+	"damage" : 1,
 	"health" : 5,
 	"stamina" : 5,
 	
